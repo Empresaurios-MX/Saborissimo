@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:saborissimo/res/names.dart';
+import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/ui/login/login.dart';
 import 'package:saborissimo/ui/menu/menu.dart';
 import 'package:saborissimo/ui/order/orders.dart';
@@ -17,19 +18,30 @@ class DrawerApp extends StatelessWidget {
         children: <Widget>[
           Utils.createDrawerHeader(150, Names.appName),
           SizedBox(height: 20),
-          Utils.createDrawerItem(() => Utils.replaceRoute(context, Menu()),
-              Icons.restaurant_menu, Names.menuAppBar),
+          createDrawerItem(
+              context, Menu(), Icons.restaurant_menu, Names.menuAppBar),
           if (logged)
-            Utils.createDrawerItem(() => Utils.replaceRoute(context, Orders()),
-                Icons.shopping_bag_outlined, Names.ordersAppBar),
+            createDrawerItem(
+                context, Orders(), Icons.shopping_bag, Names.ordersAppBar),
           if (logged)
-            Utils.createDrawerItem(() => Utils.replaceRoute(context, null),
-                Icons.logout, Names.logoutAppBar),
+            createDrawerItem(context, null, Icons.logout, Names.logoutAppBar),
           if (!logged)
-            Utils.createDrawerItem(() => Utils.replaceRoute(context, Login()),
-                Icons.login, Names.loginAppBar),
+            createDrawerItem(context, Login(), Icons.login, Names.loginAppBar),
         ],
       ),
+    );
+  }
+
+  Widget createDrawerItem(
+      BuildContext context, Widget destination, IconData icon, String title) {
+    return ListTile(
+      onTap: () => Utils.pushRoute(context, destination),
+      leading: Icon(
+        icon,
+        size: 25,
+        color: Palette.primary,
+      ),
+      title: Text(title),
     );
   }
 }

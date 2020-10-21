@@ -33,18 +33,6 @@ class Utils {
     );
   }
 
-  static Widget createDrawerItem(Function onTab, IconData icon, String title) {
-    return ListTile(
-      onTap: onTab,
-      leading: Icon(
-        icon,
-        size: 25,
-        color: Palette.primary,
-      ),
-      title: Text(title),
-    );
-  }
-
   static Widget createLoginHeader(double height, String title) {
     return Container(
       height: 100,
