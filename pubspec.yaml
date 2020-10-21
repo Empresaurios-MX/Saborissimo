@@ -64,6 +64,10 @@ flutter:
     - family: ReliqStd-Active
       fonts:
         - asset: assets/fonts/ReliqStd-Active.otf
+    - family: Lato-Regular
+      fonts:
+        - asset: assets/fonts/Lato-Regular.ttf
+          weight: 400
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

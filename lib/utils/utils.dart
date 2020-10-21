@@ -11,7 +11,8 @@ class Utils {
     );
   }
 
-  static Future<dynamic> replaceRoute(BuildContext context, Widget destination) {
+  static Future<dynamic> replaceRoute(
+      BuildContext context, Widget destination) {
     return Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (ctx) => destination),
@@ -27,7 +28,7 @@ class Utils {
       alignment: Alignment.centerLeft,
       child: Text(
         title,
-        style: Styles.drawerTitle(),
+        style: Styles.headerTitle(Colors.white),
       ),
     );
   }
@@ -41,6 +42,18 @@ class Utils {
         color: Palette.primary,
       ),
       title: Text(title),
+    );
+  }
+
+  static Widget createLoginHeader(double height, String title) {
+    return Container(
+      height: 100,
+      width: double.infinity,
+      alignment: Alignment.center,
+      child: Text(
+        title,
+        style: Styles.headerTitle(Palette.primary),
+      ),
     );
   }
 }
