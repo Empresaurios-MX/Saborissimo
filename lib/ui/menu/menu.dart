@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
+import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/drawer/drawer_app.dart';
 import 'package:saborissimo/utils/utils.dart';
 
@@ -11,7 +12,7 @@ class Menu extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(Names.menuAppBar),
+          title: Text(Names.menuAppBar, style: Styles.title(Colors.white)),
           backgroundColor: Palette.primary,
           actions: [
             if (logged) createIconButton(context, null, 'Publicar menú'),

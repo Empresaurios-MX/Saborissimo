@@ -11,7 +11,7 @@ class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text(Names.loginAppBar),
+          title: Text(Names.loginAppBar, style: Styles.title(Colors.white)),
           backgroundColor: Palette.primary,
         ),
         drawer: DrawerApp(true),

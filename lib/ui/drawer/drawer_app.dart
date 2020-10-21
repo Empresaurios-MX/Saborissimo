@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
+import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/login/login.dart';
 import 'package:saborissimo/ui/menu/menu.dart';
 import 'package:saborissimo/ui/order/orders.dart';
@@ -41,7 +42,7 @@ class DrawerApp extends StatelessWidget {
         size: 25,
         color: Palette.primary,
       ),
-      title: Text(title),
+      title: Text(title, style: Styles.subTitle(Colors.black)),
     );
   }
 }
