@@ -27,4 +27,14 @@ class Styles {
       fontSize: 17,
     );
   }
+
+  static TextStyle legend() {
+    return TextStyle(
+      color: Colors.white,
+      backgroundColor: Colors.black26,
+      fontWeight: FontWeight.w700,
+      fontFamily: 'Lato-Regular',
+      fontSize: 25,
+    );
+  }
 }
