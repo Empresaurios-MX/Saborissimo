@@ -18,20 +18,24 @@ class Menu extends StatelessWidget {
         title: Text(Names.menuAppBar, style: Styles.title(Colors.white)),
         backgroundColor: Palette.primary,
         actions: [
-          if (logged) createIconButton(context, null, 'Publicar menú'),
+          if (logged)
+            createIconButton(context, Icons.add, null, 'Publicar menú'),
+          if (!logged)
+            createIconButton(context, Icons.shopping_cart, null, 'Mis pedidos'),
         ],
       ),
       drawer: DrawerApp(false),
       body: ListView.builder(
         itemBuilder: (ctx, index) => createCard(ctx, dataService.meals[index]),
-        itemCount: dataService.meals.length,),
+        itemCount: dataService.meals.length
+      ),
     );
   }
 
-  Widget createIconButton(BuildContext context, Widget destination,
-      String toolTip) {
+  Widget createIconButton(BuildContext context, IconData iconData,
+      Widget destination, String toolTip) {
     return IconButton(
-      icon: Icon(Icons.add),
+      icon: Icon(iconData),
       tooltip: toolTip,
       onPressed: () => Utils.pushRoute(context, destination),
     );

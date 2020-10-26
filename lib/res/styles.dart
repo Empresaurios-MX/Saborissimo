@@ -31,8 +31,8 @@ class Styles {
   static TextStyle legend() {
     return TextStyle(
       color: Colors.white,
-      backgroundColor: Colors.black26,
-      fontWeight: FontWeight.w700,
+      backgroundColor: Colors.black54,
+      fontWeight: FontWeight.bold,
       fontFamily: 'Lato-Regular',
       fontSize: 25,
     );
