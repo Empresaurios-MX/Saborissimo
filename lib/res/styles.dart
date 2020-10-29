@@ -28,13 +28,22 @@ class Styles {
     );
   }
 
-  static TextStyle legend() {
+  static TextStyle body(Color color) {
+    return TextStyle(
+      color: color,
+      fontWeight: FontWeight.normal,
+      fontFamily: 'Lato-Regular',
+      fontSize: 15,
+    );
+  }
+
+  static TextStyle legend(double fontSize) {
     return TextStyle(
       color: Colors.white,
       backgroundColor: Colors.black54,
       fontWeight: FontWeight.bold,
       fontFamily: 'Lato-Regular',
-      fontSize: 25,
+      fontSize: fontSize,
     );
   }
 }

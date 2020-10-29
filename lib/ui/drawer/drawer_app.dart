@@ -3,7 +3,7 @@ import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/login/login.dart';
-import 'package:saborissimo/ui/menu/menu.dart';
+import 'package:saborissimo/ui/menu/daily_menu.dart';
 import 'package:saborissimo/ui/order/orders.dart';
 import 'package:saborissimo/utils/utils.dart';
 
@@ -20,7 +20,7 @@ class DrawerApp extends StatelessWidget {
           Utils.createDrawerHeader(150, Names.appName),
           SizedBox(height: 20),
           createDrawerItem(
-              context, Menu(), Icons.restaurant_menu, Names.menuAppBar),
+              context, DailyMenu(), Icons.restaurant_menu, Names.menuAppBar),
           if (logged)
             createDrawerItem(
                 context, Orders(), Icons.shopping_bag, Names.ordersAppBar),
