@@ -28,7 +28,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
   String _colony;
   String _postalCode;
   String _references;
-  bool _reserved = false;
+  bool _order = false;
 
   @override
   Widget build(BuildContext context) {
@@ -84,39 +84,39 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                 Row(
                   children: [
                     Checkbox(
-                      value: _reserved,
-                      onChanged: (value) => setState(() => _reserved = value),
+                      value: _order,
+                      onChanged: (value) => setState(() => _order = value),
                     ),
                     Text(("Quiero pedir a domicilio")),
                   ],
                 ),
-                if (_reserved)
+                if (_order)
                   createLabel(
                     'Por favor, ingrese su dirección',
                     Styles.subTitle(Colors.black),
                   ),
-                if (_reserved)
+                if (_order)
                   TextFormField(
                     decoration: createHint('Calle *'),
                     style: Styles.body(Colors.black),
                     onChanged: (value) => setState(() => _street1 = value),
                     validator: (text) => _getErrorMessage(text.isEmpty),
                   ),
-                if (_reserved)
+                if (_order)
                   TextFormField(
                     decoration: createHint('Entre calles *'),
                     style: Styles.body(Colors.black),
                     onChanged: (value) => setState(() => _street2 = value),
                     validator: (text) => _getErrorMessage(text.isEmpty),
                   ),
-                if (_reserved)
+                if (_order)
                   TextFormField(
                     decoration: createHint('Colonia *'),
                     style: Styles.body(Colors.black),
                     onChanged: (value) => setState(() => _colony = value),
                     validator: (text) => _getErrorMessage(text.isEmpty),
                   ),
-                if (_reserved)
+                if (_order)
                   TextFormField(
                       decoration: createHint('Referencias'),
                       keyboardType: TextInputType.multiline,
@@ -143,10 +143,10 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
         id: 0,
         state: false,
         order: widget.order,
-        orderType: _reserved ? "PEDIDO" : "APARTADO",
+        orderType: _order ? Order.isOrder : Order.isReserved,
         extras: _extras,
         comments: _comments,
-        address: Address(_street1, _street2, _colony, _postalCode, _references),
+        address: Address(0, _street1, _street2, _colony, _postalCode, _references),
         client: Client(0, _name, _phone),
       );
 

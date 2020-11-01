@@ -37,6 +37,14 @@ class Styles {
     );
   }
 
+  static TextStyle bodyWithoutColor() {
+    return TextStyle(
+      fontWeight: FontWeight.normal,
+      fontFamily: 'Lato-Regular',
+      fontSize: 15,
+    );
+  }
+
   static TextStyle legend(double fontSize) {
     return TextStyle(
       color: Colors.white,

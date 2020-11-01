@@ -3,6 +3,9 @@ import 'package:saborissimo/data/model/Client.dart';
 import 'package:saborissimo/data/model/MenuOrder.dart';
 
 class Order {
+  static final String isOrder = 'PEDIDO';
+  static final String isReserved = 'APARTADO';
+
   final int id;
   final bool state;
   final MenuOrder order;

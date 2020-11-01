@@ -3,7 +3,7 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/Meal.dart';
 import 'package:saborissimo/data/model/MenuOrder.dart';
-import 'package:saborissimo/data/service/MealDataService.dart';
+import 'package:saborissimo/data/service/MenuDataService.dart';
 import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
@@ -49,27 +49,27 @@ class _DailyMenuState extends State<DailyMenu> {
               createLabel('Entradas'),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: createRow(context, MealDataService.menu.entrances),
+                children: createRow(context, MenuDataService.menu.entrances),
               ),
               createLabel('Platos medios'),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: createRow(context, MealDataService.menu.middles),
+                children: createRow(context, MenuDataService.menu.middles),
               ),
               createLabel('Platos fuertes'),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: createRow(context, MealDataService.menu.stews),
+                children: createRow(context, MenuDataService.menu.stews),
               ),
               createLabel('Postres'),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: createRow(context, MealDataService.menu.desserts),
+                children: createRow(context, MenuDataService.menu.desserts),
               ),
               createLabel('Bebidas'),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: createRow(context, MealDataService.menu.drinks),
+                children: createRow(context, MenuDataService.menu.drinks),
               ),
             ],
           ),
