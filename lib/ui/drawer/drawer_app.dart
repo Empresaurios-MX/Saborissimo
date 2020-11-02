@@ -20,7 +20,7 @@ class DrawerApp extends StatelessWidget {
           Utils.createDrawerHeader(150, Names.appName),
           SizedBox(height: 20),
           createDrawerItem(
-              context, DailyMenu(), Icons.restaurant_menu, Names.menuAppBar),
+              context, DailyMenu(), Icons.menu_book, Names.menuAppBar),
           if (logged)
             createDrawerItem(
                 context, Orders(), Icons.shopping_bag, Names.ordersAppBar),

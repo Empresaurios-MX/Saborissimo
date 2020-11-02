@@ -9,11 +9,12 @@ import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/cart/confirm_order.dart';
 import 'package:saborissimo/ui/drawer/drawer_app.dart';
+import 'package:saborissimo/ui/menu/create_menu.dart';
 import 'package:saborissimo/ui/menu/meal_detail.dart';
 import 'package:saborissimo/utils/utils.dart';
 
 class DailyMenu extends StatefulWidget {
-  final bool logged = false;
+  final bool logged = true;
 
   @override
   _DailyMenuState createState() => _DailyMenuState();
@@ -35,11 +36,8 @@ class _DailyMenuState extends State<DailyMenu> {
           title: Text(Names.menuAppBar, style: Styles.title(Colors.white)),
           backgroundColor: Palette.primary,
           actions: [
-            if (widget.logged)
-              createIconButton(context, Icons.add, null, 'Publicar menú'),
-            if (!widget.logged)
-              createIconButton(
-                  context, Icons.shopping_cart, null, 'Realizar pedido'),
+            if (widget.logged) createMenuIconButton(context),
+            if (!widget.logged) createCartIconButton(context),
           ],
         ),
         drawer: DrawerApp(false),
@@ -76,69 +74,55 @@ class _DailyMenuState extends State<DailyMenu> {
         ));
   }
 
-  void goToConfirm(BuildContext context) {
-    Utils.pushRoute(
-      context,
-      ConfirmOrder(
-        MenuOrder(
-          0,
-          entrance,
-          middle,
-          stew,
-          dessert,
-          drink,
-        ),
-      ),
-    ).then((value) => setState(() => chosen = HashMap()));
-  }
-
   void attemptToAddObject(Meal meal) {
-    switch (meal.type) {
-      case "ENTRANCE":
-        {
-          if (chosen.containsKey(entrance)) {
-            chosen.update(entrance, (value) => false);
+    if (!widget.logged) {
+      switch (meal.type) {
+        case "ENTRANCE":
+          {
+            if (chosen.containsKey(entrance)) {
+              chosen.update(entrance, (value) => false);
+            }
+            entrance = meal;
+            chosen.update(entrance, (value) => true);
           }
-          entrance = meal;
-          chosen.update(entrance, (value) => true);
-        }
-        break;
-      case "MIDDLE":
-        {
-          if (chosen.containsKey(middle)) {
-            chosen.update(middle, (value) => false);
+          break;
+        case "MIDDLE":
+          {
+            if (chosen.containsKey(middle)) {
+              chosen.update(middle, (value) => false);
+            }
+            middle = meal;
+            chosen.update(middle, (value) => true);
           }
-          middle = meal;
-          chosen.update(middle, (value) => true);
-        }
-        break;
-      case "STEW":
-        {
-          if (chosen.containsKey(stew)) {
-            chosen.update(stew, (value) => false);
+          break;
+        case "STEW":
+          {
+            if (chosen.containsKey(stew)) {
+              chosen.update(stew, (value) => false);
+            }
+            stew = meal;
+            chosen.update(stew, (value) => true);
           }
-          stew = meal;
-          chosen.update(stew, (value) => true);
-        }
-        break;
-      case "DESSERT":
-        {
-          if (chosen.containsKey(dessert)) {
-            chosen.update(dessert, (value) => false);
+          break;
+        case "DESSERT":
+          {
+            if (chosen.containsKey(dessert)) {
+              chosen.update(dessert, (value) => false);
+            }
+            dessert = meal;
+            chosen.update(dessert, (value) => true);
           }
-          dessert = meal;
-          chosen.update(dessert, (value) => true);
-        }
-        break;
-      case "DRINK":
-        {
-          if (chosen.containsKey(drink)) {
-            chosen.update(drink, (value) => false);
+          break;
+        case "DRINK":
+          {
+            if (chosen.containsKey(drink)) {
+              chosen.update(drink, (value) => false);
+            }
+            drink = meal;
+            chosen.update(drink, (value) => true);
           }
-          drink = meal;
-          chosen.update(drink, (value) => true);
-        }
-        break;
+          break;
+      }
     }
   }
 
@@ -154,12 +138,31 @@ class _DailyMenuState extends State<DailyMenu> {
     );
   }
 
-  Widget createIconButton(BuildContext context, IconData iconData,
-      Widget destination, String toolTip) {
+  Widget createCartIconButton(BuildContext context) {
     return IconButton(
-      icon: Icon(iconData),
-      tooltip: toolTip,
-      onPressed: () => goToConfirm(context),
+      icon: Icon(Icons.shopping_cart),
+      tooltip: 'Realizar pedido',
+      onPressed: () => Utils.pushRoute(
+        context,
+        ConfirmOrder(
+          MenuOrder(
+            0,
+            entrance,
+            middle,
+            stew,
+            dessert,
+            drink,
+          ),
+        ),
+      ).then((value) => setState(() => chosen = HashMap())),
+    );
+  }
+
+  Widget createMenuIconButton(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.receipt_long),
+      tooltip: 'Publicar menu',
+      onPressed: () => Utils.pushRoute(context, CreateMenu()),
     );
   }
 
