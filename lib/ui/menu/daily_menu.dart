@@ -40,7 +40,7 @@ class _DailyMenuState extends State<DailyMenu> {
             if (!widget.logged) createCartIconButton(context),
           ],
         ),
-        drawer: DrawerApp(false),
+        drawer: DrawerApp(widget.logged),
         body: SingleChildScrollView(
           child: Column(
             children: [

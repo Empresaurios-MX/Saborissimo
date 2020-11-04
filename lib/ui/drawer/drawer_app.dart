@@ -27,7 +27,7 @@ class DrawerApp extends StatelessWidget {
           if (logged)
             createDrawerItem(context, null, Icons.logout, Names.logoutAppBar),
           if (!logged)
-            createDrawerItem(context, Login(), Icons.login, Names.loginAppBar),
+            createDrawerItem(context, Login(), Icons.login, 'Sección de empleados'),
         ],
       ),
     );
@@ -36,7 +36,7 @@ class DrawerApp extends StatelessWidget {
   Widget createDrawerItem(
       BuildContext context, Widget destination, IconData icon, String title) {
     return ListTile(
-      onTap: () => Utils.pushRoute(context, destination),
+      onTap: () => Utils.replaceRoute(context, destination),
       leading: Icon(
         icon,
         size: 25,
