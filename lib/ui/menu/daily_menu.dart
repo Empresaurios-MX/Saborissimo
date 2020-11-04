@@ -14,7 +14,7 @@ import 'package:saborissimo/ui/menu/meal_detail.dart';
 import 'package:saborissimo/utils/utils.dart';
 
 class DailyMenu extends StatefulWidget {
-  final bool logged = true;
+  final bool logged = false;
 
   @override
   _DailyMenuState createState() => _DailyMenuState();

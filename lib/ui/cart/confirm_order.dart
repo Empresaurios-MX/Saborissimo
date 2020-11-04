@@ -85,6 +85,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                   children: [
                     Checkbox(
                       value: _order,
+                      activeColor: Palette.primary,
                       onChanged: (value) => setState(() => _order = value),
                     ),
                     Text(("Quiero pedir a domicilio")),
