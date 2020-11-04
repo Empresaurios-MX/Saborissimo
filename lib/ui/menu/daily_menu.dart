@@ -9,12 +9,12 @@ import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/cart/confirm_order.dart';
 import 'package:saborissimo/ui/drawer/drawer_app.dart';
-import 'package:saborissimo/ui/menu/create_menu.dart';
+import 'package:saborissimo/ui/menu/create_entrances.dart';
 import 'package:saborissimo/ui/menu/meal_detail.dart';
 import 'package:saborissimo/utils/utils.dart';
 
 class DailyMenu extends StatefulWidget {
-  final bool logged = false;
+  final bool logged = true;
 
   @override
   _DailyMenuState createState() => _DailyMenuState();
@@ -162,7 +162,7 @@ class _DailyMenuState extends State<DailyMenu> {
     return IconButton(
       icon: Icon(Icons.receipt_long),
       tooltip: 'Publicar menu',
-      onPressed: () => Utils.pushRoute(context, CreateMenu()),
+      onPressed: () => Utils.pushRoute(context, CreateEntrances()),
     );
   }
 
