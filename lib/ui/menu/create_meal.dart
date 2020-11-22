@@ -6,6 +6,7 @@ import 'package:saborissimo/data/model/Meal.dart';
 import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
+import 'package:saborissimo/utils/utils.dart';
 
 class CreateMeal extends StatefulWidget {
   final _key = GlobalKey<FormState>();
@@ -49,14 +50,14 @@ class _CreateMealState extends State<CreateMeal> {
                 ),
                 SizedBox(height: 20),
                 TextFormField(
-                  decoration: createHint('Nombre *'),
+                  decoration: Utils.createHint('Nombre *'),
                   style: Styles.body(Colors.black),
                   onChanged: (value) => setState(() => _name = value),
                   validator: (text) => _getErrorMessage(text.isEmpty),
                 ),
                 SizedBox(height: 10),
                 TextFormField(
-                  decoration: createHint('Descripción *'),
+                  decoration: Utils.createHint('Descripción *'),
                   keyboardType: TextInputType.multiline,
                   minLines: 3,
                   maxLines: 20,
@@ -168,18 +169,6 @@ class _CreateMealState extends State<CreateMeal> {
         Icons.camera_enhance,
         color: Colors.white,
         size: 100,
-      ),
-    );
-  }
-
-  InputDecoration createHint(String hint) {
-    return InputDecoration(
-      hintText: hint,
-      enabledBorder: UnderlineInputBorder(
-        borderSide: BorderSide(color: Palette.primary),
-      ),
-      focusedBorder: UnderlineInputBorder(
-        borderSide: BorderSide(color: Palette.primaryLight),
       ),
     );
   }

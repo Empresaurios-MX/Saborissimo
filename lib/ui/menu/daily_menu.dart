@@ -11,10 +11,11 @@ import 'package:saborissimo/ui/cart/confirm_order.dart';
 import 'package:saborissimo/ui/drawer/drawer_app.dart';
 import 'package:saborissimo/ui/menu/create_entrances.dart';
 import 'package:saborissimo/ui/menu/meal_detail.dart';
+import 'package:saborissimo/utils/PreferencesUtils.dart';
 import 'package:saborissimo/utils/utils.dart';
 
 class DailyMenu extends StatefulWidget {
-  final bool logged = true;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   _DailyMenuState createState() => _DailyMenuState();
@@ -22,25 +23,39 @@ class DailyMenu extends StatefulWidget {
 
 class _DailyMenuState extends State<DailyMenu> {
   HashMap<Meal, bool> chosen = HashMap();
+  bool _logged = false;
 
-  Meal entrance;
-  Meal middle;
-  Meal stew;
-  Meal drink;
-  Meal dessert;
+  Meal _entrance;
+  Meal _middle;
+  Meal _stew;
+  Meal _drink;
+  Meal _dessert;
+
+  @override
+  void initState() {
+    PreferencesUtils.getPreferences().then(
+      (preferences) => {
+        if (preferences.getBool(PreferencesUtils.LOGGED_KEY) ?? false)
+          {setState(() => _logged = true)}
+      },
+    );
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: widget._scaffoldKey,
         appBar: AppBar(
           title: Text(Names.menuAppBar, style: Styles.title(Colors.white)),
           backgroundColor: Palette.primary,
           actions: [
-            if (widget.logged) createMenuIconButton(context),
-            if (!widget.logged) createCartIconButton(context),
+            if (_logged) createMenuIconButton(context),
+            if (!_logged) createCartIconButton(context),
           ],
         ),
-        drawer: DrawerApp(widget.logged),
+        drawer: DrawerApp(),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -75,55 +90,72 @@ class _DailyMenuState extends State<DailyMenu> {
   }
 
   void attemptToAddObject(Meal meal) {
-    if (!widget.logged) {
+    if (!_logged) {
       switch (meal.type) {
         case "ENTRANCE":
           {
-            if (chosen.containsKey(entrance)) {
-              chosen.update(entrance, (value) => false);
+            if (chosen.containsKey(_entrance)) {
+              chosen.update(_entrance, (value) => false);
             }
-            entrance = meal;
-            chosen.update(entrance, (value) => true);
+            _entrance = meal;
+            chosen.update(_entrance, (value) => true);
           }
           break;
         case "MIDDLE":
           {
-            if (chosen.containsKey(middle)) {
-              chosen.update(middle, (value) => false);
+            if (chosen.containsKey(_middle)) {
+              chosen.update(_middle, (value) => false);
             }
-            middle = meal;
-            chosen.update(middle, (value) => true);
+            _middle = meal;
+            chosen.update(_middle, (value) => true);
           }
           break;
         case "STEW":
           {
-            if (chosen.containsKey(stew)) {
-              chosen.update(stew, (value) => false);
+            if (chosen.containsKey(_stew)) {
+              chosen.update(_stew, (value) => false);
             }
-            stew = meal;
-            chosen.update(stew, (value) => true);
+            _stew = meal;
+            chosen.update(_stew, (value) => true);
           }
           break;
         case "DESSERT":
           {
-            if (chosen.containsKey(dessert)) {
-              chosen.update(dessert, (value) => false);
+            if (chosen.containsKey(_dessert)) {
+              chosen.update(_dessert, (value) => false);
             }
-            dessert = meal;
-            chosen.update(dessert, (value) => true);
+            _dessert = meal;
+            chosen.update(_dessert, (value) => true);
           }
           break;
         case "DRINK":
           {
-            if (chosen.containsKey(drink)) {
-              chosen.update(drink, (value) => false);
+            if (chosen.containsKey(_drink)) {
+              chosen.update(_drink, (value) => false);
             }
-            drink = meal;
-            chosen.update(drink, (value) => true);
+            _drink = meal;
+            chosen.update(_drink, (value) => true);
           }
           break;
       }
     }
+  }
+
+  bool isValidOrder() {
+    return _entrance != null || _middle != null || _stew != null;
+  }
+
+  void resetSelection() {
+    setState(
+      () => {
+        chosen = HashMap(),
+        _entrance = null,
+        _middle = null,
+        _stew = null,
+        _drink = null,
+        _dessert = null,
+      },
+    );
   }
 
   Widget createLabel(String text) {
@@ -140,22 +172,30 @@ class _DailyMenuState extends State<DailyMenu> {
 
   Widget createCartIconButton(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.shopping_cart),
-      tooltip: 'Realizar pedido',
-      onPressed: () => Utils.pushRoute(
-        context,
-        ConfirmOrder(
-          MenuOrder(
-            0,
-            entrance,
-            middle,
-            stew,
-            dessert,
-            drink,
-          ),
-        ),
-      ).then((value) => setState(() => chosen = HashMap())),
-    );
+        icon: Icon(Icons.shopping_cart),
+        tooltip: 'Realizar pedido',
+        onPressed: () => {
+              if (isValidOrder())
+                {
+                  Utils.pushRoute(
+                    context,
+                    ConfirmOrder(
+                      MenuOrder(
+                        0,
+                        _entrance,
+                        _middle,
+                        _stew,
+                        _dessert,
+                        _drink,
+                      ),
+                    ),
+                  ).then((value) => resetSelection()),
+                }
+              else
+                {
+                  Utils.showSnack(widget._scaffoldKey, 'Su pedido esta vacío!'),
+                }
+            });
   }
 
   Widget createMenuIconButton(BuildContext context) {
@@ -166,20 +206,20 @@ class _DailyMenuState extends State<DailyMenu> {
     );
   }
 
-  List<Widget> createRow(BuildContext context, List<Meal> entrances) {
+  List<Widget> createRow(BuildContext context, List<Meal> meals) {
     List<Widget> cards = [];
     double dimension = 190;
     double fontSize = 20;
 
-    if (entrances.length == 2) {
+    if (meals.length == 2) {
       dimension = 150;
     }
-    if (entrances.length >= 3) {
+    if (meals.length >= 3) {
       dimension = 110;
       fontSize = 15;
     }
 
-    entrances.forEach(
+    meals.forEach(
       (meal) => {cards.add(createMiniCard(context, meal, dimension, fontSize))},
     );
 

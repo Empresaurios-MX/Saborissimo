@@ -16,15 +16,13 @@ class Orders extends StatelessWidget {
         title: Text(Names.ordersAppBar, style: Styles.title(Colors.white)),
         backgroundColor: Palette.primary,
       ),
-      drawer: DrawerApp(true),
-      body: ListView.builder(
+      drawer: DrawerApp(),
+      body: ListView.separated(
         padding: EdgeInsets.only(top: 10, left: 10, right: 10),
         itemCount: OrderDataService.orders.length,
         itemBuilder: (ctx, index) =>
             createListTile(ctx, OrderDataService.orders[index]),
-/*        separatorBuilder: (context, index) => Divider(
-          thickness: 2,
-        ),*/
+        separatorBuilder: (context, index) => Divider(thickness: 2),
       ),
     );
   }
@@ -37,12 +35,7 @@ class Orders extends StatelessWidget {
     }
 
     return ListTile(
-/*      leading: Icon(
-        Icons.shopping_bag_outlined,
-        color: Palette.primary,
-        size: 35,
-      ),*/
-      tileColor: Palette.backgroundElevated,
+      tileColor: Palette.background,
       title: Text(
         order.client.name,
         style: Styles.subTitle(Colors.black),

@@ -44,4 +44,22 @@ class Utils {
       ),
     );
   }
+
+  static InputDecoration createHint(String hint) {
+    return InputDecoration(
+      hintText: hint,
+      enabledBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Palette.primary),
+      ),
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Palette.primaryLight),
+      ),
+    );
+  }
+
+  static void showSnack(scaffoldKey, message) {
+    scaffoldKey.currentState.showSnackBar(
+      SnackBar(content: Text(message, style: Styles.body(Colors.white))),
+    );
+  }
 }

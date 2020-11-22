@@ -6,6 +6,7 @@ import 'package:saborissimo/data/model/Order.dart';
 import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
+import 'package:saborissimo/utils/utils.dart';
 
 class ConfirmOrder extends StatefulWidget {
   final _key = GlobalKey<FormState>();
@@ -51,14 +52,14 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                   Styles.subTitle(Colors.black),
                 ),
                 TextFormField(
-                  decoration: createHint('Nombre *'),
+                  decoration: Utils.createHint('Nombre *'),
                   cursorColor: Colors.red,
                   style: Styles.body(Colors.black),
                   onChanged: (value) => setState(() => _name = value),
                   validator: (text) => _getErrorMessage(text.isEmpty),
                 ),
                 TextFormField(
-                  decoration: createHint('Teléfono *'),
+                  decoration: Utils.createHint('Teléfono *'),
                   keyboardType: TextInputType.phone,
                   maxLength: 10,
                   style: Styles.body(Colors.black),
@@ -66,7 +67,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                   validator: (text) => _getErrorMessage(text.isEmpty),
                 ),
                 TextFormField(
-                  decoration: createHint('Extras'),
+                  decoration: Utils.createHint('Extras'),
                   keyboardType: TextInputType.multiline,
                   minLines: 1,
                   maxLines: 10,
@@ -74,7 +75,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                   onChanged: (value) => setState(() => _extras = value),
                 ),
                 TextFormField(
-                  decoration: createHint('Comentarios'),
+                  decoration: Utils.createHint('Comentarios'),
                   keyboardType: TextInputType.multiline,
                   minLines: 1,
                   maxLines: 10,
@@ -98,28 +99,28 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                   ),
                 if (_order)
                   TextFormField(
-                    decoration: createHint('Calle *'),
+                    decoration: Utils.createHint('Calle *'),
                     style: Styles.body(Colors.black),
                     onChanged: (value) => setState(() => _street1 = value),
                     validator: (text) => _getErrorMessage(text.isEmpty),
                   ),
                 if (_order)
                   TextFormField(
-                    decoration: createHint('Entre calles *'),
+                    decoration: Utils.createHint('Entre calles *'),
                     style: Styles.body(Colors.black),
                     onChanged: (value) => setState(() => _street2 = value),
                     validator: (text) => _getErrorMessage(text.isEmpty),
                   ),
                 if (_order)
                   TextFormField(
-                    decoration: createHint('Colonia *'),
+                    decoration: Utils.createHint('Colonia *'),
                     style: Styles.body(Colors.black),
                     onChanged: (value) => setState(() => _colony = value),
                     validator: (text) => _getErrorMessage(text.isEmpty),
                   ),
                 if (_order)
                   TextFormField(
-                      decoration: createHint('Referencias'),
+                      decoration: Utils.createHint('Referencias'),
                       keyboardType: TextInputType.multiline,
                       minLines: 1,
                       maxLines: 10,
@@ -151,17 +152,8 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
         client: Client(0, _name, _phone),
       );
 
-      print(order);
-
       Navigator.pop(context);
     }
-  }
-
-  Future<void> showSnack() {
-    return Future.value(
-      () => widget._scaffoldKey.currentState
-          .showSnackBar(SnackBar(content: Text('Pedido realizado con exito'))),
-    );
   }
 
   String _getErrorMessage(empty) {
@@ -169,18 +161,6 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
       return 'Este campo no puede estar vacío';
     }
     return null;
-  }
-
-  InputDecoration createHint(String hint) {
-    return InputDecoration(
-      hintText: hint,
-      enabledBorder: UnderlineInputBorder(
-        borderSide: BorderSide(color: Palette.primary),
-      ),
-      focusedBorder: UnderlineInputBorder(
-        borderSide: BorderSide(color: Palette.primaryLight),
-      ),
-    );
   }
 
   Widget createLabel(String text, TextStyle style) {
