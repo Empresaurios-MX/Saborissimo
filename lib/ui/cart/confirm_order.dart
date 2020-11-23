@@ -148,7 +148,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
         orderType: _order ? Order.isOrder : Order.isReserved,
         extras: _extras,
         comments: _comments,
-        address: Address(0, _street1, _street2, _colony, _postalCode, _references),
+        address: Address(0, _street1, _street2, _colony, _references),
         client: Client(0, _name, _phone),
       );
 

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:saborissimo/data/model/Meal.dart';
+import 'package:saborissimo/data/service/MealDataService.dart';
 import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
@@ -10,21 +11,24 @@ import 'package:saborissimo/utils/utils.dart';
 
 class CreateMeal extends StatefulWidget {
   final _key = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   _CreateMealState createState() => _CreateMealState();
 }
 
 class _CreateMealState extends State<CreateMeal> {
+  MealDataService _service = MealDataService();
+
   File _selectedPicture;
 
   String _name;
   String _description;
-  String _picture;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: widget._scaffoldKey,
       appBar: AppBar(
         title: Text(Names.createMealAppBar, style: Styles.title(Colors.white)),
         backgroundColor: Palette.primary,
@@ -44,7 +48,7 @@ class _CreateMealState extends State<CreateMeal> {
                   onTap: () => _showPicker(context),
                   child: CircleAvatar(
                     radius: 100,
-                    backgroundColor: Palette.accent,
+                    backgroundColor: Palette.primaryLight,
                     child: createPicture(),
                   ),
                 ),
@@ -125,7 +129,7 @@ class _CreateMealState extends State<CreateMeal> {
     );
   }
 
-  String _getErrorMessage(empty) {
+  String _getErrorMessage(bool empty) {
     if (empty) {
       return 'Este campo no puede estar vacío';
     }
@@ -134,15 +138,18 @@ class _CreateMealState extends State<CreateMeal> {
 
   void _validateForm() {
     if (widget._key.currentState.validate()) {
-      _picture = uploadToFirebase();
-      final Meal meal = Meal(0, _name, _description, _picture);
+      if (_selectedPicture == null) {
+        Utils.showSnack(widget._scaffoldKey, 'Debe seleccionar una imagen');
+      } else {
 
-      Navigator.pop(context);
+        final Meal meal = Meal(0, _name, _description, uploadToFirebase());
+        _service.saveMeal(meal).then((value) => Navigator.pop(context));
+      }
     }
   }
 
   String uploadToFirebase() {
-    return 'URL';
+    return _selectedPicture.path;
   }
 
   Widget createPicture() {
@@ -160,13 +167,13 @@ class _CreateMealState extends State<CreateMeal> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Palette.primary,
+        color: Palette.primaryMedium,
         borderRadius: BorderRadius.circular(100),
       ),
       width: 190,
       height: 190,
       child: Icon(
-        Icons.camera_enhance,
+        Icons.add_a_photo,
         color: Colors.white,
         size: 100,
       ),

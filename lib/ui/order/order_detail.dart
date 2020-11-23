@@ -104,12 +104,6 @@ class OrderDetail extends StatelessWidget {
               createInfoRow(Icons.house, 'Entre calles', order.address.street2),
             if (order.address.colony.isNotEmpty)
               createInfoRow(Icons.home_work, 'Colonia', order.address.colony),
-            if (order.address.postalCode.isNotEmpty)
-              createInfoRow(
-                Icons.markunread_mailbox,
-                'Código postal',
-                order.address.postalCode,
-              ),
             if (order.address.references.isNotEmpty)
               createInfoRow(
                 Icons.contact_support,

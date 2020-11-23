@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class Palette {
   static final Color primary = Colors.red.shade900;
+  static final Color primaryMedium = Colors.red.shade800;
   static final Color primaryLight = Colors.red.shade600;
   static final Color accent = Colors.deepOrangeAccent;
   static final Color done = Colors.green;

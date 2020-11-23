@@ -1,7 +1,7 @@
 import 'package:saborissimo/data/model/Meal.dart';
 
 class MealDataService {
-  static final List<Meal> meals = [
+  List<Meal> _meals = [
     Meal.withType(
       1,
       "Pozole",
@@ -66,4 +66,25 @@ class MealDataService {
       "DRINK",
     ),
   ];
+
+  List<Meal> get meals {
+    print(_meals.length);
+    return _meals;
+  }
+
+  Meal getById(int id) {
+    return _meals.firstWhere((meal) => meal.id == id, orElse: null);
+  }
+
+  Future<Meal> saveMeal(Meal meal) async {
+    meal.id = _meals.length;
+
+    _meals.add(meal);
+
+    return meal;
+  }
+
+  void deleteMeal(int id) {
+    _meals.removeWhere((meal) => meal.id == id);
+  }
 }

@@ -32,7 +32,7 @@ class OrderDataService {
       extras: "",
       comments: "",
       orderType: Order.isOrder,
-      address: Address(0, 'Sur 1', 'Norte 12 y Este 10', 'Centro', '95600',
+      address: Address(0, 'Sur 1', 'Norte 12 y Este 10', 'Centro',
           'Casa azul marino'),
       client: Client(0, 'Daniel Antonio Nolasco Alvarado', '2711532828'),
     ),
@@ -43,7 +43,7 @@ class OrderDataService {
       extras: "",
       comments: "",
       orderType: Order.isReserved,
-      address: Address(0, '', '', '', '', ''),
+      address: Address(0, '', '', '', ''),
       client: Client(0, 'Fernando Palencia', '2714589896'),
     ),
   ];

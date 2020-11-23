@@ -19,7 +19,8 @@ class CreateDesserts extends StatefulWidget {
 }
 
 class _CreateDessertsState extends State<CreateDesserts> {
-  Map<Meal, bool> selected = {};
+  MealDataService _service = MealDataService();
+  Map<Meal, bool> _selected = {};
 
   @override
   Widget build(BuildContext context) {
@@ -39,15 +40,14 @@ class _CreateDessertsState extends State<CreateDesserts> {
         ),
       ),
       body: ListView.builder(
-        itemBuilder: (context, index) =>
-            createListTile(MealDataService.meals[index]),
-        itemCount: MealDataService.meals.length,
+        itemBuilder: (context, index) => createListTile(_service.meals[index]),
+        itemCount: _service.meals.length,
       ),
     );
   }
 
   Widget createListTile(Meal meal) {
-    selected.putIfAbsent(meal, () => false);
+    _selected.putIfAbsent(meal, () => false);
 
     return CheckboxListTile(
       contentPadding: EdgeInsets.all(10),
@@ -59,16 +59,16 @@ class _CreateDessertsState extends State<CreateDesserts> {
         fit: BoxFit.cover,
       ),
       activeColor: Palette.done,
-      value: selected[meal],
+      value: _selected[meal],
       onChanged: (value) =>
-          setState(() => selected.update(meal, (old) => !old)),
+          setState(() => _selected.update(meal, (old) => !old)),
     );
   }
 
   List<Meal> getSelected() {
     final List<Meal> selectedNames = [];
 
-    selected.forEach((key, value) => {
+    _selected.forEach((key, value) => {
           if (value) {selectedNames.add(key)}
         });
 
