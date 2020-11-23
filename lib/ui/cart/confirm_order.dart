@@ -27,7 +27,6 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
   String _street1;
   String _street2;
   String _colony;
-  String _postalCode;
   String _references;
   bool _order = false;
 

@@ -75,12 +75,6 @@ class _LoginState extends State<Login> {
     );
   }
 
-  void _toggle() {
-    setState(() {
-      _obscureText = !_obscureText;
-    });
-  }
-
   String _getErrorMessage(empty) {
     if (empty) {
       return 'Este campo no puede estar vacío';
