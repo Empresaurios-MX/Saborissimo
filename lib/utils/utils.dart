@@ -11,7 +11,8 @@ class Utils {
     );
   }
 
-  static Future<dynamic> replaceRoute(BuildContext context, Widget destination) {
+  static Future<dynamic> replaceRoute(
+      BuildContext context, Widget destination) {
     return Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (ctx) => destination),
@@ -27,20 +28,38 @@ class Utils {
       alignment: Alignment.centerLeft,
       child: Text(
         title,
-        style: Styles.drawerTitle(),
+        style: Styles.headerTitle(Colors.white),
       ),
     );
   }
 
-  static Widget createDrawerItem(Function onTab, IconData icon, String title) {
-    return ListTile(
-      onTap: onTab,
-      leading: Icon(
-        icon,
-        size: 25,
-        color: Palette.primary,
+  static Widget createLoginHeader(double height, String title) {
+    return Container(
+      height: 100,
+      width: double.infinity,
+      alignment: Alignment.center,
+      child: Text(
+        title,
+        style: Styles.headerTitle(Palette.primary),
       ),
-      title: Text(title),
+    );
+  }
+
+  static InputDecoration createHint(String hint) {
+    return InputDecoration(
+      hintText: hint,
+      enabledBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Palette.primary),
+      ),
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Palette.primaryLight),
+      ),
+    );
+  }
+
+  static void showSnack(scaffoldKey, message) {
+    scaffoldKey.currentState.showSnackBar(
+      SnackBar(content: Text(message, style: Styles.body(Colors.white))),
     );
   }
 }
