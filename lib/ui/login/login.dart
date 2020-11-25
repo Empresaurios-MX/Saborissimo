@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:saborissimo/data/model/Login.dart';
+import 'package:saborissimo/data/model/LoginResponse.dart';
+import 'package:saborissimo/data/service/UserDataService.dart';
 import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
@@ -9,6 +12,9 @@ import 'package:saborissimo/utils/utils.dart';
 
 class Login extends StatefulWidget {
   final _key = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  final AdminDataService service = AdminDataService();
 
   @override
   _LoginState createState() => _LoginState();
@@ -32,6 +38,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: widget._scaffoldKey,
       appBar: AppBar(
         title: Text(Names.loginAppBar, style: Styles.title(Colors.white)),
         backgroundColor: Palette.primary,
@@ -84,20 +91,30 @@ class _LoginState extends State<Login> {
 
   void validateForm() {
     if (widget._key.currentState.validate()) {
-      // Make request
-
-      if (_user == 'admin' && _password == 'admin') {
-        PreferencesUtils.getPreferences().then(
-          (preferences) => {
-            preferences.setString(PreferencesUtils.USER_KEY, _user),
-            preferences.setString(PreferencesUtils.PASSWORD_KEY, _password),
-            preferences.setBool(PreferencesUtils.LOGGED_KEY, true)
-          },
-        );
-
-        Utils.replaceRoute(context, DailyMenu());
-      }
+      widget.service
+          .login(Admin(_user, _password))
+          .catchError((error) => Utils.showSnack(widget._scaffoldKey, error))
+          .then((response) => {
+                if (response.key != null)
+                  saveUserToPreferences(response)
+                else
+                  Utils.showSnack(
+                    widget._scaffoldKey,
+                    "Usuario o contraseña incorrectos",
+                  )
+              });
     }
+  }
+
+  void saveUserToPreferences(LoginResponse loginResponse) {
+    PreferencesUtils.getPreferences().then((preferences) => {
+          preferences.setString(PreferencesUtils.USER_KEY, _user),
+          preferences.setString(PreferencesUtils.PASSWORD_KEY, _password),
+          preferences.setString(PreferencesUtils.TOKEN_KEY, loginResponse.key),
+          preferences.setBool(PreferencesUtils.LOGGED_KEY, true)
+        });
+
+    Utils.replaceRoute(context, DailyMenu());
   }
 
   Widget createRoundedButton() {
