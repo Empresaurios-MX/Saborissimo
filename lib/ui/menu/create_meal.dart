@@ -1,13 +1,17 @@
 import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:saborissimo/data/model/Meal.dart';
-import 'package:saborissimo/data/service/MealDataService.dart';
+import 'package:saborissimo/data/service/MealsDataService.dart';
 import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
+import 'package:saborissimo/utils/PreferencesUtils.dart';
 import 'package:saborissimo/utils/utils.dart';
+import 'package:select_form_field/select_form_field.dart';
 
 class CreateMeal extends StatefulWidget {
   final _key = GlobalKey<FormState>();
@@ -18,12 +22,25 @@ class CreateMeal extends StatefulWidget {
 }
 
 class _CreateMealState extends State<CreateMeal> {
-  MealDataService _service = MealDataService();
-
   File _selectedPicture;
 
+  bool working;
+  String _token;
   String _name;
   String _description;
+  String _type;
+
+  @override
+  void initState() {
+    working = false;
+    PreferencesUtils.getPreferences().then((preferences) => {
+          if (preferences.getString(PreferencesUtils.TOKEN_KEY) != null)
+            _token = preferences.getString(PreferencesUtils.TOKEN_KEY)
+          else
+            _token = 'N/A'
+        });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +50,7 @@ class _CreateMealState extends State<CreateMeal> {
         title: Text(Names.createMealAppBar, style: Styles.title(Colors.white)),
         backgroundColor: Palette.primary,
       ),
-      floatingActionButton: FloatingActionButton(
-          backgroundColor: Palette.accent,
-          child: Icon(Icons.save),
-          onPressed: _validateForm),
+      floatingActionButton: createFAB(),
       body: Padding(
         padding: EdgeInsets.all(20),
         child: SingleChildScrollView(
@@ -55,6 +69,7 @@ class _CreateMealState extends State<CreateMeal> {
                 SizedBox(height: 20),
                 TextFormField(
                   decoration: Utils.createHint('Nombre *'),
+                  maxLength: 255,
                   style: Styles.body(Colors.black),
                   onChanged: (value) => setState(() => _name = value),
                   validator: (text) => _getErrorMessage(text.isEmpty),
@@ -65,8 +80,26 @@ class _CreateMealState extends State<CreateMeal> {
                   keyboardType: TextInputType.multiline,
                   minLines: 3,
                   maxLines: 20,
+                  maxLength: 255,
                   style: Styles.body(Colors.black),
                   onChanged: (value) => setState(() => _description = value),
+                  validator: (text) => _getErrorMessage(text.isEmpty),
+                ),
+                SizedBox(height: 10),
+                SelectFormField(
+                  decoration: InputDecoration(
+                    hintText: 'Tipo de platillo',
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Palette.primary),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Palette.primaryLight),
+                    ),
+                    suffixIcon:
+                        Icon(Icons.arrow_drop_down, color: Palette.primary),
+                  ),
+                  items: Names.mealTypeSelector,
+                  onChanged: (value) => setState(() => _type = value),
                   validator: (text) => _getErrorMessage(text.isEmpty),
                 ),
                 Container(
@@ -85,50 +118,6 @@ class _CreateMealState extends State<CreateMeal> {
     );
   }
 
-  void _selectFromCamera() async {
-    File file = await ImagePicker.pickImage(source: ImageSource.camera);
-
-    setState(() {
-      _selectedPicture = file;
-    });
-  }
-
-  void _selectFromGallery() async {
-    File file = await ImagePicker.pickImage(source: ImageSource.gallery);
-
-    setState(() {
-      _selectedPicture = file;
-    });
-  }
-
-  void _showPicker(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (ctx) => Container(
-        child: Wrap(
-          children: <Widget>[
-            ListTile(
-              leading: Icon(Icons.photo_library, color: Palette.primary),
-              title: Text(
-                'Seleccionar de la galeria',
-                style: Styles.body(Colors.black),
-              ),
-              onTap: () => {_selectFromGallery(), Navigator.of(context).pop()},
-            ),
-            ListTile(
-              leading: Icon(Icons.photo_camera, color: Palette.primary),
-              title: Text(
-                'Tomar una foto ahora',
-                style: Styles.body(Colors.black),
-              ),
-              onTap: () => {_selectFromCamera(), Navigator.of(context).pop()},
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   String _getErrorMessage(bool empty) {
     if (empty) {
       return 'Este campo no puede estar vacío';
@@ -136,20 +125,139 @@ class _CreateMealState extends State<CreateMeal> {
     return null;
   }
 
+  void _selectFromCamera() async {
+    File file = await ImagePicker.pickImage(
+        source: ImageSource.camera,
+        maxHeight: 480,
+        maxWidth: 960,
+        imageQuality: 50);
+
+    setState(() {
+      _selectedPicture = file;
+    });
+  }
+
+  void _selectFromGallery() async {
+    File file = await ImagePicker.pickImage(
+        source: ImageSource.gallery,
+        maxHeight: 480,
+        maxWidth: 960,
+        imageQuality: 50);
+
+    setState(() {
+      _selectedPicture = file;
+    });
+  }
+
   void _validateForm() {
     if (widget._key.currentState.validate()) {
       if (_selectedPicture == null) {
         Utils.showSnack(widget._scaffoldKey, 'Debe seleccionar una imagen');
       } else {
-
-        final Meal meal = Meal(0, _name, _description, uploadToFirebase());
-        _service.saveMeal(meal).then((value) => Navigator.pop(context));
+        setState(() => working = true);
+        uploadToFirebase(_selectedPicture);
       }
     }
   }
 
-  String uploadToFirebase() {
-    return _selectedPicture.path;
+  Future deleteFromFirebase(String path) async {
+    String child = path
+        .split('/o/')[1]
+        .replaceAll('%2F', '/')
+        .replaceAll('%20', ' ')
+        .split('?alt')[0];
+
+    Firebase.initializeApp().then(
+        (value) => {FirebaseStorage.instance.ref().child(child).delete()});
+  }
+
+  Future uploadToFirebase(File imageToUpload) async {
+    DateTime now = DateTime.now();
+    String fileName = 'meal_' +
+        _type +
+        '_' +
+        _name +
+        '_' +
+        DateTime(now.year, now.month, now.day).toString().substring(0, 10);
+
+    Reference firebaseStorageRef;
+    UploadTask uploadTask;
+    TaskSnapshot taskSnapshot;
+
+    Firebase.initializeApp().then((value) async => {
+          firebaseStorageRef =
+              FirebaseStorage.instance.ref().child('meals/$fileName'),
+          uploadTask = firebaseStorageRef.putFile(_selectedPicture),
+          taskSnapshot = await uploadTask.whenComplete(() => null),
+          taskSnapshot.ref
+              .getDownloadURL()
+              .then((url) => saveMeal(url))
+              .catchError((_) => setState(() => working = false)),
+        });
+  }
+
+  void saveMeal(String url) {
+    MealsDataService service = MealsDataService(_token);
+
+    if (url != null && url.isNotEmpty) {
+      final Meal meal = Meal(0, _name, _description, url, _type);
+      service.post(meal).then(
+            (success) => {if (success) showDoneDialog() else showErrorDialog()},
+          );
+    } else {
+      setState(() => working = false);
+    }
+  }
+
+  void showDoneDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (_) => AlertDialog(
+        title: Text(
+          'Platillo creado con exito',
+          textAlign: TextAlign.center,
+          style: Styles.subTitle(Colors.black),
+        ),
+        content: Icon(
+          Icons.done,
+          color: Palette.done,
+          size: 80,
+        ),
+      ),
+    ).then((_) => Navigator.pop(context));
+  }
+
+  void showErrorDialog() {
+    setState(() => working = false);
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (_) => AlertDialog(
+          title: Text(
+            'Ha ocurrido un error, intente de nuevo',
+            textAlign: TextAlign.center,
+            style: Styles.subTitle(Colors.black),
+          ),
+          content: Icon(
+            Icons.error,
+            color: Palette.todo,
+            size: 80,
+          )),
+    );
+  }
+
+  Widget createFAB() {
+    if (working) {
+      return Center();
+    }
+
+    return FloatingActionButton(
+      backgroundColor: Palette.accent,
+      child: Icon(Icons.save),
+      onPressed: _validateForm,
+    );
   }
 
   Widget createPicture() {
@@ -176,6 +284,34 @@ class _CreateMealState extends State<CreateMeal> {
         Icons.add_a_photo,
         color: Colors.white,
         size: 100,
+      ),
+    );
+  }
+
+  void _showPicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => Container(
+        child: Wrap(
+          children: <Widget>[
+            ListTile(
+              leading: Icon(Icons.photo_library, color: Palette.primary),
+              title: Text(
+                'Seleccionar de la galeria',
+                style: Styles.body(Colors.black),
+              ),
+              onTap: () => {_selectFromGallery(), Navigator.of(context).pop()},
+            ),
+            ListTile(
+              leading: Icon(Icons.photo_camera, color: Palette.primary),
+              title: Text(
+                'Tomar una foto ahora',
+                style: Styles.body(Colors.black),
+              ),
+              onTap: () => {_selectFromCamera(), Navigator.of(context).pop()},
+            ),
+          ],
+        ),
       ),
     );
   }
