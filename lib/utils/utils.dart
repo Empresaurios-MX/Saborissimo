@@ -45,6 +45,15 @@ class Utils {
     );
   }
 
+  static Widget createThumbnail(String pictureUrl) {
+    return Image.network(
+      pictureUrl,
+      height: double.infinity,
+      width: 100,
+      fit: BoxFit.cover,
+    );
+  }
+
   static InputDecoration createHint(String hint) {
     return InputDecoration(
       hintText: hint,

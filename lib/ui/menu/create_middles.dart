@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/Meal.dart';
-import 'package:saborissimo/data/service/MealDataService.dart';
+import 'package:saborissimo/data/service/MealsDataService.dart';
 import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/menu/create_stews.dart';
+import 'package:saborissimo/utils/PreferencesUtils.dart';
 import 'package:saborissimo/utils/utils.dart';
 
 class CreateMiddles extends StatefulWidget {
@@ -17,8 +18,23 @@ class CreateMiddles extends StatefulWidget {
 }
 
 class _CreateMiddlesState extends State<CreateMiddles> {
-  MealDataService _service = MealDataService();
-  Map<Meal, bool> _selected = {};
+  String _token;
+  MealsDataService _service;
+  List<Meal> _meals = [];
+  Map<int, bool> _selected = {};
+
+  @override
+  void initState() {
+    PreferencesUtils.getPreferences()
+        .then((preferences) => {
+              if (preferences.getString(PreferencesUtils.TOKEN_KEY) != null)
+                _token = preferences.getString(PreferencesUtils.TOKEN_KEY)
+              else
+                _token = 'N/A'
+            })
+        .then((_) => refreshList());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,37 +44,54 @@ class _CreateMiddlesState extends State<CreateMiddles> {
             Text(Names.createMiddlesAppBar, style: Styles.title(Colors.white)),
         backgroundColor: Palette.primary,
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.arrow_forward),
+        mini: true,
         backgroundColor: Palette.accent,
         onPressed: () => Utils.pushRoute(
           context,
           CreateStews(widget.entrances, getSelected()),
         ),
       ),
-      body: ListView.builder(
-        itemBuilder: (context, index) => createListTile(_service.meals[index]),
-        itemCount: _service.meals.length,
-      ),
+      body: createList(),
+    );
+  }
+
+  void refreshList() {
+    _service = MealsDataService(_token);
+    _service.get().then((response) => setState(() => _meals = response));
+  }
+
+  Widget createList() {
+    if (_meals.isEmpty) {
+      return Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation(Palette.accent),
+        ),
+      );
+    }
+
+    List<Meal> shortedMeals =
+        _meals.where((meal) => meal.type == 'medio').toList();
+
+    return ListView.builder(
+      itemBuilder: (context, index) => createListTile(shortedMeals[index]),
+      itemCount: shortedMeals.length,
     );
   }
 
   Widget createListTile(Meal meal) {
-    _selected.putIfAbsent(meal, () => false);
+    _selected.putIfAbsent(meal.id, () => false);
 
     return CheckboxListTile(
       contentPadding: EdgeInsets.all(10),
       title: Text(meal.name, style: Styles.subTitle(Colors.black)),
-      secondary: Image.network(
-        meal.picture,
-        height: double.infinity,
-        width: 100,
-        fit: BoxFit.cover,
-      ),
+      secondary: Utils.createThumbnail(meal.picture),
       activeColor: Palette.done,
-      value: _selected[meal],
+      value: _selected[meal.id],
       onChanged: (value) =>
-          setState(() => _selected.update(meal, (old) => !old)),
+          setState(() => _selected.update(meal.id, (old) => !old)),
     );
   }
 
@@ -66,7 +99,7 @@ class _CreateMiddlesState extends State<CreateMiddles> {
     final List<Meal> selectedNames = [];
 
     _selected.forEach((key, value) => {
-          if (value) {selectedNames.add(key)}
+          if (value) {selectedNames.add(Meal(key, '', '', '', ''))}
         });
 
     return selectedNames;

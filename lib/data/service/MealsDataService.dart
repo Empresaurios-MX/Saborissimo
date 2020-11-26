@@ -11,7 +11,10 @@ class MealsDataService {
   Future<List<Meal>> get() async {
     final response = await http.get(
       "${ApiPath.API}/meal",
-      headers: {"content-type": "application/json", "Authorization": "Bearer $token"},
+      headers: {
+        "content-type": "application/json",
+        "Authorization": "Bearer $token"
+      },
     );
 
     if (response.statusCode == 200) {
@@ -24,7 +27,10 @@ class MealsDataService {
   Future<bool> post(Meal meal) async {
     final response = await http.post(
       "${ApiPath.API}/meal",
-      headers: {"content-type": "application/json", "Authorization": "Bearer $token"},
+      headers: {
+        "content-type": "application/json",
+        "Authorization": "Bearer $token"
+      },
       body: Meal.profileToJson(meal),
     );
     if (response.statusCode == 200) {
@@ -34,10 +40,29 @@ class MealsDataService {
     }
   }
 
-  Future<bool> deletePersona(String id) async {
+  Future<bool> put(Meal meal) async {
+    final response = await http.put(
+      "${ApiPath.API}/meal",
+      headers: {
+        "content-type": "application/json",
+        "Authorization": "Bearer $token"
+      },
+      body: Meal.profileToJson(meal),
+    );
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> delete(String id) async {
     final response = await http.delete(
       "${ApiPath.API}/meal/$id",
-      headers: {"content-type": "application/json", "Authorization": "Bearer $token"},
+      headers: {
+        "content-type": "application/json",
+        "Authorization": "Bearer $token"
+      },
     );
     if (response.statusCode == 200) {
       return true;

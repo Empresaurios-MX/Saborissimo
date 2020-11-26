@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/Meal.dart';
 import 'package:saborissimo/data/model/Menu.dart';
-import 'package:saborissimo/data/service/MealDataService.dart';
+import 'package:saborissimo/data/service/MealsDataService.dart';
+import 'package:saborissimo/data/service/MenuDataService.dart';
 import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
+import 'package:saborissimo/ui/menu/daily_menu.dart';
+import 'package:saborissimo/utils/PreferencesUtils.dart';
+import 'package:saborissimo/utils/utils.dart';
 
 class CreateDrinks extends StatefulWidget {
   final List<Meal> entrances;
@@ -19,8 +23,25 @@ class CreateDrinks extends StatefulWidget {
 }
 
 class _CreateDrinksState extends State<CreateDrinks> {
-  MealDataService _service = MealDataService();
-  Map<Meal, bool> _selected = {};
+  bool working;
+  String _token;
+  MealsDataService _service;
+  List<Meal> _meals = [];
+  Map<int, bool> _selected = {};
+
+  @override
+  void initState() {
+    working = false;
+    PreferencesUtils.getPreferences()
+        .then((preferences) => {
+              if (preferences.getString(PreferencesUtils.TOKEN_KEY) != null)
+                _token = preferences.getString(PreferencesUtils.TOKEN_KEY)
+              else
+                _token = 'N/A'
+            })
+        .then((_) => refreshList());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,34 +51,106 @@ class _CreateDrinksState extends State<CreateDrinks> {
             Text(Names.createDrinksAppBar, style: Styles.title(Colors.white)),
         backgroundColor: Palette.primary,
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.save),
-        backgroundColor: Palette.accent,
-        onPressed: () => {},
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: createFAB(),
+      body: createList(),
+    );
+  }
+
+  void refreshList() {
+    _service = MealsDataService(_token);
+    _service.get().then((response) => setState(() => _meals = response));
+  }
+
+  void publishMenu() {
+    MenuDataService service = MenuDataService(_token);
+
+    final Menu menu = Menu(
+      widget.entrances,
+      widget.middles,
+      widget.stews,
+      widget.desserts,
+      getSelected(),
+    );
+
+    setState(() => working = true);
+
+    service.post(menu).then(
+          (success) => {if (success) showDoneDialog() else showErrorDialog()},
+        );
+  }
+
+  void showDoneDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (_) => AlertDialog(
+        title: Text(
+          'Platillo creado con exito',
+          textAlign: TextAlign.center,
+          style: Styles.subTitle(Colors.black),
+        ),
+        content: Icon(
+          Icons.done,
+          color: Palette.done,
+          size: 80,
+        ),
       ),
-      body: ListView.builder(
-        itemBuilder: (context, index) => createListTile(_service.meals[index]),
-        itemCount: _service.meals.length,
-      ),
+    ).then((_) => {
+          Navigator.of(context).popUntil((route) => route.isFirst),
+          Utils.replaceRoute(context, DailyMenu()),
+        });
+  }
+
+  void showErrorDialog() {
+    setState(() => working = false);
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (_) => AlertDialog(
+          title: Text(
+            'Ha ocurrido un error, intente de nuevo',
+            textAlign: TextAlign.center,
+            style: Styles.subTitle(Colors.black),
+          ),
+          content: Icon(
+            Icons.error,
+            color: Palette.todo,
+            size: 80,
+          )),
+    );
+  }
+
+  Widget createList() {
+    if (_meals.isEmpty) {
+      return Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation(Palette.accent),
+        ),
+      );
+    }
+
+    List<Meal> shortedMeals =
+        _meals.where((meal) => meal.type == 'entrada').toList();
+
+    return ListView.builder(
+      itemBuilder: (context, index) => createListTile(shortedMeals[index]),
+      itemCount: shortedMeals.length,
     );
   }
 
   Widget createListTile(Meal meal) {
-    _selected.putIfAbsent(meal, () => false);
+    _selected.putIfAbsent(meal.id, () => false);
 
     return CheckboxListTile(
       contentPadding: EdgeInsets.all(10),
       title: Text(meal.name, style: Styles.subTitle(Colors.black)),
-      secondary: Image.network(
-        meal.picture,
-        height: double.infinity,
-        width: 100,
-        fit: BoxFit.cover,
-      ),
+      secondary: Utils.createThumbnail(meal.picture),
       activeColor: Palette.done,
-      value: _selected[meal],
+      value: _selected[meal.id],
       onChanged: (value) =>
-          setState(() => _selected.update(meal, (old) => !old)),
+          setState(() => _selected.update(meal.id, (old) => !old)),
     );
   }
 
@@ -65,19 +158,22 @@ class _CreateDrinksState extends State<CreateDrinks> {
     final List<Meal> selectedNames = [];
 
     _selected.forEach((key, value) => {
-          if (value) {selectedNames.add(key)}
+          if (value) {selectedNames.add(Meal(key, '', '', '', ''))}
         });
 
     return selectedNames;
   }
 
-  void publishMenu() {
-    final Menu menu = Menu(
-      widget.entrances,
-      widget.middles,
-      widget.stews,
-      widget.desserts,
-      getSelected(),
+  Widget createFAB() {
+    if (working) {
+      return Center();
+    }
+
+    return FloatingActionButton(
+      backgroundColor: Palette.accent,
+      mini: true,
+      child: Icon(Icons.save),
+      onPressed: publishMenu,
     );
   }
 }
