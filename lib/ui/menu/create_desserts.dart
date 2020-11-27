@@ -24,7 +24,7 @@ class _CreateDessertsState extends State<CreateDesserts> {
   String _token;
   MealsDataService _service;
   List<Meal> _meals = [];
-  Map<int, bool> _selected = {};
+  Map<Meal, bool> _selected = {};
 
   @override
   void initState() {
@@ -86,16 +86,16 @@ class _CreateDessertsState extends State<CreateDesserts> {
   }
 
   Widget createListTile(Meal meal) {
-    _selected.putIfAbsent(meal.id, () => false);
+    _selected.putIfAbsent(meal, () => false);
 
     return CheckboxListTile(
       contentPadding: EdgeInsets.all(10),
       title: Text(meal.name, style: Styles.subTitle(Colors.black)),
       secondary: Utils.createThumbnail(meal.picture),
       activeColor: Palette.done,
-      value: _selected[meal.id],
+      value: _selected[meal],
       onChanged: (value) =>
-          setState(() => _selected.update(meal.id, (old) => !old)),
+          setState(() => _selected.update(meal, (old) => !old)),
     );
   }
 
@@ -103,8 +103,8 @@ class _CreateDessertsState extends State<CreateDesserts> {
     final List<Meal> selectedNames = [];
 
     _selected.forEach((key, value) => {
-          if (value) {selectedNames.add(Meal(key, '', '', '', ''))}
-        });
+      if (value) {selectedNames.add(key)}
+    });
 
     return selectedNames;
   }

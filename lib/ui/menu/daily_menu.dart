@@ -1,7 +1,6 @@
-import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/Meal.dart';
+import 'package:saborissimo/data/model/Menu.dart';
 import 'package:saborissimo/data/model/MenuOrder.dart';
 import 'package:saborissimo/data/service/MenuDataService.dart';
 import 'package:saborissimo/res/names.dart';
@@ -22,8 +21,10 @@ class DailyMenu extends StatefulWidget {
 }
 
 class _DailyMenuState extends State<DailyMenu> {
-  HashMap<Meal, bool> chosen = HashMap();
   bool _logged = false;
+  String _token;
+  MenuDataService _service;
+  Menu _menu;
 
   Meal _entrance;
   Meal _middle;
@@ -33,12 +34,20 @@ class _DailyMenuState extends State<DailyMenu> {
 
   @override
   void initState() {
-    PreferencesUtils.getPreferences().then(
-      (preferences) => {
-        if (preferences.getBool(PreferencesUtils.LOGGED_KEY) ?? false)
-          {setState(() => _logged = true)}
-      },
-    );
+    PreferencesUtils.getPreferences()
+        .then(
+          (preferences) => {
+            if (preferences.getBool(PreferencesUtils.LOGGED_KEY) ?? false)
+              setState(() => _logged = true)
+            else
+              _logged = false,
+            if (preferences.getString(PreferencesUtils.TOKEN_KEY) != null)
+              _token = preferences.getString(PreferencesUtils.TOKEN_KEY)
+            else
+              _token = 'N/A'
+          },
+        )
+        .then((_) => refreshMenu());
 
     super.initState();
   }
@@ -50,95 +59,65 @@ class _DailyMenuState extends State<DailyMenu> {
         appBar: AppBar(
           title: Text(Names.menuAppBar, style: Styles.title(Colors.white)),
           backgroundColor: Palette.primary,
-          actions: [
-            if (_logged) createMenuIconButton(context),
-            if (!_logged) createCartIconButton(context),
-          ],
+          actions: [createRefreshButton(), createIconButton(context)],
         ),
         drawer: DrawerApp(),
         body: SingleChildScrollView(
-          child: Column(
-            children: [
-              createLabel('Entradas'),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: createRow(context, MenuDataService.menu.entrances),
-              ),
-              createLabel('Platos medios'),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: createRow(context, MenuDataService.menu.middles),
-              ),
-              createLabel('Platos fuertes'),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: createRow(context, MenuDataService.menu.stews),
-              ),
-              createLabel('Postres'),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: createRow(context, MenuDataService.menu.desserts),
-              ),
-              createLabel('Bebidas'),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: createRow(context, MenuDataService.menu.drinks),
-              ),
-            ],
-          ),
+          child: createMenu(),
         ));
   }
 
-  void attemptToAddObject(Meal meal) {
+  void refreshMenu() {
+    _service = MenuDataService(_token);
+    _service.get().then((response) => setState(() => {
+          if (response.entrances.isNotEmpty)
+            _menu = response
+          else
+            _menu = Menu([], [], [], [], []),
+          resetSelection()
+        }));
+  }
+
+  void attemptToMark(Meal meal) {
     if (!_logged) {
-      switch (meal.type) {
-        case "ENTRANCE":
-          {
-            if (chosen.containsKey(_entrance)) {
-              chosen.update(_entrance, (value) => false);
-            }
-            _entrance = meal;
-            chosen.update(_entrance, (value) => true);
-          }
-          break;
-        case "MIDDLE":
-          {
-            if (chosen.containsKey(_middle)) {
-              chosen.update(_middle, (value) => false);
-            }
-            _middle = meal;
-            chosen.update(_middle, (value) => true);
-          }
-          break;
-        case "STEW":
-          {
-            if (chosen.containsKey(_stew)) {
-              chosen.update(_stew, (value) => false);
-            }
-            _stew = meal;
-            chosen.update(_stew, (value) => true);
-          }
-          break;
-        case "DESSERT":
-          {
-            if (chosen.containsKey(_dessert)) {
-              chosen.update(_dessert, (value) => false);
-            }
-            _dessert = meal;
-            chosen.update(_dessert, (value) => true);
-          }
-          break;
-        case "DRINK":
-          {
-            if (chosen.containsKey(_drink)) {
-              chosen.update(_drink, (value) => false);
-            }
-            _drink = meal;
-            chosen.update(_drink, (value) => true);
-          }
-          break;
+      if (meal.type == "entrada") {
+        setState(() => _entrance = meal);
+      }
+      if (meal.type == "medio") {
+        setState(() => _middle = meal);
+      }
+      if (meal.type == "guisado") {
+        setState(() => _stew = meal);
+      }
+      if (meal.type == "postre") {
+        setState(() => _dessert = meal);
+      }
+      if (meal.type == "bebida") {
+        setState(() => _drink = meal);
       }
     }
+  }
+
+  bool isMarked(Meal meal) {
+    if (!_logged) {
+      if (meal.type == "entrada" && _entrance != null) {
+        return _entrance.id == meal.id;
+      }
+      if (meal.type == "medio" && _middle != null) {
+        return _middle.id == meal.id;
+      }
+      if (meal.type == "guisado" && _stew != null) {
+        return _stew.id == meal.id;
+      }
+      if (meal.type == "postre" && _dessert != null) {
+        return _dessert.id == meal.id;
+      }
+      if (meal.type == "bebida" && _drink != null) {
+        return _drink.id == meal.id;
+      }
+    }
+
+    return false;
   }
 
   bool isValidOrder() {
@@ -148,7 +127,6 @@ class _DailyMenuState extends State<DailyMenu> {
   void resetSelection() {
     setState(
       () => {
-        chosen = HashMap(),
         _entrance = null,
         _middle = null,
         _stew = null,
@@ -158,19 +136,15 @@ class _DailyMenuState extends State<DailyMenu> {
     );
   }
 
-  Widget createLabel(String text) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 20),
-      width: double.infinity,
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: Styles.title(Colors.black),
-      ),
-    );
-  }
+  Widget createIconButton(BuildContext context) {
+    if (_logged) {
+      return IconButton(
+        icon: Icon(Icons.receipt_long),
+        tooltip: 'Publicar menu',
+        onPressed: () => Utils.pushRoute(context, CreateEntrances()),
+      );
+    }
 
-  Widget createCartIconButton(BuildContext context) {
     return IconButton(
         icon: Icon(Icons.shopping_cart),
         tooltip: 'Realizar pedido',
@@ -198,11 +172,68 @@ class _DailyMenuState extends State<DailyMenu> {
             });
   }
 
-  Widget createMenuIconButton(BuildContext context) {
+  Widget createRefreshButton() {
     return IconButton(
-      icon: Icon(Icons.receipt_long),
-      tooltip: 'Publicar menu',
-      onPressed: () => Utils.pushRoute(context, CreateEntrances()),
+      icon: Icon(Icons.refresh),
+      tooltip: 'Refrescar',
+      onPressed: () => refreshMenu(),
+    );
+  }
+
+  Widget createMenu() {
+    List<Widget> rows = [];
+
+    if (_menu != null) {
+      rows.add(createLabel('Entradas'));
+      rows.add(drawRow(false, _menu.entrances));
+      rows.add(createLabel('Platos medios'));
+      rows.add(drawRow(false, _menu.middles));
+      rows.add(createLabel('Platos fuertes'));
+      rows.add(drawRow(false, _menu.stews));
+      rows.add(createLabel('Postres'));
+      rows.add(drawRow(false, _menu.desserts));
+      rows.add(createLabel('Bebidas'));
+      rows.add(drawRow(false, _menu.drinks));
+    } else {
+      rows.add(createLabel('Entradas'));
+      rows.add(drawRow(true, null));
+      rows.add(createLabel('Platos medios'));
+      rows.add(drawRow(true, null));
+      rows.add(createLabel('Platos fuertes'));
+      rows.add(drawRow(true, null));
+      rows.add(createLabel('Postres'));
+      rows.add(drawRow(true, null));
+      rows.add(createLabel('Bebidas'));
+      rows.add(drawRow(true, null));
+    }
+
+    return Column(children: [...rows]);
+  }
+
+  Widget drawRow(bool loading, List<Meal> meals) {
+    if (loading) {
+      return Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation(Palette.accent),
+        ),
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: createRow(context, meals),
+    );
+  }
+
+  Widget createLabel(String text) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 20),
+      width: double.infinity,
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: Styles.title(Colors.black),
+      ),
     );
   }
 
@@ -228,11 +259,10 @@ class _DailyMenuState extends State<DailyMenu> {
 
   Widget createMiniCard(context, Meal meal, dimension, fontSize) {
     Color color = Colors.transparent;
-    chosen.putIfAbsent(meal, () => false);
 
     return InkWell(
       onTap: () => Utils.pushRoute(context, MealDetail(meal)),
-      onLongPress: () => setState(() => attemptToAddObject(meal)),
+      onLongPress: () => attemptToMark(meal),
       child: Container(
         color: color,
         width: dimension,
@@ -253,14 +283,14 @@ class _DailyMenuState extends State<DailyMenu> {
                     fit: BoxFit.cover,
                   ),
                 ),
-                if (!chosen[meal])
+                if (!isMarked(meal))
                   Text(
                     meal.name,
                     textAlign: TextAlign.center,
                     style: Styles.legend(fontSize),
                     overflow: TextOverflow.clip,
                   ),
-                if (chosen[meal])
+                if (isMarked(meal))
                   Container(
                     color: Colors.black54,
                     child: Icon(

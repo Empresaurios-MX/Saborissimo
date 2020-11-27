@@ -30,7 +30,7 @@ class Menu {
           element["type"],
         )));
 
-    (map["middles"] as List<dynamic>).forEach((element) => entrances.add(Meal(
+    (map["middles"] as List<dynamic>).forEach((element) => middles.add(Meal(
       element["id"],
       element["name"],
       element["description"],
@@ -38,7 +38,7 @@ class Menu {
       element["type"],
     )));
 
-    (map["stews"] as List<dynamic>).forEach((element) => entrances.add(Meal(
+    (map["stews"] as List<dynamic>).forEach((element) => stews.add(Meal(
       element["id"],
       element["name"],
       element["description"],
@@ -46,7 +46,7 @@ class Menu {
       element["type"],
     )));
 
-    (map["desserts"] as List<dynamic>).forEach((element) => entrances.add(Meal(
+    (map["desserts"] as List<dynamic>).forEach((element) => desserts.add(Meal(
       element["id"],
       element["name"],
       element["description"],
@@ -54,7 +54,7 @@ class Menu {
       element["type"],
     )));
 
-    (map["drinks"] as List<dynamic>).forEach((element) => entrances.add(Meal(
+    (map["drinks"] as List<dynamic>).forEach((element) => drinks.add(Meal(
       element["id"],
       element["name"],
       element["description"],
@@ -72,7 +72,7 @@ class Menu {
   }
 
   Map<String, dynamic> toJson() {
-    List<int> entrancesIds = [];
+/*    List<int> entrancesIds = [];
     List<int> middlesIds = [];
     List<int> stewsIds = [];
     List<int> dessertsIds = [];
@@ -82,19 +82,22 @@ class Menu {
     middles.forEach((meal) => middlesIds.add(meal.id));
     stews.forEach((meal) => stewsIds.add(meal.id));
     desserts.forEach((meal) => dessertsIds.add(meal.id));
-    drinks.forEach((meal) => drinksIds.add(meal.id));
+    drinks.forEach((meal) => drinksIds.add(meal.id));*/
 
     return {
-      "entrances": entrancesIds,
-      "middles": middlesIds,
-      "stews": stewsIds,
-      "desserts": dessertsIds,
-      "drinks": drinksIds,
+      "entrances": entrances,
+      "middles": middles,
+      "stews": stews,
+      "desserts": desserts,
+      "drinks": drinks,
     };
   }
 
   static Menu profileFromJson(String jsonData) {
     final data = json.decode(jsonData);
+    print("-----------------------------------------------------data");
+    //print(data[0]);
+    print("-----------------------------------------------------data");
     return Menu.fromJson(data[0]);
   }
 
