@@ -6,6 +6,7 @@ import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/utils/PreferencesUtils.dart';
 import 'package:saborissimo/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class OrderDetail extends StatelessWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -73,6 +74,14 @@ class OrderDetail extends StatelessWidget {
           }
       },
     );
+  }
+
+  Future<void> makePhoneCall(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   void showDoneDialog(BuildContext context) {
@@ -175,6 +184,25 @@ class OrderDetail extends StatelessWidget {
     );
   }
 
+  Widget createActionRow(IconData icon, String tooltip, String text) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      child: Tooltip(
+        message: tooltip,
+        child: Row(
+          children: [
+            Icon(icon, color: Palette.primary),
+            SizedBox(width: 20),
+            InkWell(
+              onTap: () => makePhoneCall('tel:$text'),
+              child: Text(text, style: Styles.body(Colors.black)),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget createBottomModal() {
     return SingleChildScrollView(
       child: Container(
@@ -183,7 +211,7 @@ class OrderDetail extends StatelessWidget {
         child: Column(
           children: [
             createInfoRow(Icons.person, 'Nombre', _order.client.name),
-            createInfoRow(Icons.phone, 'Teléfono', _order.client.phone),
+            createActionRow(Icons.phone, 'Teléfono', _order.client.phone),
             if (_order.extras.isNotEmpty)
               createInfoRow(Icons.add_comment, 'Extras', _order.extras),
             if (_order.comments.isNotEmpty)
