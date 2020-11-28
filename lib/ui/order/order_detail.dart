@@ -20,16 +20,16 @@ class OrderDetail extends StatelessWidget {
       floatingActionButton: createFAB(),
       body: ListView(
         children: [
-          if (order.order.entrance != null)
-            createListTile(order.order.entrance, 'Entrada'),
-          if (order.order.middle != null)
-            createListTile(order.order.middle, 'Plato medio'),
-          if (order.order.stew != null)
-            createListTile(order.order.stew, 'Plato fuerte'),
-          if (order.order.dessert != null)
-            createListTile(order.order.dessert, 'Postre'),
-          if (order.order.drink != null)
-            createListTile(order.order.drink, 'Bebida'),
+          if (order.menuOrder.entrance != null)
+            createListTile(order.menuOrder.entrance, 'Entrada'),
+          if (order.menuOrder.middle != null)
+            createListTile(order.menuOrder.middle, 'Plato medio'),
+          if (order.menuOrder.stew != null)
+            createListTile(order.menuOrder.stew, 'Plato fuerte'),
+          if (order.menuOrder.dessert != null)
+            createListTile(order.menuOrder.dessert, 'Postre'),
+          if (order.menuOrder.drink != null)
+            createListTile(order.menuOrder.drink, 'Bebida'),
         ],
       ),
     );

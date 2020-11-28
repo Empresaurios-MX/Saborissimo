@@ -22,8 +22,6 @@ class DailyMenu extends StatefulWidget {
 
 class _DailyMenuState extends State<DailyMenu> {
   bool _logged = false;
-  String _token;
-  MenuDataService _service;
   Menu _menu;
 
   Meal _entrance;
@@ -40,11 +38,7 @@ class _DailyMenuState extends State<DailyMenu> {
             if (preferences.getBool(PreferencesUtils.LOGGED_KEY) ?? false)
               setState(() => _logged = true)
             else
-              _logged = false,
-            if (preferences.getString(PreferencesUtils.TOKEN_KEY) != null)
-              _token = preferences.getString(PreferencesUtils.TOKEN_KEY)
-            else
-              _token = 'N/A'
+              _logged = false
           },
         )
         .then((_) => refreshMenu());
@@ -68,8 +62,8 @@ class _DailyMenuState extends State<DailyMenu> {
   }
 
   void refreshMenu() {
-    _service = MenuDataService(_token);
-    _service.get().then((response) => setState(() => {
+    MenuDataService service = MenuDataService("");
+    service.get().then((response) => setState(() => {
           if (response.entrances.isNotEmpty)
             _menu = response
           else
@@ -188,7 +182,7 @@ class _DailyMenuState extends State<DailyMenu> {
       rows.add(drawRow(false, _menu.entrances));
       rows.add(createLabel('Platos medios'));
       rows.add(drawRow(false, _menu.middles));
-      rows.add(createLabel('Platos fuertes'));
+      rows.add(createLabel('Guisados'));
       rows.add(drawRow(false, _menu.stews));
       rows.add(createLabel('Postres'));
       rows.add(drawRow(false, _menu.desserts));
@@ -199,7 +193,7 @@ class _DailyMenuState extends State<DailyMenu> {
       rows.add(drawRow(true, null));
       rows.add(createLabel('Platos medios'));
       rows.add(drawRow(true, null));
-      rows.add(createLabel('Platos fuertes'));
+      rows.add(createLabel('Guisados'));
       rows.add(drawRow(true, null));
       rows.add(createLabel('Postres'));
       rows.add(drawRow(true, null));

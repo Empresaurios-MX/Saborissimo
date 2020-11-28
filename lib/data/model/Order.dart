@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:saborissimo/data/model/Address.dart';
 import 'package:saborissimo/data/model/Client.dart';
 import 'package:saborissimo/data/model/MenuOrder.dart';
@@ -8,7 +10,7 @@ class Order {
 
   final int id;
   final bool state;
-  final MenuOrder order;
+  final MenuOrder menuOrder;
   final String orderType;
   final String extras;
   final String comments;
@@ -18,7 +20,7 @@ class Order {
   Order(
       {this.id,
       this.state,
-      this.order,
+      this.menuOrder,
       this.orderType,
       this.extras,
       this.comments,
@@ -27,6 +29,45 @@ class Order {
 
   @override
   String toString() {
-    return 'Order{id: $id, state: $state, order: $order, orderType: $orderType, extras: $extras, address: $address, client: $client}';
+    return 'Order{id: $id, state: $state, menuOrder: $menuOrder, orderType: $orderType, extras: $extras, address: $address, client: $client}';
+  }
+
+  factory Order.fromJson(Map<String, dynamic> map) {
+    return Order(
+      id: map["id"],
+      state: map["state"],
+      menuOrder: MenuOrder.fromJson(map["menuOrder"]),
+      orderType: map["orderType"],
+      extras: map["extras"],
+      address: Address.fromJson(map["address"]),
+      client: Client.fromJson(map["client"]),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "\"id\"": id,
+      "\"state\"": state,
+      "\"menuOrder\"": MenuOrder.profileToJson(menuOrder),
+      "\"orderType\"": "\"" + orderType + "\"",
+      "\"extras\"": "\"" + extras + "\"",
+      "\"comments\"": "\"" + comments + "\"",
+      "\"address\"": Address.profileToJson(address),
+      "\"client\"": Client.profileToJson(client),
+    };
+  }
+
+  static List<Order> profileFromJson(String jsonData) {
+    final data = json.decode(jsonData);
+    return List<Order>.from(data.map((item) => Order.fromJson(item)));
+  }
+
+  static String profileToJson(Order data) {
+    return data.toJson().toString();
+  }
+
+  static bool profileFromJsonResponse(String jsonData) {
+    final data = json.decode(jsonData);
+    return data;
   }
 }

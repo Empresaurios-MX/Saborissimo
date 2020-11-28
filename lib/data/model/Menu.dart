@@ -95,9 +95,6 @@ class Menu {
 
   static Menu profileFromJson(String jsonData) {
     final data = json.decode(jsonData);
-    print("-----------------------------------------------------data");
-    //print(data[0]);
-    print("-----------------------------------------------------data");
     return Menu.fromJson(data[0]);
   }
 

@@ -43,4 +43,11 @@ class Meal {
     final jsonData = data.toJson();
     return json.encode(jsonData);
   }
+
+  static Map<String, dynamic> profileToMap(Meal data) {
+    if(data == null) {
+      return Meal(0, "N/A", "N/A", "N/A", "N/A").toJson();
+    }
+    return data.toJson();
+  }
 }

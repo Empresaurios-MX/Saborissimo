@@ -28,7 +28,7 @@ class OrderDataService {
     Order(
       id: 0,
       state: true,
-      order: _menuOrders[0],
+      menuOrder: _menuOrders[0],
       extras: "",
       comments: "",
       orderType: Order.isOrder,
@@ -39,7 +39,7 @@ class OrderDataService {
     Order(
       id: 0,
       state: false,
-      order: _menuOrders[1],
+      menuOrder: _menuOrders[1],
       extras: "",
       comments: "",
       orderType: Order.isReserved,

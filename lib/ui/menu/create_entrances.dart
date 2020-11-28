@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/Meal.dart';
-import 'package:saborissimo/data/service/MealDataService.dart';
 import 'package:saborissimo/data/service/MealsDataService.dart';
 import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';

@@ -24,7 +24,7 @@ class CreateMeal extends StatefulWidget {
 class _CreateMealState extends State<CreateMeal> {
   File _selectedPicture;
 
-  bool working;
+  bool _working;
   String _token;
   String _name;
   String _description;
@@ -32,7 +32,7 @@ class _CreateMealState extends State<CreateMeal> {
 
   @override
   void initState() {
-    working = false;
+    _working = false;
     PreferencesUtils.getPreferences().then((preferences) => {
           if (preferences.getString(PreferencesUtils.TOKEN_KEY) != null)
             _token = preferences.getString(PreferencesUtils.TOKEN_KEY)
@@ -154,7 +154,7 @@ class _CreateMealState extends State<CreateMeal> {
       if (_selectedPicture == null) {
         Utils.showSnack(widget._scaffoldKey, 'Debe seleccionar una imagen');
       } else {
-        setState(() => working = true);
+        setState(() => _working = true);
         uploadToFirebase(_selectedPicture);
       }
     }
@@ -192,7 +192,7 @@ class _CreateMealState extends State<CreateMeal> {
           taskSnapshot.ref
               .getDownloadURL()
               .then((url) => saveMeal(url))
-              .catchError((_) => setState(() => working = false)),
+              .catchError((_) => setState(() => _working = false)),
         });
   }
 
@@ -205,7 +205,7 @@ class _CreateMealState extends State<CreateMeal> {
             (success) => {if (success) showDoneDialog() else showErrorDialog()},
           );
     } else {
-      setState(() => working = false);
+      setState(() => _working = false);
     }
   }
 
@@ -229,7 +229,7 @@ class _CreateMealState extends State<CreateMeal> {
   }
 
   void showErrorDialog() {
-    setState(() => working = false);
+    setState(() => _working = false);
 
     showDialog(
       context: context,
@@ -249,7 +249,7 @@ class _CreateMealState extends State<CreateMeal> {
   }
 
   Widget createFAB() {
-    if (working) {
+    if (_working) {
       return Center();
     }
 
