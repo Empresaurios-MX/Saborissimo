@@ -10,6 +10,8 @@ import 'package:saborissimo/utils/utils.dart';
 import 'create_drinks.dart';
 
 class CreateDesserts extends StatefulWidget {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   final List<Meal> entrances;
   final List<Meal> middles;
   final List<Meal> stews;
@@ -42,6 +44,7 @@ class _CreateDessertsState extends State<CreateDesserts> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: widget._scaffoldKey,
       appBar: AppBar(
         title:
             Text(Names.createDessertsAppBar, style: Styles.title(Colors.white)),
@@ -52,11 +55,7 @@ class _CreateDessertsState extends State<CreateDesserts> {
         child: Icon(Icons.arrow_forward),
         mini: true,
         backgroundColor: Palette.accent,
-        onPressed: () => Utils.pushRoute(
-          context,
-          CreateDrinks(
-              widget.entrances, widget.middles, widget.stews, getSelected()),
-        ),
+        onPressed: () => attemptToGoNext(),
       ),
       body: createList(),
     );
@@ -65,6 +64,21 @@ class _CreateDessertsState extends State<CreateDesserts> {
   void refreshList() {
     _service = MealsDataService(_token);
     _service.get().then((response) => setState(() => _meals = response));
+  }
+
+  void attemptToGoNext() {
+    final List<Meal> selectedMeals = [];
+
+    _selected.forEach((key, value) => {
+      if (value) {selectedMeals.add(key)}
+    });
+
+    if(selectedMeals.isNotEmpty) {
+      Utils.pushRoute(context, CreateDrinks(widget.entrances, widget.middles, widget.stews, selectedMeals));
+    }
+    else {
+      Utils.showSnack(widget._scaffoldKey, "Debe agregar por lo menos 1 platillo");
+    }
   }
 
   Widget createList() {
@@ -77,7 +91,7 @@ class _CreateDessertsState extends State<CreateDesserts> {
     }
 
     List<Meal> shortedMeals =
-        _meals.where((meal) => meal.type == 'entrada').toList();
+        _meals.where((meal) => meal.type == 'postre').toList();
 
     return ListView.builder(
       itemBuilder: (context, index) => createListTile(shortedMeals[index]),
@@ -97,15 +111,5 @@ class _CreateDessertsState extends State<CreateDesserts> {
       onChanged: (value) =>
           setState(() => _selected.update(meal, (old) => !old)),
     );
-  }
-
-  List<Meal> getSelected() {
-    final List<Meal> selectedNames = [];
-
-    _selected.forEach((key, value) => {
-      if (value) {selectedNames.add(key)}
-    });
-
-    return selectedNames;
   }
 }

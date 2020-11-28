@@ -132,8 +132,9 @@ class MenuDataService {
         "Authorization": "Bearer $token"
       },
     );
+
     if (response.statusCode == 200) {
-      return true;
+      return Menu.profileFromJsonResponse(response.body);
     } else {
       return false;
     }

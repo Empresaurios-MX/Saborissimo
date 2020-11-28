@@ -31,36 +31,36 @@ class Menu {
         )));
 
     (map["middles"] as List<dynamic>).forEach((element) => middles.add(Meal(
-      element["id"],
-      element["name"],
-      element["description"],
-      element["picture"],
-      element["type"],
-    )));
+          element["id"],
+          element["name"],
+          element["description"],
+          element["picture"],
+          element["type"],
+        )));
 
     (map["stews"] as List<dynamic>).forEach((element) => stews.add(Meal(
-      element["id"],
-      element["name"],
-      element["description"],
-      element["picture"],
-      element["type"],
-    )));
+          element["id"],
+          element["name"],
+          element["description"],
+          element["picture"],
+          element["type"],
+        )));
 
     (map["desserts"] as List<dynamic>).forEach((element) => desserts.add(Meal(
-      element["id"],
-      element["name"],
-      element["description"],
-      element["picture"],
-      element["type"],
-    )));
+          element["id"],
+          element["name"],
+          element["description"],
+          element["picture"],
+          element["type"],
+        )));
 
     (map["drinks"] as List<dynamic>).forEach((element) => drinks.add(Meal(
-      element["id"],
-      element["name"],
-      element["description"],
-      element["picture"],
-      element["type"],
-    )));
+          element["id"],
+          element["name"],
+          element["description"],
+          element["picture"],
+          element["type"],
+        )));
 
     return Menu(
       entrances,
@@ -95,6 +95,11 @@ class Menu {
 
   static Menu profileFromJson(String jsonData) {
     final data = json.decode(jsonData);
+
+    if ((data as List<dynamic>).isEmpty) {
+      return Menu([], [], [], [], []);
+    }
+
     return Menu.fromJson(data[0]);
   }
 

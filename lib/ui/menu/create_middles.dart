@@ -9,9 +9,11 @@ import 'package:saborissimo/utils/PreferencesUtils.dart';
 import 'package:saborissimo/utils/utils.dart';
 
 class CreateMiddles extends StatefulWidget {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   final List<Meal> entrances;
 
-  const CreateMiddles(this.entrances);
+  CreateMiddles(this.entrances);
 
   @override
   _CreateMiddlesState createState() => _CreateMiddlesState();
@@ -39,6 +41,7 @@ class _CreateMiddlesState extends State<CreateMiddles> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: widget._scaffoldKey,
       appBar: AppBar(
         title:
             Text(Names.createMiddlesAppBar, style: Styles.title(Colors.white)),
@@ -49,10 +52,7 @@ class _CreateMiddlesState extends State<CreateMiddles> {
         child: Icon(Icons.arrow_forward),
         mini: true,
         backgroundColor: Palette.accent,
-        onPressed: () => Utils.pushRoute(
-          context,
-          CreateStews(widget.entrances, getSelected()),
-        ),
+        onPressed: () => attemptToGoNext(),
       ),
       body: createList(),
     );
@@ -61,6 +61,21 @@ class _CreateMiddlesState extends State<CreateMiddles> {
   void refreshList() {
     _service = MealsDataService(_token);
     _service.get().then((response) => setState(() => _meals = response));
+  }
+
+  void attemptToGoNext() {
+    final List<Meal> selectedMeals = [];
+
+    _selected.forEach((key, value) => {
+      if (value) {selectedMeals.add(key)}
+    });
+
+    if(selectedMeals.isNotEmpty) {
+      Utils.pushRoute(context, CreateStews(widget.entrances, selectedMeals));
+    }
+    else {
+      Utils.showSnack(widget._scaffoldKey, "Debe agregar por lo menos 1 platillo");
+    }
   }
 
   Widget createList() {
@@ -93,15 +108,5 @@ class _CreateMiddlesState extends State<CreateMiddles> {
       onChanged: (value) =>
           setState(() => _selected.update(meal, (old) => !old)),
     );
-  }
-
-  List<Meal> getSelected() {
-    final List<Meal> selectedNames = [];
-
-    _selected.forEach((key, value) => {
-      if (value) {selectedNames.add(key)}
-    });
-
-    return selectedNames;
   }
 }

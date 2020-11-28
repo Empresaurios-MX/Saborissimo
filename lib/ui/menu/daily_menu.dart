@@ -49,16 +49,19 @@ class _DailyMenuState extends State<DailyMenu> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: widget._scaffoldKey,
-        appBar: AppBar(
-          title: Text(Names.menuAppBar, style: Styles.title(Colors.white)),
-          backgroundColor: Palette.primary,
-          actions: [createRefreshButton(), createIconButton(context)],
-        ),
-        drawer: DrawerApp(),
-        body: SingleChildScrollView(
-          child: createMenu(),
-        ));
+      key: widget._scaffoldKey,
+      appBar: AppBar(
+        title: Text(Names.menuAppBar, style: Styles.title(Colors.white)),
+        backgroundColor: Palette.primary,
+        actions: [
+          createDeleteButton(),
+          createRefreshButton(),
+          createIconButton(context),
+        ],
+      ),
+      drawer: DrawerApp(),
+      body: createMenu(),
+    );
   }
 
   void refreshMenu() {
@@ -70,6 +73,40 @@ class _DailyMenuState extends State<DailyMenu> {
             _menu = Menu([], [], [], [], []),
           resetSelection()
         }));
+  }
+
+  void deleteMenu() {
+    String token = "N/A";
+    MenuDataService service;
+
+    PreferencesUtils.getPreferences().then(
+      (preferences) => {
+        if (preferences.getBool(PreferencesUtils.LOGGED_KEY) ?? false)
+          {
+            token = preferences.getString(PreferencesUtils.TOKEN_KEY),
+            service = MenuDataService(token),
+            service
+                .delete()
+                .then(
+                  (success) => {
+                    if (success)
+                      refreshMenu()
+                    else
+                      Utils.showSnack(
+                        widget._scaffoldKey,
+                        "Error, inicie sesión e intente de nuevo",
+                      )
+                  },
+                )
+                .catchError(
+                  (_) => Utils.showSnack(
+                    widget._scaffoldKey,
+                    "Error, inicie sesión e intente de nuevo",
+                  ),
+                )
+          }
+      },
+    );
   }
 
   void attemptToMark(Meal meal) {
@@ -130,6 +167,37 @@ class _DailyMenuState extends State<DailyMenu> {
     );
   }
 
+  void showDeleteDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (_) => AlertDialog(
+        title: Text(
+          'Borrar el menú del día, ¿Está de acuerdo?',
+          textAlign: TextAlign.center,
+          style: Styles.subTitle(Colors.black),
+        ),
+        content: Icon(
+          Icons.warning,
+          color: Palette.todo,
+          size: 80,
+        ),
+        actions: [
+          FlatButton(
+            onPressed: () => {deleteMenu(), Navigator.pop(context)},
+            child: Text("Sí"),
+            textColor: Palette.primary,
+          ),
+          FlatButton(
+            onPressed: () => {Navigator.pop(context)},
+            child: Text("No"),
+            textColor: Palette.primary,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget createIconButton(BuildContext context) {
     if (_logged) {
       return IconButton(
@@ -174,20 +242,53 @@ class _DailyMenuState extends State<DailyMenu> {
     );
   }
 
+  Widget createDeleteButton() {
+    if (_logged) {
+      return IconButton(
+        icon: Icon(Icons.delete_forever),
+        tooltip: 'Borrar menú',
+        onPressed: () => showDeleteDialog(),
+      );
+    }
+
+    return Container();
+  }
+
   Widget createMenu() {
     List<Widget> rows = [];
 
     if (_menu != null) {
-      rows.add(createLabel('Entradas'));
-      rows.add(drawRow(false, _menu.entrances));
-      rows.add(createLabel('Platos medios'));
-      rows.add(drawRow(false, _menu.middles));
-      rows.add(createLabel('Guisados'));
-      rows.add(drawRow(false, _menu.stews));
-      rows.add(createLabel('Postres'));
-      rows.add(drawRow(false, _menu.desserts));
-      rows.add(createLabel('Bebidas'));
-      rows.add(drawRow(false, _menu.drinks));
+      if (_menu.entrances.isNotEmpty) {
+        rows.add(createLabel('Entradas'));
+        rows.add(drawRow(false, _menu.entrances));
+        rows.add(createLabel('Platos medios'));
+        rows.add(drawRow(false, _menu.middles));
+        rows.add(createLabel('Guisados'));
+        rows.add(drawRow(false, _menu.stews));
+        rows.add(createLabel('Postres'));
+        rows.add(drawRow(false, _menu.desserts));
+        rows.add(createLabel('Bebidas'));
+        rows.add(drawRow(false, _menu.drinks));
+      } else {
+        return Container(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Text(
+                "El menu de hoy no ha sido publicado aún, discuple las molestias",
+                textAlign: TextAlign.center,
+                style: Styles.subTitleBig(Colors.black),
+              ),
+              SizedBox(height: 25),
+              Icon(
+                Icons.mood_bad,
+                size: 100,
+                color: Palette.primary,
+              ),
+            ],
+          ),
+        );
+      }
     } else {
       rows.add(createLabel('Entradas'));
       rows.add(drawRow(true, null));
@@ -201,7 +302,7 @@ class _DailyMenuState extends State<DailyMenu> {
       rows.add(drawRow(true, null));
     }
 
-    return Column(children: [...rows]);
+    return SingleChildScrollView(child: Column(children: [...rows]));
   }
 
   Widget drawRow(bool loading, List<Meal> meals) {

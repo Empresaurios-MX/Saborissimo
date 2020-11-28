@@ -11,6 +11,8 @@ import 'package:saborissimo/utils/PreferencesUtils.dart';
 import 'package:saborissimo/utils/utils.dart';
 
 class CreateDrinks extends StatefulWidget {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   final List<Meal> entrances;
   final List<Meal> middles;
   final List<Meal> stews;
@@ -46,6 +48,7 @@ class _CreateDrinksState extends State<CreateDrinks> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: widget._scaffoldKey,
       appBar: AppBar(
         title:
             Text(Names.createDrinksAppBar, style: Styles.title(Colors.white)),
@@ -63,21 +66,32 @@ class _CreateDrinksState extends State<CreateDrinks> {
   }
 
   void publishMenu() {
-    MenuDataService service = MenuDataService(_token);
+    final List<Meal> selectedMeals = [];
 
-    final Menu menu = Menu(
-      widget.entrances,
-      widget.middles,
-      widget.stews,
-      widget.desserts,
-      getSelected(),
-    );
+    _selected.forEach((key, value) => {
+          if (value) {selectedMeals.add(key)}
+        });
 
-    setState(() => working = true);
+    if (selectedMeals.isNotEmpty) {
+      MenuDataService service = MenuDataService(_token);
 
-    service.post(menu).then(
-          (success) => {if (success) showDoneDialog() else showErrorDialog()},
-        );
+      final Menu menu = Menu(
+        widget.entrances,
+        widget.middles,
+        widget.stews,
+        widget.desserts,
+        selectedMeals,
+      );
+
+      setState(() => working = true);
+
+      service.post(menu).then(
+            (success) => {if (success) showDoneDialog() else showErrorDialog()},
+          );
+    } else {
+      Utils.showSnack(
+          widget._scaffoldKey, "Debe agregar por lo menos 1 platillo");
+    }
   }
 
   void showDoneDialog() {
@@ -86,7 +100,7 @@ class _CreateDrinksState extends State<CreateDrinks> {
       barrierDismissible: true,
       builder: (_) => AlertDialog(
         title: Text(
-          'Platillo creado con exito',
+          'Menú publicado con exito',
           textAlign: TextAlign.center,
           style: Styles.subTitle(Colors.black),
         ),
@@ -132,7 +146,7 @@ class _CreateDrinksState extends State<CreateDrinks> {
     }
 
     List<Meal> shortedMeals =
-        _meals.where((meal) => meal.type == 'entrada').toList();
+        _meals.where((meal) => meal.type == 'bebida').toList();
 
     return ListView.builder(
       itemBuilder: (context, index) => createListTile(shortedMeals[index]),
@@ -152,16 +166,6 @@ class _CreateDrinksState extends State<CreateDrinks> {
       onChanged: (value) =>
           setState(() => _selected.update(meal, (old) => !old)),
     );
-  }
-
-  List<Meal> getSelected() {
-    final List<Meal> selectedNames = [];
-
-    _selected.forEach((key, value) => {
-      if (value) {selectedNames.add(key)}
-    });
-
-    return selectedNames;
   }
 
   Widget createFAB() {

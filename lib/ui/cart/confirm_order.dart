@@ -190,7 +190,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
       barrierDismissible: true,
       builder: (_) => AlertDialog(
         title: Text(
-          'Platillo creado con exito',
+          'Pedido realizado con exito',
           textAlign: TextAlign.center,
           style: Styles.subTitle(Colors.black),
         ),

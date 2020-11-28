@@ -9,6 +9,8 @@ import 'package:saborissimo/utils/PreferencesUtils.dart';
 import 'package:saborissimo/utils/utils.dart';
 
 class CreateStews extends StatefulWidget {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   final List<Meal> entrances;
   final List<Meal> middles;
 
@@ -40,6 +42,7 @@ class _CreateStewsState extends State<CreateStews> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: widget._scaffoldKey,
       appBar: AppBar(
         title: Text(Names.createStewsAppBar, style: Styles.title(Colors.white)),
         backgroundColor: Palette.primary,
@@ -49,10 +52,7 @@ class _CreateStewsState extends State<CreateStews> {
         child: Icon(Icons.arrow_forward),
         mini: true,
         backgroundColor: Palette.accent,
-        onPressed: () => Utils.pushRoute(
-          context,
-          CreateDesserts(widget.entrances, widget.middles, getSelected()),
-        ),
+        onPressed: () => attemptToGoNext(),
       ),
       body: createList(),
     );
@@ -61,6 +61,21 @@ class _CreateStewsState extends State<CreateStews> {
   void refreshList() {
     _service = MealsDataService(_token);
     _service.get().then((response) => setState(() => _meals = response));
+  }
+
+  void attemptToGoNext() {
+    final List<Meal> selectedMeals = [];
+
+    _selected.forEach((key, value) => {
+      if (value) {selectedMeals.add(key)}
+    });
+
+    if(selectedMeals.isNotEmpty) {
+      Utils.pushRoute(context, CreateDesserts(widget.entrances, widget.middles, selectedMeals));
+    }
+    else {
+      Utils.showSnack(widget._scaffoldKey, "Debe agregar por lo menos 1 platillo");
+    }
   }
 
   Widget createList() {
@@ -73,7 +88,7 @@ class _CreateStewsState extends State<CreateStews> {
     }
 
     List<Meal> shortedMeals =
-        _meals.where((meal) => meal.type == 'entrada').toList();
+        _meals.where((meal) => meal.type == 'guisado').toList();
 
     return ListView.builder(
       itemBuilder: (context, index) => createListTile(shortedMeals[index]),
@@ -93,15 +108,5 @@ class _CreateStewsState extends State<CreateStews> {
       onChanged: (value) =>
           setState(() => _selected.update(meal, (old) => !old)),
     );
-  }
-
-  List<Meal> getSelected() {
-    final List<Meal> selectedNames = [];
-
-    _selected.forEach((key, value) => {
-      if (value) {selectedNames.add(key)}
-    });
-
-    return selectedNames;
   }
 }

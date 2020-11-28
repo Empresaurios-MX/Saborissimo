@@ -10,6 +10,8 @@ import 'package:saborissimo/utils/PreferencesUtils.dart';
 import 'package:saborissimo/utils/utils.dart';
 
 class CreateEntrances extends StatefulWidget {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   _CreateEntrancesState createState() => _CreateEntrancesState();
 }
@@ -36,6 +38,7 @@ class _CreateEntrancesState extends State<CreateEntrances> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: widget._scaffoldKey,
       appBar: AppBar(
         title: Text(Names.createEntrancesAppBar,
             style: Styles.title(Colors.white)),
@@ -52,7 +55,7 @@ class _CreateEntrancesState extends State<CreateEntrances> {
         child: Icon(Icons.arrow_forward),
         mini: true,
         backgroundColor: Palette.accent,
-        onPressed: () => Utils.pushRoute(context, CreateMiddles(getSelected())),
+        onPressed: () => attemptToGoNext(),
       ),
       body: createList(),
     );
@@ -61,6 +64,21 @@ class _CreateEntrancesState extends State<CreateEntrances> {
   void refreshList() {
     _service = MealsDataService(_token);
     _service.get().then((response) => setState(() => _meals = response));
+  }
+
+  void attemptToGoNext() {
+      final List<Meal> selectedMeals = [];
+
+      _selected.forEach((key, value) => {
+        if (value) {selectedMeals.add(key)}
+      });
+
+      if(selectedMeals.isNotEmpty) {
+        Utils.pushRoute(context, CreateMiddles(selectedMeals));
+      }
+      else {
+        Utils.showSnack(widget._scaffoldKey, "Debe agregar por lo menos 1 platillo");
+      }
   }
 
   Widget createList() {
@@ -93,15 +111,5 @@ class _CreateEntrancesState extends State<CreateEntrances> {
       onChanged: (value) =>
           setState(() => _selected.update(meal, (old) => !old)),
     );
-  }
-
-  List<Meal> getSelected() {
-    final List<Meal> selectedNames = [];
-
-    _selected.forEach((key, value) => {
-          if (value) {selectedNames.add(key)}
-        });
-
-    return selectedNames;
   }
 }
