@@ -39,6 +39,7 @@ class Order {
       menuOrder: MenuOrder.fromJson(map["menuOrder"]),
       orderType: map["orderType"],
       extras: map["extras"],
+      comments: map["comments"],
       address: Address.fromJson(map["address"]),
       client: Client.fromJson(map["client"]),
     );

@@ -76,7 +76,7 @@ class _DailyMenuState extends State<DailyMenu> {
   }
 
   void deleteMenu() {
-    String token = "N/A";
+    String token = 'N/A';
     MenuDataService service;
 
     PreferencesUtils.getPreferences().then(
@@ -94,14 +94,14 @@ class _DailyMenuState extends State<DailyMenu> {
                     else
                       Utils.showSnack(
                         widget._scaffoldKey,
-                        "Error, inicie sesión e intente de nuevo",
+                        'Error, inicie sesión e intente de nuevo',
                       )
                   },
                 )
                 .catchError(
                   (_) => Utils.showSnack(
                     widget._scaffoldKey,
-                    "Error, inicie sesión e intente de nuevo",
+                    'Error, inicie sesión e intente de nuevo',
                   ),
                 )
           }
@@ -170,7 +170,7 @@ class _DailyMenuState extends State<DailyMenu> {
   void showDeleteDialog() {
     showDialog(
       context: context,
-      barrierDismissible: true,
+      barrierDismissible: false,
       builder: (_) => AlertDialog(
         title: Text(
           'Borrar el menú del día, ¿Está de acuerdo?',
@@ -270,23 +270,8 @@ class _DailyMenuState extends State<DailyMenu> {
         rows.add(createLabel('Bebidas'));
         rows.add(drawRow(false, _menu.drinks));
       } else {
-        return Container(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            children: [
-              Text(
-                "El menu de hoy no ha sido publicado aún, discuple las molestias",
-                textAlign: TextAlign.center,
-                style: Styles.subTitleBig(Colors.black),
-              ),
-              SizedBox(height: 25),
-              Icon(
-                Icons.mood_bad,
-                size: 100,
-                color: Palette.primary,
-              ),
-            ],
-          ),
+        return Utils.createNoItemsMessage(
+          'El menu de hoy no ha sido publicado aún, disculpe las molestias',
         );
       }
     } else {

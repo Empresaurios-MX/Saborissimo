@@ -1,53 +1,139 @@
 import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/Meal.dart';
 import 'package:saborissimo/data/model/Order.dart';
+import 'package:saborissimo/data/service/MenuOrderDataService.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
+import 'package:saborissimo/utils/PreferencesUtils.dart';
+import 'package:saborissimo/utils/utils.dart';
 
 class OrderDetail extends StatelessWidget {
-  final Order order;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  const OrderDetail(this.order);
+  final Order _order;
+
+  OrderDetail(this._order);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
-        title: Text(order.client.name),
+        title: Text(_order.client.name),
         backgroundColor: Palette.primary,
         actions: [createIconButton(context)],
       ),
-      floatingActionButton: createFAB(),
+      floatingActionButton: createFAB(context),
       body: ListView(
         children: [
-          if (order.menuOrder.entrance != null)
-            createListTile(order.menuOrder.entrance, 'Entrada'),
-          if (order.menuOrder.middle != null)
-            createListTile(order.menuOrder.middle, 'Plato medio'),
-          if (order.menuOrder.stew != null)
-            createListTile(order.menuOrder.stew, 'Plato fuerte'),
-          if (order.menuOrder.dessert != null)
-            createListTile(order.menuOrder.dessert, 'Postre'),
-          if (order.menuOrder.drink != null)
-            createListTile(order.menuOrder.drink, 'Bebida'),
+          if (_order.menuOrder.entrance.id != 0)
+            createListTile(_order.menuOrder.entrance, 'Entrada'),
+          if (_order.menuOrder.middle.id != 0)
+            createListTile(_order.menuOrder.middle, 'Plato medio'),
+          if (_order.menuOrder.stew.id != 0)
+            createListTile(_order.menuOrder.stew, 'Plato fuerte'),
+          if (_order.menuOrder.dessert.id != 0)
+            createListTile(_order.menuOrder.dessert, 'Postre'),
+          if (_order.menuOrder.drink.id != 0)
+            createListTile(_order.menuOrder.drink, 'Bebida'),
         ],
       ),
     );
   }
 
-  void updateOrder() {
-    //order.state = true;
+  void updateOrder(BuildContext context) {
+    String token = '';
+    MenuOrderDataService service;
+
+    PreferencesUtils.getPreferences().then(
+      (preferences) => {
+        if (preferences.getBool(PreferencesUtils.LOGGED_KEY) ?? false)
+          {
+            token = preferences.getString(PreferencesUtils.TOKEN_KEY),
+            service = MenuOrderDataService(token),
+            service
+                .put(_order)
+                .then(
+                  (success) => {
+                    if (success)
+                      showDoneDialog(context)
+                    else
+                      Utils.showSnack(
+                        _scaffoldKey,
+                        "Error, inicie sesión e intente de nuevo",
+                      )
+                  },
+                )
+                .catchError(
+                  (_) => Utils.showSnack(
+                    _scaffoldKey,
+                    "Error, inicie sesión e intente de nuevo",
+                  ),
+                )
+          }
+      },
+    );
   }
 
-  Widget createFAB() {
-    if (order.state) {
-      return null;
+  void showDoneDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (_) => AlertDialog(
+        title: Text(
+          'El pedido se ha entregado',
+          textAlign: TextAlign.center,
+          style: Styles.subTitle(Colors.black),
+        ),
+        content: Icon(
+          Icons.done,
+          color: Palette.done,
+          size: 80,
+        ),
+      ),
+    ).then((_) => Navigator.pop(context));
+  }
+
+  void showUpdateDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        title: Text(
+          'Marcar como entregado, ¿Está de acuerdo?',
+          textAlign: TextAlign.center,
+          style: Styles.subTitle(Colors.black),
+        ),
+        content: Icon(
+          Icons.warning,
+          color: Palette.todo,
+          size: 80,
+        ),
+        actions: [
+          FlatButton(
+            onPressed: () => {updateOrder(context), Navigator.pop(context)},
+            child: Text("Sí"),
+            textColor: Palette.primary,
+          ),
+          FlatButton(
+            onPressed: () => {Navigator.pop(context)},
+            child: Text("No"),
+            textColor: Palette.primary,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget createFAB(BuildContext context) {
+    if (_order.state) {
+      return Container();
     }
 
     return FloatingActionButton(
       child: Icon(Icons.check),
       backgroundColor: Palette.done,
-      onPressed: () => updateOrder(),
+      onPressed: () => showUpdateDialog(context),
     );
   }
 
@@ -96,22 +182,28 @@ class OrderDetail extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Column(
           children: [
-            createInfoRow(Icons.person, 'Nombre', order.client.name),
-            createInfoRow(Icons.phone, 'Teléfono', order.client.phone),
-            if (order.address.street1.isNotEmpty)
-              createInfoRow(Icons.house, 'Calle', order.address.street1),
-            if (order.address.street2.isNotEmpty)
-              createInfoRow(Icons.house, 'Entre calles', order.address.street2),
-            if (order.address.colony.isNotEmpty)
-              createInfoRow(Icons.home_work, 'Colonia', order.address.colony),
-            if (order.address.references.isNotEmpty)
+            createInfoRow(Icons.person, 'Nombre', _order.client.name),
+            createInfoRow(Icons.phone, 'Teléfono', _order.client.phone),
+            if (_order.extras.isNotEmpty)
+              createInfoRow(Icons.add_comment, 'Extras', _order.extras),
+            if (_order.comments.isNotEmpty)
+              createInfoRow(Icons.comment, 'Comentarios', _order.comments),
+            if (_order.address.street1.isNotEmpty)
+              createInfoRow(Icons.house, 'Calle', _order.address.street1),
+            if (_order.address.street2.isNotEmpty)
+              createInfoRow(
+                  Icons.house, 'Entre calles', _order.address.street2),
+            if (_order.address.colony.isNotEmpty)
+              createInfoRow(Icons.home_work, 'Colonia', _order.address.colony),
+            if (_order.address.references.isNotEmpty)
               createInfoRow(
                 Icons.contact_support,
                 'Referencias',
-                order.address.references,
+                _order.address.references,
               ),
-            if (order.address.street1.isEmpty)
-              createInfoRow(Icons.error, 'Este pedido no es a domicilio', 'Dirección no proporcionado por el cliente')
+            if (_order.address.street1.isEmpty)
+              createInfoRow(Icons.error, 'Este pedido no es a domicilio',
+                  'Dirección no proporcionado por el cliente')
           ],
         ),
       ),

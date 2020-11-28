@@ -54,6 +54,27 @@ class Utils {
     );
   }
 
+  static Widget createNoItemsMessage(String message) {
+    return Container(
+      padding: EdgeInsets.all(20),
+      child: Column(
+        children: [
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: Styles.subTitleBig(Colors.black),
+          ),
+          SizedBox(height: 25),
+          Icon(
+            Icons.mood_bad,
+            size: 100,
+            color: Palette.primary,
+          ),
+        ],
+      ),
+    );
+  }
+
   static InputDecoration createHint(String hint) {
     return InputDecoration(
       hintText: hint,

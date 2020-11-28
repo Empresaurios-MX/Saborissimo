@@ -37,14 +37,14 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
   void initState() {
     _working = false;
 
-    _name = "";
-    _phone = "";
-    _extras = "";
-    _comments = "";
-    _street1 = "";
-    _street2 = "";
-    _colony = "";
-    _references = "";
+    _name = '';
+    _phone = '';
+    _extras = '';
+    _comments = '';
+    _street1 = '';
+    _street2 = '';
+    _colony = '';
+    _references = '';
     super.initState();
   }
 

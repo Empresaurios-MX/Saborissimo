@@ -42,6 +42,22 @@ class MenuOrderDataService {
     }
   }
 
+  Future<bool> put(Order order) async {
+    final response = await http.put(
+      "${ApiPath.API}/meal",
+      headers: {
+        "content-type": "application/json",
+        "Authorization": "Bearer $token"
+      },
+      body: Order.profileToJson(order),
+    );
+    if (response.statusCode == 200) {
+      return Order.profileFromJsonResponse(response.body);
+    } else {
+      return false;
+    }
+  }
+
   Future<bool> delete() async {
     final response = await http.delete(
       "${ApiPath.API}/order",
@@ -51,7 +67,7 @@ class MenuOrderDataService {
       },
     );
     if (response.statusCode == 200) {
-      return true;
+      return Order.profileFromJsonResponse(response.body);
     } else {
       return false;
     }

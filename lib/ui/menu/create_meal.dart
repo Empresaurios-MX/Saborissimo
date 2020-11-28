@@ -37,7 +37,7 @@ class _CreateMealState extends State<CreateMeal> {
           if (preferences.getString(PreferencesUtils.TOKEN_KEY) != null)
             _token = preferences.getString(PreferencesUtils.TOKEN_KEY)
           else
-            _token = 'N/A'
+            _token = ''
         });
     super.initState();
   }

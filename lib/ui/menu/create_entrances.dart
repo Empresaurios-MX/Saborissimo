@@ -46,7 +46,8 @@ class _CreateEntrancesState extends State<CreateEntrances> {
         actions: [
           IconButton(
             icon: Icon(Icons.add),
-            onPressed: () => Utils.pushRoute(context, CreateMeal()),
+            onPressed: () => Utils.pushRoute(context, CreateMeal())
+                .then((_) => refreshList()),
           ),
         ],
       ),
@@ -67,18 +68,18 @@ class _CreateEntrancesState extends State<CreateEntrances> {
   }
 
   void attemptToGoNext() {
-      final List<Meal> selectedMeals = [];
+    final List<Meal> selectedMeals = [];
 
-      _selected.forEach((key, value) => {
-        if (value) {selectedMeals.add(key)}
-      });
+    _selected.forEach((key, value) => {
+          if (value) {selectedMeals.add(key)}
+        });
 
-      if(selectedMeals.isNotEmpty) {
-        Utils.pushRoute(context, CreateMiddles(selectedMeals));
-      }
-      else {
-        Utils.showSnack(widget._scaffoldKey, "Debe agregar por lo menos 1 platillo");
-      }
+    if (selectedMeals.isNotEmpty) {
+      Utils.pushRoute(context, CreateMiddles(selectedMeals));
+    } else {
+      Utils.showSnack(
+          widget._scaffoldKey, "Debe agregar por lo menos 1 platillo");
+    }
   }
 
   Widget createList() {
