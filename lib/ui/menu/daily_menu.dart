@@ -54,8 +54,10 @@ class _DailyMenuState extends State<DailyMenu> {
         title: Text(Names.menuAppBar, style: Styles.title(Colors.white)),
         backgroundColor: Palette.primary,
         actions: [
-          createDeleteButton(),
           createRefreshButton(),
+          createHelpButton(),
+          createResetButton(),
+          createDeleteButton(),
           createIconButton(context),
         ],
       ),
@@ -66,12 +68,12 @@ class _DailyMenuState extends State<DailyMenu> {
 
   void refreshMenu() {
     MenuDataService service = MenuDataService("");
+    resetSelection();
     service.get().then((response) => setState(() => {
           if (response.entrances.isNotEmpty)
             _menu = response
           else
             _menu = Menu([], [], [], [], []),
-          resetSelection()
         }));
   }
 
@@ -158,6 +160,7 @@ class _DailyMenuState extends State<DailyMenu> {
   void resetSelection() {
     setState(
       () => {
+        _menu = null,
         _entrance = null,
         _middle = null,
         _stew = null,
@@ -234,12 +237,70 @@ class _DailyMenuState extends State<DailyMenu> {
             });
   }
 
+  Widget createHelpButton() {
+    if(!_logged) {
+      return IconButton(
+        icon: Icon(Icons.help),
+        tooltip: 'Ayuda',
+        onPressed: () => showDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (_) => AlertDialog(
+            title: Text(
+              'Ayuda',
+              textAlign: TextAlign.center,
+              style: Styles.title(Colors.black),
+            ),
+            content: Container(
+              height: 150,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.help,
+                      color: Palette.primary,
+                      size: 80,
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      'Manten presionado cualquier platillo para agregarlo a tu orden',
+                      textAlign: TextAlign.center,
+                      style: Styles.body(Colors.black),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Container();
+  }
+
   Widget createRefreshButton() {
-    return IconButton(
-      icon: Icon(Icons.refresh),
-      tooltip: 'Refrescar',
-      onPressed: () => refreshMenu(),
-    );
+    if(_logged){
+      return IconButton(
+        icon: Icon(Icons.refresh),
+        tooltip: 'Refrescar',
+        onPressed: () => refreshMenu(),
+      );
+    }
+
+    return Container();
+  }
+
+  Widget createResetButton() {
+    if(!_logged){
+      return IconButton(
+        icon: Icon(Icons.undo),
+        tooltip: 'Borrar selección',
+        onPressed: () => refreshMenu(),
+      );
+    }
+
+    return Container();
   }
 
   Widget createDeleteButton() {
