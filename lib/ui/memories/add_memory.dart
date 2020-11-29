@@ -163,7 +163,7 @@ class _AddMemoryState extends State<AddMemory> {
       barrierDismissible: true,
       builder: (_) => AlertDialog(
         title: Text(
-          'Su memoria ha sido publicada con exito',
+          'Su recuerdo ha sido publicada con exito',
           textAlign: TextAlign.center,
           style: Styles.subTitle(Colors.black),
         ),

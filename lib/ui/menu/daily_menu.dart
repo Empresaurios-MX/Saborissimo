@@ -228,7 +228,7 @@ class _DailyMenuState extends State<DailyMenu> {
                         _drink,
                       ),
                     ),
-                  ).then((value) => resetSelection()),
+                  ).then((value) => refreshMenu()),
                 }
               else
                 {

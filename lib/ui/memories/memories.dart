@@ -126,7 +126,7 @@ class _MemoriesState extends State<Memories> {
         barrierDismissible: false,
         builder: (_) => AlertDialog(
           title: Text(
-            'Borrar memoria, ¿Está de acuerdo?',
+            'Borrar recuerdo, ¿Está de acuerdo?',
             textAlign: TextAlign.center,
             style: Styles.subTitle(Colors.black),
           ),
@@ -172,7 +172,7 @@ class _MemoriesState extends State<Memories> {
     if (_memories.isEmpty) {
       return Center(
         child: Utils.createNoItemsMessage(
-          'No se han publicado nuevas memorias',
+          'No se han publicado nuevos recuerdos',
         ),
       );
     }
