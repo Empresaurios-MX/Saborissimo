@@ -15,24 +15,26 @@ class MealDetail extends StatelessWidget {
         title: Text(meal.name, style: Styles.title(Colors.white)),
         backgroundColor: Palette.primary,
       ),
-      body: Column(
-        children: [
-          Image.network(
-            meal.picture,
-            height: 250,
-            width: double.infinity,
-            fit: BoxFit.cover,
-          ),
-          SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Text(
-              meal.description,
-              textAlign: TextAlign.justify,
-              style: Styles.body(Colors.black),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Image.network(
+              meal.picture,
+              height: 250,
+              width: double.infinity,
+              fit: BoxFit.cover,
             ),
-          ),
-        ],
+            SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Text(
+                meal.description,
+                textAlign: TextAlign.justify,
+                style: Styles.body(Colors.black),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
