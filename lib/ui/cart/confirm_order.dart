@@ -159,21 +159,22 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
   void validateForm() {
     if (widget._key.currentState.validate()) {
       Order order = Order(
-        id: 0,
-        state: false,
-        menuOrder: widget._order,
-        orderType: _order ? Order.isOrder : Order.isReserved,
-        extras: _extras,
-        comments: _comments,
-        address: Address(0, _street1, _street2, _colony, _references),
-        client: Client(0, _name, _phone),
+        0,
+        false,
+        widget._order,
+        _order ? Order.isOrder : Order.isReserved,
+        _extras,
+        _comments,
+        Address(0, _street1, _street2, _colony, _references),
+        Client(0, _name, _phone),
       );
 
       MenuOrderDataService service = MenuOrderDataService("");
 
       setState(() => _working = true);
 
-      service.post(order).then((success) => {if(success) showDoneDialog() else showErrorDialog()});
+      service.post(order).then(
+          (success) => {if (success) showDoneDialog() else showErrorDialog()});
     }
   }
 
@@ -235,7 +236,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
   }
 
   Widget createRoundedButton(BuildContext context) {
-    if(_working) {
+    if (_working) {
       return Center();
     }
     return Container(

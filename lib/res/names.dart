@@ -3,6 +3,7 @@ import 'package:saborissimo/res/styles.dart';
 
 class Names {
   static final String appName = 'Saboríssimo';
+  static final String memoriesAppBar = 'Memorias';
   static final String ordersAppBar = 'Pedidos';
   static final String loginAppBar = 'Iniciar sesión';
   static final String logoutAppBar = 'Cerrar sesión';
@@ -16,6 +17,7 @@ class Names {
   static final String createDessertsAppBar = 'Seleccione los postres';
   static final String createDrinksAppBar = 'Seleccione las bebidas';
   static final String createMealAppBar = 'Nuevo platillo';
+  static final String createMemoryAppBar = 'Publicar nueva memoria';
 
   static final List<Map<String, dynamic>> mealTypeSelector = [
     {

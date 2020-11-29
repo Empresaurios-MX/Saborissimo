@@ -44,13 +44,14 @@ class MenuOrderDataService {
 
   Future<bool> put(Order order) async {
     final response = await http.put(
-      "${ApiPath.API}/meal",
+      "${ApiPath.API}/order/${order.id}",
       headers: {
         "content-type": "application/json",
         "Authorization": "Bearer $token"
       },
       body: Order.profileToJson(order),
     );
+
     if (response.statusCode == 200) {
       return Order.profileFromJsonResponse(response.body);
     } else {

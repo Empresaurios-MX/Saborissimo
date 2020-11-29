@@ -9,7 +9,7 @@ class Order {
   static final String isReserved = 'APARTADO';
 
   final int id;
-  final bool state;
+  bool state;
   final MenuOrder menuOrder;
   final String orderType;
   final String extras;
@@ -17,15 +17,8 @@ class Order {
   final Address address;
   final Client client;
 
-  Order(
-      {this.id,
-      this.state,
-      this.menuOrder,
-      this.orderType,
-      this.extras,
-      this.comments,
-      this.address,
-      this.client});
+  Order(this.id, this.state, this.menuOrder, this.orderType, this.extras,
+      this.comments, this.address, this.client);
 
   @override
   String toString() {
@@ -34,14 +27,14 @@ class Order {
 
   factory Order.fromJson(Map<String, dynamic> map) {
     return Order(
-      id: map["id"],
-      state: map["state"],
-      menuOrder: MenuOrder.fromJson(map["menuOrder"]),
-      orderType: map["orderType"],
-      extras: map["extras"],
-      comments: map["comments"],
-      address: Address.fromJson(map["address"]),
-      client: Client.fromJson(map["client"]),
+      map["id"],
+      map["state"],
+      MenuOrder.fromJson(map["menuOrder"]),
+      map["orderType"],
+      map["extras"],
+      map["comments"],
+      Address.fromJson(map["address"]),
+      Client.fromJson(map["client"]),
     );
   }
 

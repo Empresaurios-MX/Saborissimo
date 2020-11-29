@@ -54,7 +54,7 @@ class _OrdersState extends State<Orders> {
   }
 
   void deleteOrders() {
-    String token = 'N/A';
+    String token = '';
     MenuOrderDataService service;
 
     PreferencesUtils.getPreferences().then(

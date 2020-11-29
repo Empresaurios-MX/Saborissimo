@@ -52,6 +52,7 @@ class OrderDetail extends StatelessWidget {
           {
             token = preferences.getString(PreferencesUtils.TOKEN_KEY),
             service = MenuOrderDataService(token),
+            _order.state = true,
             service
                 .put(_order)
                 .then(
