@@ -92,4 +92,12 @@ class Utils {
       SnackBar(content: Text(message, style: Styles.body(Colors.white))),
     );
   }
+
+  static String getFirebaseName(String path) {
+    return path
+        .split('/o/')[1]
+        .replaceAll('%2F', '/')
+        .replaceAll('%20', ' ')
+        .split('?alt')[0];
+  }
 }

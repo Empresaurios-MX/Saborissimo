@@ -160,17 +160,6 @@ class _CreateMealState extends State<CreateMeal> {
     }
   }
 
-  Future deleteFromFirebase(String path) async {
-    String child = path
-        .split('/o/')[1]
-        .replaceAll('%2F', '/')
-        .replaceAll('%20', ' ')
-        .split('?alt')[0];
-
-    Firebase.initializeApp().then(
-        (value) => {FirebaseStorage.instance.ref().child(child).delete()});
-  }
-
   Future uploadToFirebase(File imageToUpload) async {
     DateTime now = DateTime.now();
     String fileName = 'meal_' +

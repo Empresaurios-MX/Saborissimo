@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/Memory.dart';
 import 'package:saborissimo/data/service/MemoriesDataService.dart';
@@ -61,35 +63,44 @@ class _MemoriesState extends State<Memories> {
     _service.get().then((response) => setState(() => _memories = response));
   }
 
+  void attemptToDelete(String token, Memory memory) {
+    String child = Utils.getFirebaseName(memory.picture);
+    MemoriesDataService service = MemoriesDataService(token);
+
+    service
+        .delete(memory.id.toString())
+        .then(
+          (success) => {
+            if (success)
+              {
+                refreshList(),
+                Firebase.initializeApp().then(
+                    (_) => FirebaseStorage.instance.ref().child(child).delete())
+              }
+            else
+              Utils.showSnack(
+                widget._scaffoldKey,
+                'Error, inicie sesión e intente de nuevo',
+              )
+          },
+        )
+        .catchError(
+          (_) => Utils.showSnack(
+            widget._scaffoldKey,
+            'Error, inicie sesión e intente de nuevo',
+          ),
+        );
+  }
+
   void deleteMemory(Memory memory) {
     String token = '';
-    MemoriesDataService service;
 
     PreferencesUtils.getPreferences().then(
       (preferences) => {
         if (preferences.getBool(PreferencesUtils.LOGGED_KEY) ?? false)
           {
             token = preferences.getString(PreferencesUtils.TOKEN_KEY),
-            service = MemoriesDataService(token),
-            service
-                .delete(memory.id.toString())
-                .then(
-                  (success) => {
-                    if (success)
-                      refreshList()
-                    else
-                      Utils.showSnack(
-                        widget._scaffoldKey,
-                        'Error, inicie sesión e intente de nuevo',
-                      )
-                  },
-                )
-                .catchError(
-                  (_) => Utils.showSnack(
-                    widget._scaffoldKey,
-                    'Error, inicie sesión e intente de nuevo',
-                  ),
-                )
+            attemptToDelete(token, memory),
           }
       },
     );
