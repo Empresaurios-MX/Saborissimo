@@ -154,7 +154,7 @@ class _DailyMenuState extends State<DailyMenu> {
   }
 
   bool isValidOrder() {
-    return _entrance != null || _middle != null || _stew != null;
+    return _entrance != null && _middle != null && _stew != null && _drink != null;
   }
 
   void resetSelection() {
@@ -232,7 +232,7 @@ class _DailyMenuState extends State<DailyMenu> {
                 }
               else
                 {
-                  Utils.showSnack(widget._scaffoldKey, 'Su pedido esta vacío!'),
+                  Utils.showSnack(widget._scaffoldKey, 'Su pedido esta incompleto!\nUn pedido completo consta de los 3 tiempos más la bebida'),
                 }
             });
   }

@@ -239,7 +239,7 @@ class _CreateMealState extends State<CreateMeal> {
 
   Widget createFAB() {
     if (_working) {
-      return Center();
+      return Container();
     }
 
     return FloatingActionButton(
