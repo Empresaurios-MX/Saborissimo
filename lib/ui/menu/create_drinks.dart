@@ -73,21 +73,27 @@ class _CreateDrinksState extends State<CreateDrinks> {
         });
 
     if (selectedMeals.isNotEmpty) {
-      MenuDataService service = MenuDataService(_token);
+      if (selectedMeals.length <= 3) {
+        MenuDataService service = MenuDataService(_token);
 
-      final Menu menu = Menu(
-        widget.entrances,
-        widget.middles,
-        widget.stews,
-        widget.desserts,
-        selectedMeals,
-      );
+        final Menu menu = Menu(
+          widget.entrances,
+          widget.middles,
+          widget.stews,
+          widget.desserts,
+          selectedMeals,
+        );
 
-      setState(() => working = true);
+        setState(() => working = true);
 
-      service.post(menu).then(
-            (success) => {if (success) showDoneDialog() else showErrorDialog()},
-          );
+        service.post(menu).then(
+              (success) =>
+                  {if (success) showDoneDialog() else showErrorDialog()},
+            );
+      } else {
+        Utils.showSnack(
+            widget._scaffoldKey, "Solo puede agregar un máximo de 3 platillos");
+      }
     } else {
       Utils.showSnack(
           widget._scaffoldKey, "Debe agregar por lo menos 1 platillo");

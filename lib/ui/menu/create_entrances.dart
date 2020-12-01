@@ -75,7 +75,12 @@ class _CreateEntrancesState extends State<CreateEntrances> {
         });
 
     if (selectedMeals.isNotEmpty) {
-      Utils.pushRoute(context, CreateMiddles(selectedMeals));
+      if (selectedMeals.length <= 3) {
+        Utils.pushRoute(context, CreateMiddles(selectedMeals));
+      } else {
+        Utils.showSnack(
+            widget._scaffoldKey, "Solo puede agregar un máximo de 3 platillos");
+      }
     } else {
       Utils.showSnack(
           widget._scaffoldKey, "Debe agregar por lo menos 1 platillo");

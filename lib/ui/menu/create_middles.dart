@@ -67,14 +67,19 @@ class _CreateMiddlesState extends State<CreateMiddles> {
     final List<Meal> selectedMeals = [];
 
     _selected.forEach((key, value) => {
-      if (value) {selectedMeals.add(key)}
-    });
+          if (value) {selectedMeals.add(key)}
+        });
 
-    if(selectedMeals.isNotEmpty) {
-      Utils.pushRoute(context, CreateStews(widget.entrances, selectedMeals));
-    }
-    else {
-      Utils.showSnack(widget._scaffoldKey, "Debe agregar por lo menos 1 platillo");
+    if (selectedMeals.isNotEmpty) {
+      if (selectedMeals.length <= 3) {
+        Utils.pushRoute(context, CreateStews(widget.entrances, selectedMeals));
+      } else {
+        Utils.showSnack(
+            widget._scaffoldKey, "Solo puede agregar un máximo de 3 platillos");
+      }
+    } else {
+      Utils.showSnack(
+          widget._scaffoldKey, "Debe agregar por lo menos 1 platillo");
     }
   }
 
