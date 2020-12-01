@@ -50,7 +50,7 @@ class _OrdersState extends State<Orders> {
 
   void refreshList() {
     _service = MenuOrderDataService(_token);
-    _service.get().then((response) => setState(() => _orders = response));
+    _service.get().then((response) => setState(() => _orders = response.reversed.toList()));
   }
 
   void deleteOrders() {

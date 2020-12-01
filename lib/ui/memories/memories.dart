@@ -60,7 +60,7 @@ class _MemoriesState extends State<Memories> {
 
   void refreshList() {
     _service = MemoriesDataService('');
-    _service.get().then((response) => setState(() => _memories = response));
+    _service.get().then((response) => setState(() => _memories = response.reversed.toList()));
   }
 
   void attemptToDelete(String token, Memory memory) {
