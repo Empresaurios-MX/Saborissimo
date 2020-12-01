@@ -181,13 +181,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.8.1"
-  flutter_native_image:
-    dependency: "direct main"
-    description:
-      name: flutter_native_image
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.5+3"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -232,7 +225,7 @@ packages:
       name: image_picker
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.6.7+12"
+    version: "0.6.7+14"
   image_picker_platform_interface:
     dependency: transitive
     description:

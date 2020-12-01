@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:http/http.dart' show Client;
 import 'package:saborissimo/data/model/Memory.dart';
 import 'package:saborissimo/data/model/Order.dart';
@@ -20,7 +21,7 @@ class MemoriesDataService {
     );
 
     if (response.statusCode == 200) {
-      return Memory.profileFromJson(response.body);
+      return Memory.profileFromJson(utf8.decode(response.bodyBytes));
     } else {
       return Future.error("Ha ocurrido un error, intente de nuevo");
     }

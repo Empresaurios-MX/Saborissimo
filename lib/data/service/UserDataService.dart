@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:http/http.dart' show Client;
 import 'package:saborissimo/data/model/Login.dart';
 import 'package:saborissimo/data/model/LoginResponse.dart';
@@ -13,7 +14,7 @@ class AdminDataService {
     );
 
     if (response.statusCode == 200) {
-      return LoginResponse.profileFromJson(response.body);
+      return LoginResponse.profileFromJson(utf8.decode(response.bodyBytes));
     } else {
       return Future.error("Ha ocurrido un error, intente de nuevo");
     }

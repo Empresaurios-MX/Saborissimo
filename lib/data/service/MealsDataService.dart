@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:http/http.dart' show Client;
 import 'package:saborissimo/data/model/Meal.dart';
 import 'package:saborissimo/data/service/ApiPath.dart';
@@ -18,7 +19,7 @@ class MealsDataService {
     );
 
     if (response.statusCode == 200) {
-      return Meal.profileFromJson(response.body);
+      return Meal.profileFromJson(utf8.decode(response.bodyBytes));
     } else {
       return Future.error("Ha ocurrido un error, intente de nuevo");
     }

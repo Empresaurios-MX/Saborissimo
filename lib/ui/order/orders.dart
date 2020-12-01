@@ -93,7 +93,7 @@ class _OrdersState extends State<Orders> {
       barrierDismissible: false,
       builder: (_) => AlertDialog(
         title: Text(
-          'Borrar el menú del día, ¿Está de acuerdo?',
+          'Borrar los pedidos, ¿Está de acuerdo?',
           textAlign: TextAlign.center,
           style: Styles.subTitle(Colors.black),
         ),

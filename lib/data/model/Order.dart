@@ -39,7 +39,7 @@ class Order {
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    Map<String, dynamic> x = {
       "\"id\"": id,
       "\"state\"": state,
       "\"menuOrder\"": MenuOrder.profileToJson(menuOrder),
