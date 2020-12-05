@@ -93,7 +93,7 @@ class _LoginState extends State<Login> {
     if (widget._key.currentState.validate()) {
       widget.service
           .login(Admin(_user, _password))
-          .catchError((error) => Utils.showSnack(widget._scaffoldKey, error))
+          .catchError((error) => Utils.showSnack(widget._scaffoldKey, "Usuario o contraseña incorrectos"))
           .then((response) => {
                 if (response.key != null)
                   saveUserToPreferences(response)
