@@ -32,22 +32,24 @@ class _DrawerAppState extends State<DrawerApp> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Column(
-        children: <Widget>[
-          Utils.createDrawerHeader(150, Names.appName),
-          SizedBox(height: 20),
-          createDrawerItem(
-              context, DailyMenu(), Icons.menu_book, Names.menuAppBar),
-          createDrawerItem(
-              context, Memories(), Icons.photo_album, Names.memoriesAppBar),
-          if (_logged)
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Utils.createDrawerHeader(150, Names.appName),
+            SizedBox(height: 20),
             createDrawerItem(
-                context, Orders(), Icons.shopping_bag, Names.ordersAppBar),
-          if (_logged) createLogOutDrawerItem(),
-          if (!_logged)
+                context, DailyMenu(), Icons.menu_book, Names.menuAppBar),
             createDrawerItem(
-                context, Login(), Icons.login, 'Sección de empleados'),
-        ],
+                context, Memories(), Icons.photo_album, Names.memoriesAppBar),
+            if (_logged)
+              createDrawerItem(
+                  context, Orders(), Icons.shopping_bag, Names.ordersAppBar),
+            if (_logged) createLogOutDrawerItem(),
+            if (!_logged)
+              createDrawerItem(
+                  context, Login(), Icons.login, 'Sección de empleados'),
+          ],
+        ),
       ),
     );
   }
