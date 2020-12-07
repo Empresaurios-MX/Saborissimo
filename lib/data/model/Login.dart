@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class Admin {
   final String username;
   final String password;
