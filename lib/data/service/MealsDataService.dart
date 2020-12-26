@@ -66,7 +66,7 @@ class MealsDataService {
       },
     );
     if (response.statusCode == 200) {
-      return true;
+      return Meal.profileFromJsonResponse(response.body);
     } else {
       return false;
     }

@@ -5,6 +5,7 @@ class Names {
   static final String appName = 'Saboríssimo';
   static final String memoriesAppBar = 'Recuerdos';
   static final String ordersAppBar = 'Pedidos';
+  static final String mealsAppBar = 'Platillos';
   static final String loginAppBar = 'Iniciar sesión';
   static final String logoutAppBar = 'Cerrar sesión';
   static final String menuAppBar = 'Menú del dia';
@@ -32,7 +33,7 @@ class Names {
     },
     {
       'value': 'guisado',
-      'label': 'Guisado',
+      'label': 'Fuerte',
       'textStyle': Styles.body(Colors.black),
     },
     {

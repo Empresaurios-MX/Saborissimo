@@ -50,4 +50,9 @@ class Meal {
     }
     return data.toJson();
   }
+
+  static bool profileFromJsonResponse(String jsonData) {
+    final data = json.decode(jsonData);
+    return data;
+  }
 }

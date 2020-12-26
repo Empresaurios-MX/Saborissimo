@@ -324,7 +324,7 @@ class _DailyMenuState extends State<DailyMenu> {
         rows.add(drawRow(false, _menu.entrances));
         rows.add(createLabel('Platos medios'));
         rows.add(drawRow(false, _menu.middles));
-        rows.add(createLabel('Guisados'));
+        rows.add(createLabel('Platos fuertes'));
         rows.add(drawRow(false, _menu.stews));
         rows.add(createLabel('Postres'));
         rows.add(drawRow(false, _menu.desserts));
@@ -340,7 +340,7 @@ class _DailyMenuState extends State<DailyMenu> {
       rows.add(drawRow(true, null));
       rows.add(createLabel('Platos medios'));
       rows.add(drawRow(true, null));
-      rows.add(createLabel('Guisados'));
+      rows.add(createLabel('Platos fuertes'));
       rows.add(drawRow(true, null));
       rows.add(createLabel('Postres'));
       rows.add(drawRow(true, null));
