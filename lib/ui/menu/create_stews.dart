@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/Meal.dart';
-import 'package:saborissimo/data/service/MealDataService.dart';
+import 'package:saborissimo/data/service/MealsDataService.dart';
 import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/menu/create_desserts.dart';
+import 'package:saborissimo/utils/PreferencesUtils.dart';
 import 'package:saborissimo/utils/utils.dart';
 
 class CreateStews extends StatefulWidget {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   final List<Meal> entrances;
   final List<Meal> middles;
 
@@ -18,28 +21,90 @@ class CreateStews extends StatefulWidget {
 }
 
 class _CreateStewsState extends State<CreateStews> {
-  MealDataService _service = MealDataService();
+  String _token;
+  MealsDataService _service;
+  List<Meal> _meals = [];
   Map<Meal, bool> _selected = {};
+
+  @override
+  void initState() {
+    PreferencesUtils.getPreferences()
+        .then((preferences) => {
+              if (preferences.getString(PreferencesUtils.TOKEN_KEY) != null)
+                _token = preferences.getString(PreferencesUtils.TOKEN_KEY)
+              else
+                _token = 'N/A'
+            })
+        .then((_) => refreshList());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: widget._scaffoldKey,
       appBar: AppBar(
         title: Text(Names.createStewsAppBar, style: Styles.title(Colors.white)),
         backgroundColor: Palette.primary,
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.arrow_forward),
+        mini: true,
         backgroundColor: Palette.accent,
-        onPressed: () => Utils.pushRoute(
+        onPressed: () => attemptToGoNext(),
+      ),
+      body: createList(),
+    );
+  }
+
+  void refreshList() {
+    _service = MealsDataService(_token);
+    _service.get().then((response) => setState(() => _meals = response));
+  }
+
+  void attemptToGoNext() {
+    final List<Meal> selectedMeals = [];
+
+    _selected.forEach((key, value) => {
+          if (value) {selectedMeals.add(key)}
+        });
+
+    if (selectedMeals.isNotEmpty) {
+      if (selectedMeals.length <= 3) {
+        Utils.pushRoute(
           context,
-          CreateDesserts(widget.entrances, widget.middles, getSelected()),
+          CreateDesserts(
+            widget.entrances,
+            widget.middles,
+            selectedMeals,
+          ),
+        );
+      } else {
+        Utils.showSnack(
+            widget._scaffoldKey, "Solo puede agregar un máximo de 3 platillos");
+      }
+    } else {
+      Utils.showSnack(
+          widget._scaffoldKey, "Debe agregar por lo menos 1 platillo");
+    }
+  }
+
+  Widget createList() {
+    if (_meals.isEmpty) {
+      return Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation(Palette.accent),
         ),
-      ),
-      body: ListView.builder(
-        itemBuilder: (context, index) => createListTile(_service.meals[index]),
-        itemCount: _service.meals.length,
-      ),
+      );
+    }
+
+    List<Meal> shortedMeals =
+        _meals.where((meal) => meal.type == 'guisado').toList();
+
+    return ListView.builder(
+      itemBuilder: (context, index) => createListTile(shortedMeals[index]),
+      itemCount: shortedMeals.length,
     );
   }
 
@@ -49,26 +114,11 @@ class _CreateStewsState extends State<CreateStews> {
     return CheckboxListTile(
       contentPadding: EdgeInsets.all(10),
       title: Text(meal.name, style: Styles.subTitle(Colors.black)),
-      secondary: Image.network(
-        meal.picture,
-        height: double.infinity,
-        width: 100,
-        fit: BoxFit.cover,
-      ),
+      secondary: Utils.createThumbnail(meal.picture),
       activeColor: Palette.done,
       value: _selected[meal],
       onChanged: (value) =>
           setState(() => _selected.update(meal, (old) => !old)),
     );
-  }
-
-  List<Meal> getSelected() {
-    final List<Meal> selectedNames = [];
-
-    _selected.forEach((key, value) => {
-          if (value) {selectedNames.add(key)}
-        });
-
-    return selectedNames;
   }
 }

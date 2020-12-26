@@ -3,6 +3,8 @@ import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/login/login.dart';
+import 'package:saborissimo/ui/meals/meals.dart';
+import 'package:saborissimo/ui/memories/memories.dart';
 import 'package:saborissimo/ui/menu/daily_menu.dart';
 import 'package:saborissimo/ui/order/orders.dart';
 import 'package:saborissimo/utils/PreferencesUtils.dart';
@@ -19,7 +21,7 @@ class _DrawerAppState extends State<DrawerApp> {
   @override
   void initState() {
     PreferencesUtils.getPreferences().then(
-          (preferences) => {
+      (preferences) => {
         if (preferences.getBool(PreferencesUtils.LOGGED_KEY) ?? false)
           {setState(() => _logged = true)}
       },
@@ -37,6 +39,11 @@ class _DrawerAppState extends State<DrawerApp> {
           SizedBox(height: 20),
           createDrawerItem(
               context, DailyMenu(), Icons.menu_book, Names.menuAppBar),
+          if (_logged)
+            createDrawerItem(
+                context, Meals(), Icons.food_bank, Names.mealsAppBar),
+          createDrawerItem(
+              context, Memories(), Icons.photo_album, Names.memoriesAppBar),
           if (_logged)
             createDrawerItem(
                 context, Orders(), Icons.shopping_bag, Names.ordersAppBar),

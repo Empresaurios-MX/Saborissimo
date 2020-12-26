@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1024822891363",
+    "firebase_url": "https://saborissimo-df432.firebaseio.com",
+    "project_id": "saborissimo-df432",
+    "storage_bucket": "saborissimo-df432.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1024822891363:android:4d8f2a29768b88eb21b956",
+        "android_client_info": {
+          "package_name": "com.solucionescovirtuales.saborissimo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1024822891363-mb7tl8gdbm6lb9jdbgpfvdsjct9pm3jm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPOpc_EE7IcG7KKfFesyy5VNVGjVyx5Pk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1024822891363-mb7tl8gdbm6lb9jdbgpfvdsjct9pm3jm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

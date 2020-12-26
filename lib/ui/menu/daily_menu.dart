@@ -1,7 +1,6 @@
-import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/Meal.dart';
+import 'package:saborissimo/data/model/Menu.dart';
 import 'package:saborissimo/data/model/MenuOrder.dart';
 import 'package:saborissimo/data/service/MenuDataService.dart';
 import 'package:saborissimo/res/names.dart';
@@ -22,8 +21,8 @@ class DailyMenu extends StatefulWidget {
 }
 
 class _DailyMenuState extends State<DailyMenu> {
-  HashMap<Meal, bool> chosen = HashMap();
   bool _logged = false;
+  Menu _menu;
 
   Meal _entrance;
   Meal _middle;
@@ -33,12 +32,16 @@ class _DailyMenuState extends State<DailyMenu> {
 
   @override
   void initState() {
-    PreferencesUtils.getPreferences().then(
-      (preferences) => {
-        if (preferences.getBool(PreferencesUtils.LOGGED_KEY) ?? false)
-          {setState(() => _logged = true)}
-      },
-    );
+    PreferencesUtils.getPreferences()
+        .then(
+          (preferences) => {
+            if (preferences.getBool(PreferencesUtils.LOGGED_KEY) ?? false)
+              setState(() => _logged = true)
+            else
+              _logged = false
+          },
+        )
+        .then((_) => refreshMenu());
 
     super.initState();
   }
@@ -46,109 +49,118 @@ class _DailyMenuState extends State<DailyMenu> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: widget._scaffoldKey,
-        appBar: AppBar(
-          title: Text(Names.menuAppBar, style: Styles.title(Colors.white)),
-          backgroundColor: Palette.primary,
-          actions: [
-            if (_logged) createMenuIconButton(context),
-            if (!_logged) createCartIconButton(context),
-          ],
-        ),
-        drawer: DrawerApp(),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              createLabel('Entradas'),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: createRow(context, MenuDataService.menu.entrances),
-              ),
-              createLabel('Platos medios'),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: createRow(context, MenuDataService.menu.middles),
-              ),
-              createLabel('Platos fuertes'),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: createRow(context, MenuDataService.menu.stews),
-              ),
-              createLabel('Postres'),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: createRow(context, MenuDataService.menu.desserts),
-              ),
-              createLabel('Bebidas'),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: createRow(context, MenuDataService.menu.drinks),
-              ),
-            ],
-          ),
-        ));
+      key: widget._scaffoldKey,
+      appBar: AppBar(
+        title: Text(Names.menuAppBar, style: Styles.title(Colors.white)),
+        backgroundColor: Palette.primary,
+        actions: [
+          createRefreshButton(),
+          createHelpButton(),
+          createResetButton(),
+          createDeleteButton(),
+          createIconButton(context),
+        ],
+      ),
+      drawer: DrawerApp(),
+      body: createMenu(),
+    );
   }
 
-  void attemptToAddObject(Meal meal) {
+  void refreshMenu() {
+    MenuDataService service = MenuDataService("");
+    resetSelection();
+    service.get().then((response) => setState(() => {
+          if (response.entrances.isNotEmpty)
+            _menu = response
+          else
+            _menu = Menu([], [], [], [], []),
+        }));
+  }
+
+  void deleteMenu() {
+    String token = 'N/A';
+    MenuDataService service;
+
+    PreferencesUtils.getPreferences().then(
+      (preferences) => {
+        if (preferences.getBool(PreferencesUtils.LOGGED_KEY) ?? false)
+          {
+            token = preferences.getString(PreferencesUtils.TOKEN_KEY),
+            service = MenuDataService(token),
+            service
+                .delete()
+                .then(
+                  (success) => {
+                    if (success)
+                      refreshMenu()
+                    else
+                      Utils.showSnack(
+                        widget._scaffoldKey,
+                        'Error, inicie sesión e intente de nuevo',
+                      )
+                  },
+                )
+                .catchError(
+                  (_) => Utils.showSnack(
+                    widget._scaffoldKey,
+                    'Error, inicie sesión e intente de nuevo',
+                  ),
+                )
+          }
+      },
+    );
+  }
+
+  void attemptToMark(Meal meal) {
     if (!_logged) {
-      switch (meal.type) {
-        case "ENTRANCE":
-          {
-            if (chosen.containsKey(_entrance)) {
-              chosen.update(_entrance, (value) => false);
-            }
-            _entrance = meal;
-            chosen.update(_entrance, (value) => true);
-          }
-          break;
-        case "MIDDLE":
-          {
-            if (chosen.containsKey(_middle)) {
-              chosen.update(_middle, (value) => false);
-            }
-            _middle = meal;
-            chosen.update(_middle, (value) => true);
-          }
-          break;
-        case "STEW":
-          {
-            if (chosen.containsKey(_stew)) {
-              chosen.update(_stew, (value) => false);
-            }
-            _stew = meal;
-            chosen.update(_stew, (value) => true);
-          }
-          break;
-        case "DESSERT":
-          {
-            if (chosen.containsKey(_dessert)) {
-              chosen.update(_dessert, (value) => false);
-            }
-            _dessert = meal;
-            chosen.update(_dessert, (value) => true);
-          }
-          break;
-        case "DRINK":
-          {
-            if (chosen.containsKey(_drink)) {
-              chosen.update(_drink, (value) => false);
-            }
-            _drink = meal;
-            chosen.update(_drink, (value) => true);
-          }
-          break;
+      if (meal.type == "entrada") {
+        setState(() => _entrance = meal);
+      }
+      if (meal.type == "medio") {
+        setState(() => _middle = meal);
+      }
+      if (meal.type == "guisado") {
+        setState(() => _stew = meal);
+      }
+      if (meal.type == "postre") {
+        setState(() => _dessert = meal);
+      }
+      if (meal.type == "bebida") {
+        setState(() => _drink = meal);
       }
     }
   }
 
+  bool isMarked(Meal meal) {
+    if (!_logged) {
+      if (meal.type == "entrada" && _entrance != null) {
+        return _entrance.id == meal.id;
+      }
+      if (meal.type == "medio" && _middle != null) {
+        return _middle.id == meal.id;
+      }
+      if (meal.type == "guisado" && _stew != null) {
+        return _stew.id == meal.id;
+      }
+      if (meal.type == "postre" && _dessert != null) {
+        return _dessert.id == meal.id;
+      }
+      if (meal.type == "bebida" && _drink != null) {
+        return _drink.id == meal.id;
+      }
+    }
+
+    return false;
+  }
+
   bool isValidOrder() {
-    return _entrance != null || _middle != null || _stew != null;
+    return _entrance != null && _middle != null && _stew != null && _drink != null;
   }
 
   void resetSelection() {
     setState(
       () => {
-        chosen = HashMap(),
+        _menu = null,
         _entrance = null,
         _middle = null,
         _stew = null,
@@ -158,19 +170,46 @@ class _DailyMenuState extends State<DailyMenu> {
     );
   }
 
-  Widget createLabel(String text) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 20),
-      width: double.infinity,
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: Styles.title(Colors.black),
+  void showDeleteDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        title: Text(
+          'Borrar el menú del día, ¿Está de acuerdo?',
+          textAlign: TextAlign.center,
+          style: Styles.subTitle(Colors.black),
+        ),
+        content: Icon(
+          Icons.warning,
+          color: Palette.todo,
+          size: 80,
+        ),
+        actions: [
+          FlatButton(
+            onPressed: () => {deleteMenu(), Navigator.pop(context)},
+            child: Text("Sí"),
+            textColor: Palette.primary,
+          ),
+          FlatButton(
+            onPressed: () => {Navigator.pop(context)},
+            child: Text("No"),
+            textColor: Palette.primary,
+          ),
+        ],
       ),
     );
   }
 
-  Widget createCartIconButton(BuildContext context) {
+  Widget createIconButton(BuildContext context) {
+    if (_logged) {
+      return IconButton(
+        icon: Icon(Icons.receipt_long),
+        tooltip: 'Publicar menu',
+        onPressed: () => Utils.pushRoute(context, CreateEntrances()),
+      );
+    }
+
     return IconButton(
         icon: Icon(Icons.shopping_cart),
         tooltip: 'Realizar pedido',
@@ -189,20 +228,153 @@ class _DailyMenuState extends State<DailyMenu> {
                         _drink,
                       ),
                     ),
-                  ).then((value) => resetSelection()),
+                  ).then((value) => refreshMenu()),
                 }
               else
                 {
-                  Utils.showSnack(widget._scaffoldKey, 'Su pedido esta vacío!'),
+                  Utils.showSnack(widget._scaffoldKey, 'Su pedido esta incompleto!\nUn pedido completo consta de los 3 tiempos más la bebida'),
                 }
             });
   }
 
-  Widget createMenuIconButton(BuildContext context) {
-    return IconButton(
-      icon: Icon(Icons.receipt_long),
-      tooltip: 'Publicar menu',
-      onPressed: () => Utils.pushRoute(context, CreateEntrances()),
+  Widget createHelpButton() {
+    if(!_logged) {
+      return IconButton(
+        icon: Icon(Icons.help),
+        tooltip: 'Ayuda',
+        onPressed: () => showDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (_) => AlertDialog(
+            title: Text(
+              'Ayuda',
+              textAlign: TextAlign.center,
+              style: Styles.title(Colors.black),
+            ),
+            content: Container(
+              height: 150,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.help,
+                      color: Palette.primary,
+                      size: 80,
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      'Manten presionado cualquier platillo para agregarlo a tu orden',
+                      textAlign: TextAlign.center,
+                      style: Styles.body(Colors.black),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Container();
+  }
+
+  Widget createRefreshButton() {
+    if(_logged){
+      return IconButton(
+        icon: Icon(Icons.refresh),
+        tooltip: 'Refrescar',
+        onPressed: () => refreshMenu(),
+      );
+    }
+
+    return Container();
+  }
+
+  Widget createResetButton() {
+    if(!_logged){
+      return IconButton(
+        icon: Icon(Icons.undo),
+        tooltip: 'Borrar selección',
+        onPressed: () => refreshMenu(),
+      );
+    }
+
+    return Container();
+  }
+
+  Widget createDeleteButton() {
+    if (_logged) {
+      return IconButton(
+        icon: Icon(Icons.delete_forever),
+        tooltip: 'Borrar menú',
+        onPressed: () => showDeleteDialog(),
+      );
+    }
+
+    return Container();
+  }
+
+  Widget createMenu() {
+    List<Widget> rows = [];
+
+    if (_menu != null) {
+      if (_menu.entrances.isNotEmpty) {
+        rows.add(createLabel('Entradas'));
+        rows.add(drawRow(false, _menu.entrances));
+        rows.add(createLabel('Platos medios'));
+        rows.add(drawRow(false, _menu.middles));
+        rows.add(createLabel('Platos fuertes'));
+        rows.add(drawRow(false, _menu.stews));
+        rows.add(createLabel('Postres'));
+        rows.add(drawRow(false, _menu.desserts));
+        rows.add(createLabel('Bebidas'));
+        rows.add(drawRow(false, _menu.drinks));
+      } else {
+        return Utils.createNoItemsMessage(
+          'El menu de hoy no ha sido publicado aún, disculpe las molestias',
+        );
+      }
+    } else {
+      rows.add(createLabel('Entradas'));
+      rows.add(drawRow(true, null));
+      rows.add(createLabel('Platos medios'));
+      rows.add(drawRow(true, null));
+      rows.add(createLabel('Platos fuertes'));
+      rows.add(drawRow(true, null));
+      rows.add(createLabel('Postres'));
+      rows.add(drawRow(true, null));
+      rows.add(createLabel('Bebidas'));
+      rows.add(drawRow(true, null));
+    }
+
+    return SingleChildScrollView(child: Column(children: [...rows]));
+  }
+
+  Widget drawRow(bool loading, List<Meal> meals) {
+    if (loading) {
+      return Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation(Palette.accent),
+        ),
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: createRow(context, meals),
+    );
+  }
+
+  Widget createLabel(String text) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 20),
+      width: double.infinity,
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: Styles.title(Colors.black),
+      ),
     );
   }
 
@@ -228,11 +400,10 @@ class _DailyMenuState extends State<DailyMenu> {
 
   Widget createMiniCard(context, Meal meal, dimension, fontSize) {
     Color color = Colors.transparent;
-    chosen.putIfAbsent(meal, () => false);
 
     return InkWell(
       onTap: () => Utils.pushRoute(context, MealDetail(meal)),
-      onLongPress: () => setState(() => attemptToAddObject(meal)),
+      onLongPress: () => attemptToMark(meal),
       child: Container(
         color: color,
         width: dimension,
@@ -253,14 +424,14 @@ class _DailyMenuState extends State<DailyMenu> {
                     fit: BoxFit.cover,
                   ),
                 ),
-                if (!chosen[meal])
+                if (!isMarked(meal))
                   Text(
                     meal.name,
                     textAlign: TextAlign.center,
                     style: Styles.legend(fontSize),
                     overflow: TextOverflow.clip,
                   ),
-                if (chosen[meal])
+                if (isMarked(meal))
                   Container(
                     color: Colors.black54,
                     child: Icon(

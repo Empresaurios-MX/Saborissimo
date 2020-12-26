@@ -45,6 +45,36 @@ class Utils {
     );
   }
 
+  static Widget createThumbnail(String pictureUrl) {
+    return Image.network(
+      pictureUrl,
+      height: double.infinity,
+      width: 100,
+      fit: BoxFit.cover,
+    );
+  }
+
+  static Widget createNoItemsMessage(String message) {
+    return Container(
+      padding: EdgeInsets.all(20),
+      child: Column(
+        children: [
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: Styles.subTitleBig(Colors.black),
+          ),
+          SizedBox(height: 25),
+          Icon(
+            Icons.mood_bad,
+            size: 100,
+            color: Palette.primary,
+          ),
+        ],
+      ),
+    );
+  }
+
   static InputDecoration createHint(String hint) {
     return InputDecoration(
       hintText: hint,
@@ -61,5 +91,13 @@ class Utils {
     scaffoldKey.currentState.showSnackBar(
       SnackBar(content: Text(message, style: Styles.body(Colors.white))),
     );
+  }
+
+  static String getFirebaseName(String path) {
+    return path
+        .split('/o/')[1]
+        .replaceAll('%2F', '/')
+        .replaceAll('%20', ' ')
+        .split('?alt')[0];
   }
 }

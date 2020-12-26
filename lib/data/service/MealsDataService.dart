@@ -1,17 +1,17 @@
 import 'dart:convert';
 import 'package:http/http.dart' show Client;
-import 'package:saborissimo/data/model/Menu.dart';
+import 'package:saborissimo/data/model/Meal.dart';
 import 'package:saborissimo/data/service/ApiPath.dart';
 
-class MenuDataService {
+class MealsDataService {
   final Client http = Client();
   final String token;
 
-  MenuDataService(this.token);
+  MealsDataService(this.token);
 
-  Future<Menu> get() async {
+  Future<List<Meal>> get() async {
     final response = await http.get(
-      "${ApiPath.API}/menu",
+      "${ApiPath.API}/meal",
       headers: {
         "content-type": "application/json",
         "Authorization": "Bearer $token"
@@ -19,40 +19,54 @@ class MenuDataService {
     );
 
     if (response.statusCode == 200) {
-      return Menu.profileFromJson(utf8.decode(response.bodyBytes));
+      return Meal.profileFromJson(utf8.decode(response.bodyBytes));
     } else {
       return Future.error("Ha ocurrido un error, intente de nuevo");
     }
   }
 
-  Future<bool> post(Menu menu) async {
+  Future<bool> post(Meal meal) async {
     final response = await http.post(
-      "${ApiPath.API}/menu",
+      "${ApiPath.API}/meal",
       headers: {
         "content-type": "application/json",
         "Authorization": "Bearer $token"
       },
-      body: Menu.profileToJson(menu),
+      body: Meal.profileToJson(meal),
     );
-
     if (response.statusCode == 200) {
-      return Menu.profileFromJsonResponse(response.body);
+      return true;
     } else {
       return false;
     }
   }
 
-  Future<bool> delete() async {
+  Future<bool> put(Meal meal) async {
+    final response = await http.put(
+      "${ApiPath.API}/meal",
+      headers: {
+        "content-type": "application/json",
+        "Authorization": "Bearer $token"
+      },
+      body: Meal.profileToJson(meal),
+    );
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> delete(String id) async {
     final response = await http.delete(
-      "${ApiPath.API}/menu",
+      "${ApiPath.API}/meal/$id",
       headers: {
         "content-type": "application/json",
         "Authorization": "Bearer $token"
       },
     );
-
     if (response.statusCode == 200) {
-      return Menu.profileFromJsonResponse(response.body);
+      return Meal.profileFromJsonResponse(response.body);
     } else {
       return false;
     }

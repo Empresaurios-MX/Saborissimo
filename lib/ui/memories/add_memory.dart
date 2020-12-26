@@ -4,41 +4,30 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:saborissimo/data/model/Meal.dart';
-import 'package:saborissimo/data/service/MealsDataService.dart';
+import 'package:saborissimo/data/model/Memory.dart';
+import 'package:saborissimo/data/service/MemoriesDataService.dart';
 import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
-import 'package:saborissimo/utils/PreferencesUtils.dart';
 import 'package:saborissimo/utils/utils.dart';
-import 'package:select_form_field/select_form_field.dart';
 
-class CreateMeal extends StatefulWidget {
+class AddMemory extends StatefulWidget {
   final _key = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
-  _CreateMealState createState() => _CreateMealState();
+  _AddMemoryState createState() => _AddMemoryState();
 }
 
-class _CreateMealState extends State<CreateMeal> {
+class _AddMemoryState extends State<AddMemory> {
   File _selectedPicture;
 
   bool _working;
-  String _token;
-  String _name;
-  String _description;
-  String _type;
+  String _title;
 
   @override
   void initState() {
     _working = false;
-    PreferencesUtils.getPreferences().then((preferences) => {
-          if (preferences.getString(PreferencesUtils.TOKEN_KEY) != null)
-            _token = preferences.getString(PreferencesUtils.TOKEN_KEY)
-          else
-            _token = ''
-        });
     super.initState();
   }
 
@@ -47,7 +36,8 @@ class _CreateMealState extends State<CreateMeal> {
     return Scaffold(
       key: widget._scaffoldKey,
       appBar: AppBar(
-        title: Text(Names.createMealAppBar, style: Styles.title(Colors.white)),
+        title:
+            Text(Names.createMemoryAppBar, style: Styles.title(Colors.white)),
         backgroundColor: Palette.primary,
       ),
       floatingActionButton: createFAB(),
@@ -68,38 +58,10 @@ class _CreateMealState extends State<CreateMeal> {
                 ),
                 SizedBox(height: 20),
                 TextFormField(
-                  decoration: Utils.createHint('Nombre *'),
+                  decoration: Utils.createHint('Título *'),
                   maxLength: 255,
                   style: Styles.body(Colors.black),
-                  onChanged: (value) => setState(() => _name = value),
-                  validator: (text) => _getErrorMessage(text.isEmpty),
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  decoration: Utils.createHint('Descripción *'),
-                  keyboardType: TextInputType.multiline,
-                  minLines: 3,
-                  maxLines: 20,
-                  maxLength: 255,
-                  style: Styles.body(Colors.black),
-                  onChanged: (value) => setState(() => _description = value),
-                  validator: (text) => _getErrorMessage(text.isEmpty),
-                ),
-                SizedBox(height: 10),
-                SelectFormField(
-                  decoration: InputDecoration(
-                    hintText: 'Tipo de platillo',
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Palette.primary),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Palette.primaryLight),
-                    ),
-                    suffixIcon:
-                        Icon(Icons.arrow_drop_down, color: Palette.primary),
-                  ),
-                  items: Names.mealTypeSelector,
-                  onChanged: (value) => setState(() => _type = value),
+                  onChanged: (value) => setState(() => _title = value),
                   validator: (text) => _getErrorMessage(text.isEmpty),
                 ),
                 Container(
@@ -162,12 +124,9 @@ class _CreateMealState extends State<CreateMeal> {
 
   Future uploadToFirebase(File imageToUpload) async {
     DateTime now = DateTime.now();
-    String fileName = 'meal_' +
-        _type +
-        '_' +
-        _name +
-        '_' +
+    String date =
         DateTime(now.year, now.month, now.day).toString().substring(0, 10);
+    String fileName = 'memory_' + _title + '_' + date;
 
     Reference firebaseStorageRef;
     UploadTask uploadTask;
@@ -175,22 +134,22 @@ class _CreateMealState extends State<CreateMeal> {
 
     Firebase.initializeApp().then((value) async => {
           firebaseStorageRef =
-              FirebaseStorage.instance.ref().child('meals/$fileName'),
+              FirebaseStorage.instance.ref().child('memories/$fileName'),
           uploadTask = firebaseStorageRef.putFile(_selectedPicture),
           taskSnapshot = await uploadTask.whenComplete(() => null),
           taskSnapshot.ref
               .getDownloadURL()
-              .then((url) => saveMeal(url))
+              .then((url) => saveMemory(url, date))
               .catchError((_) => setState(() => _working = false)),
         });
   }
 
-  void saveMeal(String url) {
-    MealsDataService service = MealsDataService(_token);
+  void saveMemory(String url, String date) {
+    MemoriesDataService service = MemoriesDataService('');
 
     if (url != null && url.isNotEmpty) {
-      final Meal meal = Meal(0, _name, _description, url, _type);
-      service.post(meal).then(
+      final Memory memory = Memory(0, _title, url, date);
+      service.post(memory).then(
             (success) => {if (success) showDoneDialog() else showErrorDialog()},
           );
     } else {
@@ -204,7 +163,7 @@ class _CreateMealState extends State<CreateMeal> {
       barrierDismissible: true,
       builder: (_) => AlertDialog(
         title: Text(
-          'Platillo creado con exito',
+          'Su recuerdo ha sido publicado con exito',
           textAlign: TextAlign.center,
           style: Styles.subTitle(Colors.black),
         ),
@@ -239,12 +198,12 @@ class _CreateMealState extends State<CreateMeal> {
 
   Widget createFAB() {
     if (_working) {
-      return Container();
+      return Center();
     }
 
     return FloatingActionButton(
       backgroundColor: Palette.accent,
-      child: Icon(Icons.save),
+      child: Icon(Icons.file_upload),
       onPressed: _validateForm,
     );
   }

@@ -1,17 +1,19 @@
 import 'dart:convert';
 import 'package:http/http.dart' show Client;
-import 'package:saborissimo/data/model/Menu.dart';
-import 'package:saborissimo/data/service/ApiPath.dart';
+import 'package:saborissimo/data/model/Memory.dart';
+import 'package:saborissimo/data/model/Order.dart';
 
-class MenuDataService {
+import 'ApiPath.dart';
+
+class MemoriesDataService {
   final Client http = Client();
   final String token;
 
-  MenuDataService(this.token);
+  MemoriesDataService(this.token);
 
-  Future<Menu> get() async {
+  Future<List<Memory>> get() async {
     final response = await http.get(
-      "${ApiPath.API}/menu",
+      "${ApiPath.API}/memory",
       headers: {
         "content-type": "application/json",
         "Authorization": "Bearer $token"
@@ -19,32 +21,32 @@ class MenuDataService {
     );
 
     if (response.statusCode == 200) {
-      return Menu.profileFromJson(utf8.decode(response.bodyBytes));
+      return Memory.profileFromJson(utf8.decode(response.bodyBytes));
     } else {
       return Future.error("Ha ocurrido un error, intente de nuevo");
     }
   }
 
-  Future<bool> post(Menu menu) async {
+  Future<bool> post(Memory memory) async {
     final response = await http.post(
-      "${ApiPath.API}/menu",
+      "${ApiPath.API}/memory",
       headers: {
         "content-type": "application/json",
         "Authorization": "Bearer $token"
       },
-      body: Menu.profileToJson(menu),
+      body: Memory.profileToJson(memory),
     );
-
+    print(response.body);
     if (response.statusCode == 200) {
-      return Menu.profileFromJsonResponse(response.body);
+      return Order.profileFromJsonResponse(response.body);
     } else {
       return false;
     }
   }
 
-  Future<bool> delete() async {
+  Future<bool> delete(String id) async {
     final response = await http.delete(
-      "${ApiPath.API}/menu",
+      "${ApiPath.API}/memory/$id",
       headers: {
         "content-type": "application/json",
         "Authorization": "Bearer $token"
@@ -52,7 +54,7 @@ class MenuDataService {
     );
 
     if (response.statusCode == 200) {
-      return Menu.profileFromJsonResponse(response.body);
+      return Memory.profileFromJsonResponse(response.body);
     } else {
       return false;
     }

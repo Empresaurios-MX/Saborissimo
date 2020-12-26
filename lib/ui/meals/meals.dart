@@ -4,23 +4,24 @@ import 'package:saborissimo/data/service/MealsDataService.dart';
 import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
+import 'package:saborissimo/ui/drawer/drawer_app.dart';
+import 'package:saborissimo/ui/meals/meals_detail.dart';
 import 'package:saborissimo/ui/menu/create_meal.dart';
 import 'package:saborissimo/ui/menu/create_middles.dart';
 import 'package:saborissimo/utils/PreferencesUtils.dart';
 import 'package:saborissimo/utils/utils.dart';
 
-class CreateEntrances extends StatefulWidget {
+class Meals extends StatefulWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
-  _CreateEntrancesState createState() => _CreateEntrancesState();
+  _MealsState createState() => _MealsState();
 }
 
-class _CreateEntrancesState extends State<CreateEntrances> {
+class _MealsState extends State<Meals> {
   String _token;
   MealsDataService _service;
   List<Meal> _meals = [];
-  Map<Meal, bool> _selected = {};
 
   @override
   void initState() {
@@ -40,8 +41,7 @@ class _CreateEntrancesState extends State<CreateEntrances> {
     return Scaffold(
       key: widget._scaffoldKey,
       appBar: AppBar(
-        title: Text(Names.createEntrancesAppBar,
-            style: Styles.title(Colors.white)),
+        title: Text(Names.mealsAppBar, style: Styles.title(Colors.white)),
         backgroundColor: Palette.primary,
         actions: [
           IconButton(
@@ -49,42 +49,25 @@ class _CreateEntrancesState extends State<CreateEntrances> {
             onPressed: () => Utils.pushRoute(context, CreateMeal())
                 .then((_) => refreshList()),
           ),
+          createRefreshButton(),
         ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.arrow_forward),
-        mini: true,
-        backgroundColor: Palette.accent,
-        onPressed: () => attemptToGoNext(),
-      ),
+      drawer: DrawerApp(),
       body: createList(),
     );
   }
 
   void refreshList() {
     _service = MealsDataService(_token);
-    _service.get().then((response) => setState(() => _meals = response));
+    _service.get().then((response) => setState(() => _meals = response.reversed.toList()));
   }
 
-  void attemptToGoNext() {
-    final List<Meal> selectedMeals = [];
-
-    _selected.forEach((key, value) => {
-          if (value) {selectedMeals.add(key)}
-        });
-
-    if (selectedMeals.isNotEmpty) {
-      if (selectedMeals.length <= 3) {
-        Utils.pushRoute(context, CreateMiddles(selectedMeals));
-      } else {
-        Utils.showSnack(
-            widget._scaffoldKey, "Solo puede agregar un máximo de 3 platillos");
-      }
-    } else {
-      Utils.showSnack(
-          widget._scaffoldKey, "Debe agregar por lo menos 1 platillo");
-    }
+  Widget createRefreshButton() {
+    return IconButton(
+      icon: Icon(Icons.refresh),
+      tooltip: 'Refrescar',
+      onPressed: () => refreshList(),
+    );
   }
 
   Widget createList() {
@@ -96,26 +79,19 @@ class _CreateEntrancesState extends State<CreateEntrances> {
       );
     }
 
-    List<Meal> shortedMeals =
-        _meals.where((meal) => meal.type == 'entrada').toList();
-
     return ListView.builder(
-      itemBuilder: (context, index) => createListTile(shortedMeals[index]),
-      itemCount: shortedMeals.length,
+      itemBuilder: (context, index) => createListTile(_meals[index]),
+      itemCount: _meals.length,
     );
   }
 
   Widget createListTile(Meal meal) {
-    _selected.putIfAbsent(meal, () => false);
-
-    return CheckboxListTile(
-      contentPadding: EdgeInsets.all(10),
+    return ListTile(
+      contentPadding: EdgeInsets.symmetric(horizontal: 5),
+      leading: Utils.createThumbnail(meal.picture),
       title: Text(meal.name, style: Styles.subTitle(Colors.black)),
-      secondary: Utils.createThumbnail(meal.picture),
-      activeColor: Palette.done,
-      value: _selected[meal],
-      onChanged: (value) =>
-          setState(() => _selected.update(meal, (old) => !old)),
+      subtitle: Text(meal.type.toUpperCase(), style: Styles.body(Colors.black)),
+      onTap: () => Utils.pushRoute(context, MealsDetail(meal)).then((_) => refreshList()),
     );
   }
 }

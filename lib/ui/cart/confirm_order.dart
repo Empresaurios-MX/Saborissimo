@@ -3,6 +3,7 @@ import 'package:saborissimo/data/model/Address.dart';
 import 'package:saborissimo/data/model/Client.dart';
 import 'package:saborissimo/data/model/MenuOrder.dart';
 import 'package:saborissimo/data/model/Order.dart';
+import 'package:saborissimo/data/service/MenuOrderDataService.dart';
 import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
@@ -11,15 +12,17 @@ import 'package:saborissimo/utils/utils.dart';
 class ConfirmOrder extends StatefulWidget {
   final _key = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final MenuOrder order;
+  final MenuOrder _order;
 
-  ConfirmOrder(this.order);
+  ConfirmOrder(this._order);
 
   @override
   _ConfirmOrderState createState() => _ConfirmOrderState();
 }
 
 class _ConfirmOrderState extends State<ConfirmOrder> {
+  bool _working;
+
   String _name;
   String _phone;
   String _extras;
@@ -29,6 +32,21 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
   String _colony;
   String _references;
   bool _order = false;
+
+  @override
+  void initState() {
+    _working = false;
+
+    _name = '';
+    _phone = '';
+    _extras = '';
+    _comments = '';
+    _street1 = '';
+    _street2 = '';
+    _colony = '';
+    _references = '';
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -141,17 +159,22 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
   void validateForm() {
     if (widget._key.currentState.validate()) {
       Order order = Order(
-        id: 0,
-        state: false,
-        order: widget.order,
-        orderType: _order ? Order.isOrder : Order.isReserved,
-        extras: _extras,
-        comments: _comments,
-        address: Address(0, _street1, _street2, _colony, _references),
-        client: Client(0, _name, _phone),
+        0,
+        false,
+        widget._order,
+        _order ? Order.isOrder : Order.isReserved,
+        _extras,
+        _comments,
+        Address(0, _street1, _street2, _colony, _references),
+        Client(0, _name, _phone),
       );
 
-      Navigator.pop(context);
+      MenuOrderDataService service = MenuOrderDataService("");
+
+      setState(() => _working = true);
+
+      service.post(order).then(
+          (success) => {if (success) showDoneDialog() else showErrorDialog()});
     }
   }
 
@@ -160,6 +183,45 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
       return 'Este campo no puede estar vacío';
     }
     return null;
+  }
+
+  void showDoneDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (_) => AlertDialog(
+        title: Text(
+          'Pedido realizado con exito',
+          textAlign: TextAlign.center,
+          style: Styles.subTitle(Colors.black),
+        ),
+        content: Icon(
+          Icons.done,
+          color: Palette.done,
+          size: 80,
+        ),
+      ),
+    ).then((_) => Navigator.pop(context));
+  }
+
+  void showErrorDialog() {
+    setState(() => _working = false);
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (_) => AlertDialog(
+          title: Text(
+            'Ha ocurrido un error, intente de nuevo',
+            textAlign: TextAlign.center,
+            style: Styles.subTitle(Colors.black),
+          ),
+          content: Icon(
+            Icons.error,
+            color: Palette.todo,
+            size: 80,
+          )),
+    );
   }
 
   Widget createLabel(String text, TextStyle style) {
@@ -174,6 +236,9 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
   }
 
   Widget createRoundedButton(BuildContext context) {
+    if (_working) {
+      return Center();
+    }
     return Container(
       width: double.infinity,
       child: RaisedButton(

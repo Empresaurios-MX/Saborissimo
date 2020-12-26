@@ -28,6 +28,15 @@ class Styles {
     );
   }
 
+  static TextStyle subTitleBig(Color color) {
+    return TextStyle(
+      color: color,
+      fontWeight: FontWeight.normal,
+      fontFamily: 'Lato-Regular',
+      fontSize: 20,
+    );
+  }
+
   static TextStyle body(Color color) {
     return TextStyle(
       color: color,
