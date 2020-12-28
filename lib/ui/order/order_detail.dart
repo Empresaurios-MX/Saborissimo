@@ -178,7 +178,7 @@ class OrderDetail extends StatelessWidget {
           children: [
             Icon(icon, color: Palette.primary),
             SizedBox(width: 20),
-            Text(text, style: Styles.body(Colors.black))
+            Flexible(child: Text(text, style: Styles.body(Colors.black)))
           ],
         ),
       ),
