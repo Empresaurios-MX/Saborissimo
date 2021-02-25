@@ -6,6 +6,8 @@ import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/utils/PreferencesUtils.dart';
 import 'package:saborissimo/utils/utils.dart';
+import 'package:saborissimo/widgets/material_dialog_neutral.dart';
+import 'package:saborissimo/widgets/material_dialog_yes_no.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class OrderDetail extends StatelessWidget {
@@ -88,62 +90,29 @@ class OrderDetail extends StatelessWidget {
   void showDoneDialog(BuildContext context) {
     showDialog(
       context: context,
-      barrierDismissible: true,
-      builder: (_) => AlertDialog(
-        title: Text(
-          'El pedido se ha entregado',
-          textAlign: TextAlign.center,
-          style: Styles.subTitle(Colors.black),
-        ),
-        content: Icon(
-          Icons.done,
-          color: Palette.done,
-          size: 80,
-        ),
-      ),
+      builder: (_) => MaterialDialogNeutral('', 'El pedido se ha marcado como entregado.')
     ).then((_) => Navigator.pop(context));
   }
 
-  void showUpdateDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => AlertDialog(
-        title: Text(
-          'Marcar como entregado, ¿Está de acuerdo?',
-          textAlign: TextAlign.center,
-          style: Styles.subTitle(Colors.black),
-        ),
-        content: Icon(
-          Icons.warning,
-          color: Palette.todo,
-          size: 80,
-        ),
-        actions: [
-          FlatButton(
-            onPressed: () => {updateOrder(context), Navigator.pop(context)},
-            child: Text("Sí"),
-            textColor: Palette.primary,
-          ),
-          FlatButton(
-            onPressed: () => {Navigator.pop(context)},
-            child: Text("No"),
-            textColor: Palette.primary,
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget createFAB(BuildContext context) {
-    if (_order.state) {
+/*    if (_order.state) {
       return Container();
-    }
+    }*/
 
     return FloatingActionButton(
       child: Icon(Icons.check),
       backgroundColor: Palette.done,
-      onPressed: () => showUpdateDialog(context),
+      onPressed: () => showDialog(
+        context: context,
+        builder: (_) => MaterialDialogYesNo(
+          title: 'Marcar como entregado',
+          body: 'Una vez marcado como entregado no se podrá deshacer',
+          positiveActionLabel: 'Continuar',
+          positiveAction: () => {updateOrder(context), Navigator.pop(context)},
+          negativeActionLabel: "Cancelar",
+          negativeAction: () => Navigator.pop(context),
+        ),
+      ),
     );
   }
 

@@ -9,6 +9,7 @@ import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/menu/daily_menu.dart';
 import 'package:saborissimo/utils/PreferencesUtils.dart';
 import 'package:saborissimo/utils/utils.dart';
+import 'package:saborissimo/widgets/material_dialog_neutral.dart';
 
 class CreateDrinks extends StatefulWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -88,57 +89,38 @@ class _CreateDrinksState extends State<CreateDrinks> {
 
         service.post(menu).then(
               (success) =>
-                  {if (success) showDoneDialog() else showErrorDialog()},
+                  {if (success) showDoneDialog() else showErrorMessage()},
             );
       } else {
         Utils.showSnack(
-            widget._scaffoldKey, "Solo puede agregar un máximo de 3 platillos");
+          widget._scaffoldKey,
+          "Solo puede agregar un máximo de 3 platillos",
+        );
       }
     } else {
       Utils.showSnack(
-          widget._scaffoldKey, "Debe agregar por lo menos 1 platillo");
+        widget._scaffoldKey,
+        "Debe agregar por lo menos 1 platillo",
+      );
     }
   }
 
   void showDoneDialog() {
     showDialog(
       context: context,
-      barrierDismissible: true,
-      builder: (_) => AlertDialog(
-        title: Text(
-          'Menú publicado con exito',
-          textAlign: TextAlign.center,
-          style: Styles.subTitle(Colors.black),
-        ),
-        content: Icon(
-          Icons.done,
-          color: Palette.done,
-          size: 80,
-        ),
-      ),
+      builder: (_) => MaterialDialogNeutral('', 'Menú publicado con exito.'),
     ).then((_) => {
           Navigator.of(context).popUntil((route) => route.isFirst),
           Utils.replaceRoute(context, DailyMenu()),
         });
   }
 
-  void showErrorDialog() {
+  void showErrorMessage() {
     setState(() => working = false);
 
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (_) => AlertDialog(
-          title: Text(
-            'Ha ocurrido un error, intente de nuevo',
-            textAlign: TextAlign.center,
-            style: Styles.subTitle(Colors.black),
-          ),
-          content: Icon(
-            Icons.error,
-            color: Palette.todo,
-            size: 80,
-          )),
+    Utils.showSnack(
+      widget._scaffoldKey,
+      "Ha ocurrido un error, intente de nuevo",
     );
   }
 

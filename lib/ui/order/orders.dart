@@ -8,6 +8,7 @@ import 'package:saborissimo/ui/drawer/drawer_app.dart';
 import 'package:saborissimo/ui/order/order_detail.dart';
 import 'package:saborissimo/utils/PreferencesUtils.dart';
 import 'package:saborissimo/utils/utils.dart';
+import 'package:saborissimo/widgets/material_dialog_yes_no.dart';
 
 class Orders extends StatefulWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -87,37 +88,6 @@ class _OrdersState extends State<Orders> {
     );
   }
 
-  void showDeleteDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => AlertDialog(
-        title: Text(
-          'Borrar los pedidos, ¿Está de acuerdo?',
-          textAlign: TextAlign.center,
-          style: Styles.subTitle(Colors.black),
-        ),
-        content: Icon(
-          Icons.warning,
-          color: Palette.todo,
-          size: 80,
-        ),
-        actions: [
-          FlatButton(
-            onPressed: () => {deleteOrders(), Navigator.pop(context)},
-            child: Text("Sí"),
-            textColor: Palette.primary,
-          ),
-          FlatButton(
-            onPressed: () => {Navigator.pop(context)},
-            child: Text("No"),
-            textColor: Palette.primary,
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget createList() {
     if (_orders == null) {
       return Center(
@@ -170,8 +140,18 @@ class _OrdersState extends State<Orders> {
   Widget createDeleteButton() {
     return IconButton(
       icon: Icon(Icons.delete_forever),
-      tooltip: 'Borrar menú',
-      onPressed: () => showDeleteDialog(),
+      tooltip: 'Borrar pedidos',
+      onPressed: () => showDialog(
+        context: context,
+        builder: (_) => MaterialDialogYesNo(
+          title: 'Eliminar todos los pedidos',
+          body: 'Esta acción eliminará el registro de todos los pedidos para siempre.',
+          positiveActionLabel: 'Eliminar',
+          positiveAction: () =>{deleteOrders(), Navigator.pop(context)},
+          negativeActionLabel: "Cancelar",
+          negativeAction: () => Navigator.pop(context),
+        ),
+      ),
     );
   }
 

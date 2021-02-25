@@ -12,6 +12,8 @@ import 'package:saborissimo/ui/menu/create_entrances.dart';
 import 'package:saborissimo/ui/menu/meal_detail.dart';
 import 'package:saborissimo/utils/PreferencesUtils.dart';
 import 'package:saborissimo/utils/utils.dart';
+import 'package:saborissimo/widgets/material_dialog_neutral.dart';
+import 'package:saborissimo/widgets/material_dialog_yes_no.dart';
 
 class DailyMenu extends StatefulWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -53,12 +55,7 @@ class _DailyMenuState extends State<DailyMenu> {
       appBar: AppBar(
         title: Text(Names.menuAppBar, style: Styles.title(Colors.white)),
         backgroundColor: Palette.primary,
-        actions: [
-          createRefreshButton(),
-          createHelpButton(),
-          createDeleteButton(),
-          createIconButton(context),
-        ],
+        actions: createActions(),
       ),
       drawer: DrawerApp(),
       body: createMenu(),
@@ -172,134 +169,72 @@ class _DailyMenuState extends State<DailyMenu> {
     );
   }
 
-  void showDeleteDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => AlertDialog(
-        title: Text(
-          'Borrar el menú del día, ¿Está de acuerdo?',
-          textAlign: TextAlign.center,
-          style: Styles.subTitle(Colors.black),
-        ),
-        content: Icon(
-          Icons.warning,
-          color: Palette.todo,
-          size: 80,
-        ),
-        actions: [
-          FlatButton(
-            onPressed: () => {deleteMenu(), Navigator.pop(context)},
-            child: Text("Sí"),
-            textColor: Palette.primary,
-          ),
-          FlatButton(
-            onPressed: () => {Navigator.pop(context)},
-            child: Text("No"),
-            textColor: Palette.primary,
-          ),
-        ],
-      ),
-    );
+  void goToCart() {
+    if (isValidOrder()) {
+      Utils.pushRoute(
+        context,
+        ConfirmOrder(MenuOrder(0, _entrance, _middle, _stew, _dessert, _drink)),
+      ).then((value) => refreshMenu());
+    } else {
+      Utils.showSnack(
+        widget._scaffoldKey,
+        'Su pedido esta incompleto!\nUn pedido completo consta de los 3 tiempos más la bebida',
+      );
+    }
   }
 
-  Widget createIconButton(BuildContext context) {
+  List<Widget> createActions() {
+    List<Widget> actions = [];
+
+    actions.add(IconButton(
+      icon: Icon(Icons.refresh),
+      tooltip: 'Refrescar',
+      onPressed: () => refreshMenu(),
+    ));
+
     if (_logged) {
-      return IconButton(
+      actions.add(IconButton(
+        icon: Icon(Icons.delete_forever),
+        tooltip: 'Borrar menú',
+        onPressed: () => showDialog(
+          context: context,
+          builder: (_) => MaterialDialogYesNo(
+            title: 'Eliminar el menú del día',
+            body: 'Esta acción eliminará el menú publicado para siempre.',
+            positiveActionLabel: 'Eliminar',
+            positiveAction: () => {deleteMenu(), Navigator.pop(context)},
+            negativeActionLabel: "Cancelar",
+            negativeAction: () => Navigator.pop(context),
+          ),
+        ),
+      ));
+
+      actions.add(IconButton(
         icon: Icon(Icons.receipt_long),
         tooltip: 'Publicar menu',
         onPressed: () => Utils.pushRoute(context, CreateEntrances()),
-      );
-    }
-
-    return IconButton(
-        icon: Icon(Icons.shopping_cart),
-        tooltip: 'Realizar pedido',
-        onPressed: () => {
-              if (isValidOrder())
-                {
-                  Utils.pushRoute(
-                    context,
-                    ConfirmOrder(
-                      MenuOrder(
-                        0,
-                        _entrance,
-                        _middle,
-                        _stew,
-                        _dessert,
-                        _drink,
-                      ),
-                    ),
-                  ).then((value) => refreshMenu()),
-                }
-              else
-                {
-                  Utils.showSnack(widget._scaffoldKey,
-                      'Su pedido esta incompleto!\nUn pedido completo consta de los 3 tiempos más la bebida'),
-                }
-            });
-  }
-
-  Widget createHelpButton() {
-    if (!_logged) {
-      return IconButton(
+      ));
+    } else {
+      actions.add(IconButton(
         icon: Icon(Icons.help),
         tooltip: 'Ayuda',
         onPressed: () => showDialog(
           context: context,
-          barrierDismissible: true,
-          builder: (_) => AlertDialog(
-            title: Text(
-              'Ayuda',
-              textAlign: TextAlign.center,
-              style: Styles.title(Colors.black),
-            ),
-            content: Container(
-              height: 150,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.help,
-                      color: Palette.primary,
-                      size: 80,
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      'Manten presionado cualquier platillo para agregarlo a tu orden',
-                      textAlign: TextAlign.center,
-                      style: Styles.body(Colors.black),
-                    )
-                  ],
-                ),
-              ),
-            ),
+          builder: (_) => MaterialDialogNeutral(
+            'Ayuda',
+            'Manten presionado cualquier platillo para agregarlo a tu orden',
           ),
         ),
-      );
+      ));
+
+      actions.add(IconButton(
+        icon: Icon(Icons.shopping_cart),
+        tooltip: 'Realizar pedido',
+        onPressed: () => goToCart(),
+      ));
     }
 
-    return Container();
-  }
-
-  Widget createRefreshButton() {
-    return IconButton(
-      icon: Icon(Icons.refresh),
-      tooltip: 'Refrescar',
-      onPressed: () => refreshMenu(),
-    );
-  }
-
-  Widget createDeleteButton() {
-    if (_logged) {
-      return IconButton(
-        icon: Icon(Icons.delete_forever),
-        tooltip: 'Borrar menú',
-        onPressed: () => showDeleteDialog(),
-      );
-    }
-
-    return Container();
+    return actions;
   }
 
   Widget createMenu() {
