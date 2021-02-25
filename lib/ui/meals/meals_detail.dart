@@ -7,6 +7,7 @@ import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/utils/PreferencesUtils.dart';
 import 'package:saborissimo/utils/utils.dart';
+import 'package:saborissimo/widgets/material_dialog_yes_no.dart';
 
 class MealsDetail extends StatefulWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -119,39 +120,6 @@ class _MealsDetailState extends State<MealsDetail> {
     );
   }
 
-  void showDeleteDialog() {
-    if (_logged) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => AlertDialog(
-          title: Text(
-            'Borrar platillo, ¿Está de acuerdo?',
-            textAlign: TextAlign.center,
-            style: Styles.subTitle(Colors.black),
-          ),
-          content: Icon(
-            Icons.warning,
-            color: Palette.todo,
-            size: 80,
-          ),
-          actions: [
-            FlatButton(
-              onPressed: () => {deleteMeal(), Navigator.pop(context)},
-              child: Text("Sí"),
-              textColor: Palette.primary,
-            ),
-            FlatButton(
-              onPressed: () => {Navigator.pop(context)},
-              child: Text("No"),
-              textColor: Palette.primary,
-            ),
-          ],
-        ),
-      );
-    }
-  }
-
   Widget createFAB() {
     if (_working) {
       return Container();
@@ -160,7 +128,18 @@ class _MealsDetailState extends State<MealsDetail> {
     return FloatingActionButton(
       backgroundColor: Palette.accent,
       child: Icon(Icons.delete),
-      onPressed: showDeleteDialog,
+      onPressed: () => showDialog(
+        context: context,
+        builder: (_) => MaterialDialogYesNo(
+          title: 'Eliminar platillo',
+          body:
+              'Esta acción eliminará el platillo ${this.widget.meal.name} para siempre.',
+          positiveActionLabel: 'Eliminar',
+          positiveAction: () => {deleteMeal(), Navigator.pop(context)},
+          negativeActionLabel: "Cancelar",
+          negativeAction: () => Navigator.pop(context),
+        ),
+      ),
     );
   }
 }

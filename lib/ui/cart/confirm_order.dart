@@ -8,6 +8,7 @@ import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/utils/utils.dart';
+import 'package:saborissimo/widgets/material_dialog_neutral.dart';
 
 class ConfirmOrder extends StatefulWidget {
   final _key = GlobalKey<FormState>();
@@ -174,7 +175,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
       setState(() => _working = true);
 
       service.post(order).then(
-          (success) => {if (success) showDoneDialog() else showErrorDialog()});
+          (success) => {if (success) showDoneDialog() else showErrorMessage()});
     }
   }
 
@@ -188,39 +189,16 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
   void showDoneDialog() {
     showDialog(
       context: context,
-      barrierDismissible: true,
-      builder: (_) => AlertDialog(
-        title: Text(
-          'Pedido realizado con exito',
-          textAlign: TextAlign.center,
-          style: Styles.subTitle(Colors.black),
-        ),
-        content: Icon(
-          Icons.done,
-          color: Palette.done,
-          size: 80,
-        ),
-      ),
+      builder: (_) => MaterialDialogNeutral('', 'Pedido realizado con exito.'),
     ).then((_) => Navigator.pop(context));
   }
 
-  void showErrorDialog() {
+  void showErrorMessage() {
     setState(() => _working = false);
 
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (_) => AlertDialog(
-          title: Text(
-            'Ha ocurrido un error, intente de nuevo',
-            textAlign: TextAlign.center,
-            style: Styles.subTitle(Colors.black),
-          ),
-          content: Icon(
-            Icons.error,
-            color: Palette.todo,
-            size: 80,
-          )),
+    Utils.showSnack(
+      widget._scaffoldKey,
+      "Ha ocurrido un error, intente de nuevo",
     );
   }
 

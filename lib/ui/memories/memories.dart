@@ -10,6 +10,7 @@ import 'package:saborissimo/ui/drawer/drawer_app.dart';
 import 'package:saborissimo/ui/memories/add_memory.dart';
 import 'package:saborissimo/utils/PreferencesUtils.dart';
 import 'package:saborissimo/utils/utils.dart';
+import 'package:saborissimo/widgets/material_dialog_yes_no.dart';
 
 class Memories extends StatefulWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -60,7 +61,8 @@ class _MemoriesState extends State<Memories> {
 
   void refreshList() {
     _service = MemoriesDataService('');
-    _service.get().then((response) => setState(() => _memories = response.reversed.toList()));
+    _service.get().then(
+        (response) => setState(() => _memories = response.reversed.toList()));
   }
 
   void attemptToDelete(String token, Memory memory) {
@@ -135,29 +137,14 @@ class _MemoriesState extends State<Memories> {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (_) => AlertDialog(
-          title: Text(
-            'Borrar recuerdo, ¿Está de acuerdo?',
-            textAlign: TextAlign.center,
-            style: Styles.subTitle(Colors.black),
-          ),
-          content: Icon(
-            Icons.warning,
-            color: Palette.todo,
-            size: 80,
-          ),
-          actions: [
-            FlatButton(
-              onPressed: () => {deleteMemory(memory), Navigator.pop(context)},
-              child: Text("Sí"),
-              textColor: Palette.primary,
-            ),
-            FlatButton(
-              onPressed: () => {Navigator.pop(context)},
-              child: Text("No"),
-              textColor: Palette.primary,
-            ),
-          ],
+        builder: (_) => MaterialDialogYesNo(
+          title: 'Eliminar recuerdo',
+          body:
+              'Esta acción eliminará el recuerdo ${memory.title} para siempre.',
+          positiveActionLabel: 'Eliminar',
+          positiveAction: () => {deleteMemory(memory), Navigator.pop(context)},
+          negativeActionLabel: "Cancelar",
+          negativeAction: () => Navigator.pop(context),
         ),
       );
     }
