@@ -56,7 +56,6 @@ class _DailyMenuState extends State<DailyMenu> {
         actions: [
           createRefreshButton(),
           createHelpButton(),
-          createResetButton(),
           createDeleteButton(),
           createIconButton(context),
         ],
@@ -154,7 +153,10 @@ class _DailyMenuState extends State<DailyMenu> {
   }
 
   bool isValidOrder() {
-    return _entrance != null && _middle != null && _stew != null && _drink != null;
+    return _entrance != null &&
+        _middle != null &&
+        _stew != null &&
+        _drink != null;
   }
 
   void resetSelection() {
@@ -232,13 +234,14 @@ class _DailyMenuState extends State<DailyMenu> {
                 }
               else
                 {
-                  Utils.showSnack(widget._scaffoldKey, 'Su pedido esta incompleto!\nUn pedido completo consta de los 3 tiempos más la bebida'),
+                  Utils.showSnack(widget._scaffoldKey,
+                      'Su pedido esta incompleto!\nUn pedido completo consta de los 3 tiempos más la bebida'),
                 }
             });
   }
 
   Widget createHelpButton() {
-    if(!_logged) {
+    if (!_logged) {
       return IconButton(
         icon: Icon(Icons.help),
         tooltip: 'Ayuda',
@@ -280,27 +283,11 @@ class _DailyMenuState extends State<DailyMenu> {
   }
 
   Widget createRefreshButton() {
-    if(_logged){
-      return IconButton(
-        icon: Icon(Icons.refresh),
-        tooltip: 'Refrescar',
-        onPressed: () => refreshMenu(),
-      );
-    }
-
-    return Container();
-  }
-
-  Widget createResetButton() {
-    if(!_logged){
-      return IconButton(
-        icon: Icon(Icons.undo),
-        tooltip: 'Borrar selección',
-        onPressed: () => refreshMenu(),
-      );
-    }
-
-    return Container();
+    return IconButton(
+      icon: Icon(Icons.refresh),
+      tooltip: 'Refrescar',
+      onPressed: () => refreshMenu(),
+    );
   }
 
   Widget createDeleteButton() {
@@ -321,38 +308,21 @@ class _DailyMenuState extends State<DailyMenu> {
     if (_menu != null) {
       if (_menu.entrances.isNotEmpty) {
         rows.add(createLabel('Entradas'));
-        rows.add(drawRow(false, _menu.entrances));
+        rows.add(createRow(_menu.entrances));
         rows.add(createLabel('Platos medios'));
-        rows.add(drawRow(false, _menu.middles));
+        rows.add(createRow(_menu.middles));
         rows.add(createLabel('Platos fuertes'));
-        rows.add(drawRow(false, _menu.stews));
+        rows.add(createRow(_menu.stews));
         rows.add(createLabel('Postres'));
-        rows.add(drawRow(false, _menu.desserts));
+        rows.add(createRow(_menu.desserts));
         rows.add(createLabel('Bebidas'));
-        rows.add(drawRow(false, _menu.drinks));
+        rows.add(createRow(_menu.drinks));
       } else {
         return Utils.createNoItemsMessage(
           'El menu de hoy no ha sido publicado aún, disculpe las molestias',
         );
       }
     } else {
-      rows.add(createLabel('Entradas'));
-      rows.add(drawRow(true, null));
-      rows.add(createLabel('Platos medios'));
-      rows.add(drawRow(true, null));
-      rows.add(createLabel('Platos fuertes'));
-      rows.add(drawRow(true, null));
-      rows.add(createLabel('Postres'));
-      rows.add(drawRow(true, null));
-      rows.add(createLabel('Bebidas'));
-      rows.add(drawRow(true, null));
-    }
-
-    return SingleChildScrollView(child: Column(children: [...rows]));
-  }
-
-  Widget drawRow(bool loading, List<Meal> meals) {
-    if (loading) {
       return Center(
         child: CircularProgressIndicator(
           valueColor: AlwaysStoppedAnimation(Palette.accent),
@@ -360,10 +330,7 @@ class _DailyMenuState extends State<DailyMenu> {
       );
     }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: createRow(context, meals),
-    );
+    return ListView(children: rows);
   }
 
   Widget createLabel(String text) {
@@ -378,35 +345,28 @@ class _DailyMenuState extends State<DailyMenu> {
     );
   }
 
-  List<Widget> createRow(BuildContext context, List<Meal> meals) {
+  Widget createRow(List<Meal> meals) {
     List<Widget> cards = [];
-    double dimension = 190;
-    double fontSize = 20;
-
-    if (meals.length == 2) {
-      dimension = 150;
-    }
-    if (meals.length >= 3) {
-      dimension = 110;
-      fontSize = 15;
-    }
 
     meals.forEach(
-      (meal) => {cards.add(createMiniCard(context, meal, dimension, fontSize))},
+      (meal) => {cards.add(createCard(context, meal))},
     );
 
-    return cards;
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: cards,
+      ),
+    );
   }
 
-  Widget createMiniCard(context, Meal meal, dimension, fontSize) {
-    Color color = Colors.transparent;
-
+  Widget createCard(context, Meal meal) {
     return InkWell(
       onTap: () => Utils.pushRoute(context, MealDetail(meal)),
       onLongPress: () => attemptToMark(meal),
       child: Container(
-        color: color,
-        width: dimension,
+        color: Colors.transparent,
+        width: 225,
         child: Card(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -419,16 +379,16 @@ class _DailyMenuState extends State<DailyMenu> {
                   borderRadius: BorderRadius.circular(10),
                   child: Image.network(
                     meal.picture,
-                    height: dimension,
+                    height: 125,
                     width: double.infinity,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fitWidth,
                   ),
                 ),
                 if (!isMarked(meal))
                   Text(
                     meal.name,
                     textAlign: TextAlign.center,
-                    style: Styles.legend(fontSize),
+                    style: Styles.legend(20),
                     overflow: TextOverflow.clip,
                   ),
                 if (isMarked(meal))
