@@ -7,7 +7,7 @@ import 'package:saborissimo/ui/meals/meals.dart';
 import 'package:saborissimo/ui/memories/memories.dart';
 import 'package:saborissimo/ui/menu/daily_menu.dart';
 import 'package:saborissimo/ui/order/orders.dart';
-import 'package:saborissimo/utils/PreferencesUtils.dart';
+import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/utils.dart';
 
 class DrawerApp extends StatefulWidget {
@@ -84,7 +84,7 @@ class _DrawerAppState extends State<DrawerApp> {
         size: 25,
         color: Palette.primary,
       ),
-      title: Text(Names.logoutAppBar, style: Styles.subTitle(Colors.black)),
+      title: Text(Names.logoutAppBar, style: Styles.subTitle()),
     );
   }
 
@@ -97,7 +97,7 @@ class _DrawerAppState extends State<DrawerApp> {
         size: 25,
         color: Palette.primary,
       ),
-      title: Text(title, style: Styles.subTitle(Colors.black)),
+      title: Text(title, style: Styles.subTitle()),
     );
   }
 }

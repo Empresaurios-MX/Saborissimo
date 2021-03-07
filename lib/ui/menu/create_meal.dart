@@ -6,12 +6,21 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:saborissimo/data/model/Meal.dart';
 import 'package:saborissimo/data/service/MealsDataService.dart';
+import 'package:saborissimo/res/messages.dart';
 import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
-import 'package:saborissimo/utils/PreferencesUtils.dart';
+import 'package:saborissimo/utils/preferences_utils.dart';
+import 'package:saborissimo/utils/firebase_storage_helper.dart';
+import 'package:saborissimo/utils/image_utils.dart';
 import 'package:saborissimo/utils/utils.dart';
-import 'package:select_form_field/select_form_field.dart';
+import 'package:saborissimo/utils/validation_utils.dart';
+import 'package:saborissimo/widgets/body_label.dart';
+import 'package:saborissimo/widgets/input/image_avatar.dart';
+import 'package:saborissimo/widgets/input/long_text_field_empty.dart';
+import 'package:saborissimo/widgets/input/selector_field_empty.dart';
+import 'package:saborissimo/widgets/input/text_field_empty.dart';
+import 'package:saborissimo/widgets/material_dialog_neutral.dart';
 
 class CreateMeal extends StatefulWidget {
   final _key = GlobalKey<FormState>();
@@ -22,6 +31,7 @@ class CreateMeal extends StatefulWidget {
 }
 
 class _CreateMealState extends State<CreateMeal> {
+  ImageSelectorUtils selector;
   File _selectedPicture;
 
   bool _working;
@@ -32,13 +42,16 @@ class _CreateMealState extends State<CreateMeal> {
 
   @override
   void initState() {
+    PreferencesUtils.getToken((result) => setState(() => _token = result));
+
     _working = false;
-    PreferencesUtils.getPreferences().then((preferences) => {
-          if (preferences.getString(PreferencesUtils.TOKEN_KEY) != null)
-            _token = preferences.getString(PreferencesUtils.TOKEN_KEY)
-          else
-            _token = ''
-        });
+    selector = ImageSelectorUtils(
+      height: 480,
+      width: 960,
+      quality: 50,
+      cameraListener: (file) => setState(() => _selectedPicture = file),
+      galleryListener: (file) => setState(() => _selectedPicture = file),
+    );
     super.initState();
   }
 
@@ -46,70 +59,48 @@ class _CreateMealState extends State<CreateMeal> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: widget._scaffoldKey,
-      appBar: AppBar(
-        title: Text(Names.createMealAppBar, style: Styles.title(Colors.white)),
-        backgroundColor: Palette.primary,
-      ),
-      floatingActionButton: createFAB(),
+      appBar: AppBar(title: Text(Names.createMealAppBar)),
+      floatingActionButton: uploadButton(),
       body: Padding(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(10),
         child: SingleChildScrollView(
           child: Form(
             key: widget._key,
             child: Column(
               children: [
-                InkWell(
-                  onTap: () => _showPicker(context),
-                  child: CircleAvatar(
-                    radius: 100,
-                    backgroundColor: Palette.primaryLight,
-                    child: createPicture(),
-                  ),
+                ImageAvatar(
+                  image: _selectedPicture,
+                  icon: Icons.add_a_photo,
+                  theme: Palette.primary,
+                  themeAlt: Colors.black54,
+                  selector: (context) => selector.showSelector(context),
                 ),
                 SizedBox(height: 20),
-                TextFormField(
-                  decoration: Utils.createHint('Nombre *'),
-                  maxLength: 255,
-                  style: Styles.body(Colors.black),
-                  onChanged: (value) => setState(() => _name = value),
-                  validator: (text) => _getErrorMessage(text.isEmpty),
+                TextFieldEmpty(
+                  hint: 'Nombre *',
+                  theme: Palette.primary,
+                  textListener: (value) => setState(() => _name = value),
+                  validator: (text) => ValidationUtils.validateEmpty(text),
                 ),
                 SizedBox(height: 10),
-                TextFormField(
-                  decoration: Utils.createHint('Descripción *'),
-                  keyboardType: TextInputType.multiline,
-                  minLines: 3,
-                  maxLines: 20,
-                  maxLength: 255,
-                  style: Styles.body(Colors.black),
-                  onChanged: (value) => setState(() => _description = value),
-                  validator: (text) => _getErrorMessage(text.isEmpty),
+                LongTextFieldEmpty(
+                  hint: 'Descripción *',
+                  theme: Palette.primary,
+                  textListener: (value) => setState(() => _description = value),
+                  validator: (text) => ValidationUtils.validateEmpty(text),
                 ),
                 SizedBox(height: 10),
-                SelectFormField(
-                  decoration: InputDecoration(
-                    hintText: 'Tipo de platillo',
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Palette.primary),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Palette.primaryLight),
-                    ),
-                    suffixIcon:
-                        Icon(Icons.arrow_drop_down, color: Palette.primary),
-                  ),
-                  items: Names.mealTypeSelector,
-                  onChanged: (value) => setState(() => _type = value),
-                  validator: (text) => _getErrorMessage(text.isEmpty),
+                SelectorFieldEmpty(
+                  options: Names.mealTypeSelector,
+                  hint: 'Tipo de platillo *',
+                  theme: Palette.primary,
+                  textListener: (value) => setState(() => _type = value),
+                  validator: (text) => ValidationUtils.validateEmpty(text),
                 ),
                 Container(
-                  margin: EdgeInsets.symmetric(vertical: 20),
                   width: double.infinity,
-                  child: Text(
-                    '* Campos obligatorios',
-                    style: Styles.body(Colors.black54),
-                  ),
-                )
+                  child: BodyLabel('* Campos obligatorios'),
+                ),
               ],
             ),
           ),
@@ -118,71 +109,30 @@ class _CreateMealState extends State<CreateMeal> {
     );
   }
 
-  String _getErrorMessage(bool empty) {
-    if (empty) {
-      return 'Este campo no puede estar vacío';
-    }
-    return null;
-  }
-
-  void _selectFromCamera() async {
-    File file = await ImagePicker.pickImage(
-        source: ImageSource.camera,
-        maxHeight: 480,
-        maxWidth: 960,
-        imageQuality: 50);
-
-    setState(() {
-      _selectedPicture = file;
-    });
-  }
-
-  void _selectFromGallery() async {
-    File file = await ImagePicker.pickImage(
-        source: ImageSource.gallery,
-        maxHeight: 480,
-        maxWidth: 960,
-        imageQuality: 50);
-
-    setState(() {
-      _selectedPicture = file;
-    });
-  }
-
   void _validateForm() {
-    if (widget._key.currentState.validate()) {
-      if (_selectedPicture == null) {
-        Utils.showSnack(widget._scaffoldKey, 'Debe seleccionar una imagen');
-      } else {
-        setState(() => _working = true);
-        uploadToFirebase(_selectedPicture);
-      }
+    if (_selectedPicture == null) {
+      Utils.showSnack(widget._scaffoldKey, Messages.NO_IMAGE);
+
+      return;
     }
-  }
 
-  Future uploadToFirebase(File imageToUpload) async {
-    DateTime now = DateTime.now();
-    String fileName = 'meal_' +
-        _type +
-        '_' +
-        _name +
-        '_' +
-        DateTime(now.year, now.month, now.day).toString().substring(0, 10);
+    if (widget._key.currentState.validate()) {
+      setState(() => _working = true);
+      String fileName = 'meal_' +
+          _type +
+          '_' +
+          _name +
+          '_' +
+          DateTime.now().toString().substring(0, 10);
 
-    Reference firebaseStorageRef;
-    UploadTask uploadTask;
-    TaskSnapshot taskSnapshot;
-
-    Firebase.initializeApp().then((value) async => {
-          firebaseStorageRef =
-              FirebaseStorage.instance.ref().child('meals/$fileName'),
-          uploadTask = firebaseStorageRef.putFile(_selectedPicture),
-          taskSnapshot = await uploadTask.whenComplete(() => null),
-          taskSnapshot.ref
-              .getDownloadURL()
-              .then((url) => saveMeal(url))
-              .catchError((_) => setState(() => _working = false)),
-        });
+      FirebaseStorageHelper(
+        imageToUpload: _selectedPicture,
+        fileName: fileName,
+        location: 'meals/',
+        onSuccess: (url) => saveMeal(url),
+        onFailure: (_) => showErrorMessage(),
+      ).uploadFile();
+    }
   }
 
   void saveMeal(String url) {
@@ -191,7 +141,8 @@ class _CreateMealState extends State<CreateMeal> {
     if (url != null && url.isNotEmpty) {
       final Meal meal = Meal(0, _name, _description, url, _type);
       service.post(meal).then(
-            (success) => {if (success) showDoneDialog() else showErrorDialog()},
+            (success) =>
+                {if (success) showDoneDialog() else showErrorMessage()},
           );
     } else {
       setState(() => _working = false);
@@ -201,107 +152,33 @@ class _CreateMealState extends State<CreateMeal> {
   void showDoneDialog() {
     showDialog(
       context: context,
-      barrierDismissible: true,
-      builder: (_) => AlertDialog(
-        title: Text(
-          'Platillo creado con exito',
-          textAlign: TextAlign.center,
-          style: Styles.subTitle(Colors.black),
-        ),
-        content: Icon(
-          Icons.done,
-          color: Palette.done,
-          size: 80,
-        ),
-      ),
-    ).then((_) => Navigator.pop(context));
+      builder: (_) => MaterialDialogNeutral('', 'Platillo creado con exito.'),
+    ).then((_) => Navigator.of(context).pop());
   }
 
-  void showErrorDialog() {
+  void showErrorMessage() {
     setState(() => _working = false);
 
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (_) => AlertDialog(
-          title: Text(
-            'Ha ocurrido un error, intente de nuevo',
-            textAlign: TextAlign.center,
-            style: Styles.subTitle(Colors.black),
-          ),
-          content: Icon(
-            Icons.error,
-            color: Palette.todo,
-            size: 80,
-          )),
-    );
+    Utils.showSnack(widget._scaffoldKey, Messages.ERROR);
   }
 
-  Widget createFAB() {
+  Widget uploadButton() {
     if (_working) {
-      return Container();
-    }
-
-    return FloatingActionButton(
-      backgroundColor: Palette.accent,
-      child: Icon(Icons.save),
-      onPressed: _validateForm,
-    );
-  }
-
-  Widget createPicture() {
-    if (_selectedPicture != null) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(100),
-        child: Image.file(
-          _selectedPicture,
-          width: 190,
-          height: 190,
-          fit: BoxFit.fill,
+      return FloatingActionButton(
+        onPressed: () => {},
+        child: Padding(
+          padding: EdgeInsets.all(15),
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation(Colors.white),
+            strokeWidth: 2,
+          ),
         ),
       );
     }
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Palette.primaryMedium,
-        borderRadius: BorderRadius.circular(100),
-      ),
-      width: 190,
-      height: 190,
-      child: Icon(
-        Icons.add_a_photo,
-        color: Colors.white,
-        size: 100,
-      ),
-    );
-  }
-
-  void _showPicker(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (ctx) => Container(
-        child: Wrap(
-          children: <Widget>[
-            ListTile(
-              leading: Icon(Icons.photo_library, color: Palette.primary),
-              title: Text(
-                'Seleccionar de la galeria',
-                style: Styles.body(Colors.black),
-              ),
-              onTap: () => {_selectFromGallery(), Navigator.of(context).pop()},
-            ),
-            ListTile(
-              leading: Icon(Icons.photo_camera, color: Palette.primary),
-              title: Text(
-                'Tomar una foto ahora',
-                style: Styles.body(Colors.black),
-              ),
-              onTap: () => {_selectFromCamera(), Navigator.of(context).pop()},
-            ),
-          ],
-        ),
-      ),
+    return FloatingActionButton(
+      onPressed: () => _validateForm(),
+      child: Icon(Icons.save),
     );
   }
 }

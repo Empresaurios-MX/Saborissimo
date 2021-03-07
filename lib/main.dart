@@ -18,7 +18,11 @@ class Saborissimo extends StatelessWidget {
       title: Names.appName,
       home: DailyMenu(),
       theme: ThemeData(
+        primaryColor: Palette.primary,
+        primaryColorLight: Palette.primaryLight,
+        accentColor: Palette.accent,
         canvasColor: Palette.background,
+        fontFamily: 'Lato-Regular',
       ),
       debugShowCheckedModeBanner: false,
     );

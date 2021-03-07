@@ -34,14 +34,9 @@ class Utils {
   }
 
   static Widget createLoginHeader(double height, String title) {
-    return Container(
-      height: 100,
-      width: double.infinity,
-      alignment: Alignment.center,
-      child: Text(
-        title,
-        style: Styles.headerTitle(Palette.primary),
-      ),
+    return Text(
+      title,
+      style: Styles.headerTitle(Palette.primary),
     );
   }
 
@@ -62,7 +57,7 @@ class Utils {
           Text(
             message,
             textAlign: TextAlign.center,
-            style: Styles.subTitleBig(Colors.black),
+            style: Styles.title(),
           ),
           SizedBox(height: 25),
           Icon(
@@ -75,29 +70,9 @@ class Utils {
     );
   }
 
-  static InputDecoration createHint(String hint) {
-    return InputDecoration(
-      hintText: hint,
-      enabledBorder: UnderlineInputBorder(
-        borderSide: BorderSide(color: Palette.primary),
-      ),
-      focusedBorder: UnderlineInputBorder(
-        borderSide: BorderSide(color: Palette.primaryLight),
-      ),
-    );
-  }
-
   static void showSnack(scaffoldKey, message) {
     scaffoldKey.currentState.showSnackBar(
-      SnackBar(content: Text(message, style: Styles.body(Colors.white))),
+      SnackBar(content: Text(message)),
     );
-  }
-
-  static String getFirebaseName(String path) {
-    return path
-        .split('/o/')[1]
-        .replaceAll('%2F', '/')
-        .replaceAll('%20', ' ')
-        .split('?alt')[0];
   }
 }

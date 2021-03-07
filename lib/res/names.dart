@@ -24,27 +24,27 @@ class Names {
     {
       'value': 'entrada',
       'label': 'Entrada',
-      'textStyle': Styles.body(Colors.black),
+      'textStyle': Styles.body(),
     },
     {
       'value': 'medio',
       'label': 'Medio',
-      'textStyle': Styles.body(Colors.black),
+      'textStyle': Styles.body(),
     },
     {
       'value': 'guisado',
       'label': 'Fuerte',
-      'textStyle': Styles.body(Colors.black),
+      'textStyle': Styles.body(),
     },
     {
       'value': 'postre',
       'label': 'Postre',
-      'textStyle': Styles.body(Colors.black),
+      'textStyle': Styles.body(),
     },
     {
       'value': 'bebida',
       'label': 'Bebida',
-      'textStyle': Styles.body(Colors.black),
+      'textStyle': Styles.body(),
     },
   ];
 

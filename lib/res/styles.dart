@@ -10,47 +10,24 @@ class Styles {
     );
   }
 
-  static TextStyle title(Color color) {
+  static TextStyle title() {
     return TextStyle(
-      color: color,
-      fontWeight: FontWeight.bold,
-      fontFamily: 'Lato-Regular',
+      color: Colors.black,
       fontSize: 20,
     );
   }
 
-  static TextStyle subTitle(Color color) {
+  static TextStyle subTitle() {
     return TextStyle(
-      color: color,
-      fontWeight: FontWeight.normal,
-      fontFamily: 'Lato-Regular',
-      fontSize: 17,
+      color: Colors.black,
+      fontSize: 18,
     );
   }
 
-  static TextStyle subTitleBig(Color color) {
+  static TextStyle body() {
     return TextStyle(
-      color: color,
-      fontWeight: FontWeight.normal,
-      fontFamily: 'Lato-Regular',
-      fontSize: 20,
-    );
-  }
-
-  static TextStyle body(Color color) {
-    return TextStyle(
-      color: color,
-      fontWeight: FontWeight.normal,
-      fontFamily: 'Lato-Regular',
-      fontSize: 15,
-    );
-  }
-
-  static TextStyle bodyWithoutColor() {
-    return TextStyle(
-      fontWeight: FontWeight.normal,
-      fontFamily: 'Lato-Regular',
-      fontSize: 15,
+      color: Colors.black,
+      fontSize: 16,
     );
   }
 

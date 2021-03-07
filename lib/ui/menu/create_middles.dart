@@ -5,7 +5,7 @@ import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/menu/create_stews.dart';
-import 'package:saborissimo/utils/PreferencesUtils.dart';
+import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/utils.dart';
 
 class CreateMiddles extends StatefulWidget {
@@ -42,11 +42,7 @@ class _CreateMiddlesState extends State<CreateMiddles> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: widget._scaffoldKey,
-      appBar: AppBar(
-        title:
-            Text(Names.createMiddlesAppBar, style: Styles.title(Colors.white)),
-        backgroundColor: Palette.primary,
-      ),
+      appBar: AppBar(title: Text(Names.createMiddlesAppBar)),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.arrow_forward),
@@ -106,7 +102,7 @@ class _CreateMiddlesState extends State<CreateMiddles> {
 
     return CheckboxListTile(
       contentPadding: EdgeInsets.all(10),
-      title: Text(meal.name, style: Styles.subTitle(Colors.black)),
+      title: Text(meal.name, style: Styles.subTitle()),
       secondary: Utils.createThumbnail(meal.picture),
       activeColor: Palette.done,
       value: _selected[meal],

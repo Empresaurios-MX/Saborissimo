@@ -4,7 +4,7 @@ import 'package:saborissimo/data/model/Order.dart';
 import 'package:saborissimo/data/service/MenuOrderDataService.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
-import 'package:saborissimo/utils/PreferencesUtils.dart';
+import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/utils.dart';
 import 'package:saborissimo/widgets/material_dialog_neutral.dart';
 import 'package:saborissimo/widgets/material_dialog_yes_no.dart';
@@ -133,8 +133,8 @@ class OrderDetail extends StatelessWidget {
         width: 100,
         fit: BoxFit.cover,
       ),
-      title: Text(type, style: Styles.subTitle(Colors.black)),
-      subtitle: Text(meal.name, style: Styles.bodyWithoutColor()),
+      title: Text(type, style: Styles.subTitle()),
+      subtitle: Text(meal.name, style: Styles.body()),
     );
   }
 
@@ -147,7 +147,7 @@ class OrderDetail extends StatelessWidget {
           children: [
             Icon(icon, color: Palette.primary),
             SizedBox(width: 20),
-            Flexible(child: Text(text, style: Styles.body(Colors.black)))
+            Flexible(child: Text(text, style: Styles.body()))
           ],
         ),
       ),
@@ -165,7 +165,7 @@ class OrderDetail extends StatelessWidget {
             SizedBox(width: 20),
             InkWell(
               onTap: () => makePhoneCall('tel:$text'),
-              child: Text(text, style: Styles.body(Colors.black)),
+              child: Text(text, style: Styles.body()),
             )
           ],
         ),
@@ -178,6 +178,7 @@ class OrderDetail extends StatelessWidget {
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        color: Palette.backgroundElevated,
         child: Column(
           children: [
             createInfoRow(Icons.person, 'Nombre', _order.client.name),

@@ -8,7 +8,8 @@ import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/drawer/drawer_app.dart';
 import 'package:saborissimo/ui/memories/add_memory.dart';
-import 'package:saborissimo/utils/PreferencesUtils.dart';
+import 'package:saborissimo/utils/firebase_storage_helper.dart';
+import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/utils.dart';
 import 'package:saborissimo/widgets/material_dialog_yes_no.dart';
 
@@ -23,19 +24,15 @@ class _MemoriesState extends State<Memories> {
   MemoriesDataService _service;
   List<Memory> _memories;
   bool _logged = false;
+  String _token;
 
   @override
   void initState() {
-    PreferencesUtils.getPreferences()
-        .then(
-          (preferences) => {
-            if (preferences.getBool(PreferencesUtils.LOGGED_KEY) ?? false)
-              setState(() => _logged = true)
-            else
-              _logged = false
-          },
-        )
-        .then((_) => refreshList());
+    PreferencesUtils.getToken((result) => setState(() => _token = result));
+    PreferencesUtils.isUserLogged(
+      (result) => {setState(() => _logged = result), refreshList()},
+    );
+
     super.initState();
   }
 
@@ -44,8 +41,7 @@ class _MemoriesState extends State<Memories> {
     return Scaffold(
       key: widget._scaffoldKey,
       appBar: AppBar(
-        title: Text(Names.memoriesAppBar, style: Styles.title(Colors.white)),
-        backgroundColor: Palette.primary,
+        title: Text(Names.memoriesAppBar),
         actions: [createRefreshButton()],
       ),
       floatingActionButton: FloatingActionButton(
@@ -65,9 +61,8 @@ class _MemoriesState extends State<Memories> {
         (response) => setState(() => _memories = response.reversed.toList()));
   }
 
-  void attemptToDelete(String token, Memory memory) {
-    String child = Utils.getFirebaseName(memory.picture);
-    MemoriesDataService service = MemoriesDataService(token);
+  void deleteMemory(Memory memory) {
+    MemoriesDataService service = MemoriesDataService(_token);
 
     service
         .delete(memory.id.toString())
@@ -76,8 +71,7 @@ class _MemoriesState extends State<Memories> {
             if (success)
               {
                 refreshList(),
-                Firebase.initializeApp().then(
-                    (_) => FirebaseStorage.instance.ref().child(child).delete())
+                FirebaseStorageHelper.deleteFile(memory.picture),
               }
             else
               Utils.showSnack(
@@ -94,20 +88,6 @@ class _MemoriesState extends State<Memories> {
         );
   }
 
-  void deleteMemory(Memory memory) {
-    String token = '';
-
-    PreferencesUtils.getPreferences().then(
-      (preferences) => {
-        if (preferences.getBool(PreferencesUtils.LOGGED_KEY) ?? false)
-          {
-            token = preferences.getString(PreferencesUtils.TOKEN_KEY),
-            attemptToDelete(token, memory),
-          }
-      },
-    );
-  }
-
   void showPictureDialog(Memory memory) {
     showDialog(
       context: context,
@@ -116,7 +96,7 @@ class _MemoriesState extends State<Memories> {
         title: Text(
           memory.title,
           textAlign: TextAlign.center,
-          style: Styles.title(Colors.black),
+          style: Styles.title(),
         ),
         content: Row(
           children: [

@@ -3,13 +3,12 @@ import 'package:saborissimo/data/model/Meal.dart';
 import 'package:saborissimo/data/service/MealsDataService.dart';
 import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
-import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/drawer/drawer_app.dart';
-import 'package:saborissimo/ui/meals/meals_detail.dart';
 import 'package:saborissimo/ui/menu/create_meal.dart';
-import 'package:saborissimo/ui/menu/create_middles.dart';
-import 'package:saborissimo/utils/PreferencesUtils.dart';
+import 'package:saborissimo/ui/menu/meal_detail.dart';
+import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/utils.dart';
+import 'package:saborissimo/widgets/meal_list_tile.dart';
 
 class Meals extends StatefulWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -25,14 +24,9 @@ class _MealsState extends State<Meals> {
 
   @override
   void initState() {
-    PreferencesUtils.getPreferences()
-        .then((preferences) => {
-              if (preferences.getString(PreferencesUtils.TOKEN_KEY) != null)
-                _token = preferences.getString(PreferencesUtils.TOKEN_KEY)
-              else
-                _token = 'N/A'
-            })
-        .then((_) => refreshList());
+    PreferencesUtils.getToken(
+      (result) => {setState(() => _token = result), refreshList()},
+    );
     super.initState();
   }
 
@@ -41,16 +35,14 @@ class _MealsState extends State<Meals> {
     return Scaffold(
       key: widget._scaffoldKey,
       appBar: AppBar(
-        title: Text(Names.mealsAppBar, style: Styles.title(Colors.white)),
-        backgroundColor: Palette.primary,
+        title: Text(Names.mealsAppBar),
         actions: [
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () => Utils.pushRoute(context, CreateMeal())
-                .then((_) => refreshList()),
-          ),
           createRefreshButton(),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () => Utils.pushRoute(context, CreateMeal()).then((_) => refreshList()),
       ),
       drawer: DrawerApp(),
       body: createList(),
@@ -59,7 +51,8 @@ class _MealsState extends State<Meals> {
 
   void refreshList() {
     _service = MealsDataService(_token);
-    _service.get().then((response) => setState(() => _meals = response.reversed.toList()));
+    _service.get().then(
+        (response) => setState(() => _meals = response.reversed.toList()));
   }
 
   Widget createRefreshButton() {
@@ -80,18 +73,14 @@ class _MealsState extends State<Meals> {
     }
 
     return ListView.builder(
-      itemBuilder: (context, index) => createListTile(_meals[index]),
+      itemBuilder: (context, index) => MealListTile(
+        meal: _meals[index],
+        action: () => Utils.pushRoute(
+          context,
+          MealDetail(meal: _meals[index], logged: true),
+        ).then((_) => refreshList()),
+      ),
       itemCount: _meals.length,
-    );
-  }
-
-  Widget createListTile(Meal meal) {
-    return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 5),
-      leading: Utils.createThumbnail(meal.picture),
-      title: Text(meal.name, style: Styles.subTitle(Colors.black)),
-      subtitle: Text(meal.type.toUpperCase(), style: Styles.body(Colors.black)),
-      onTap: () => Utils.pushRoute(context, MealsDetail(meal)).then((_) => refreshList()),
     );
   }
 }

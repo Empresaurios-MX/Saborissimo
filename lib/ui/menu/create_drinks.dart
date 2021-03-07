@@ -7,7 +7,7 @@ import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/menu/daily_menu.dart';
-import 'package:saborissimo/utils/PreferencesUtils.dart';
+import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/utils.dart';
 import 'package:saborissimo/widgets/material_dialog_neutral.dart';
 
@@ -50,11 +50,7 @@ class _CreateDrinksState extends State<CreateDrinks> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: widget._scaffoldKey,
-      appBar: AppBar(
-        title:
-            Text(Names.createDrinksAppBar, style: Styles.title(Colors.white)),
-        backgroundColor: Palette.primary,
-      ),
+      appBar: AppBar(title: Text(Names.createDrinksAppBar)),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: createFAB(),
       body: createList(),
@@ -147,7 +143,7 @@ class _CreateDrinksState extends State<CreateDrinks> {
 
     return CheckboxListTile(
       contentPadding: EdgeInsets.all(10),
-      title: Text(meal.name, style: Styles.subTitle(Colors.black)),
+      title: Text(meal.name, style: Styles.subTitle()),
       secondary: Utils.createThumbnail(meal.picture),
       activeColor: Palette.done,
       value: _selected[meal],

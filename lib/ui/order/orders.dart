@@ -6,9 +6,10 @@ import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/drawer/drawer_app.dart';
 import 'package:saborissimo/ui/order/order_detail.dart';
-import 'package:saborissimo/utils/PreferencesUtils.dart';
+import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/utils.dart';
 import 'package:saborissimo/widgets/material_dialog_yes_no.dart';
+import 'package:saborissimo/widgets/rich_popup_menu.dart';
 
 class Orders extends StatefulWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -40,9 +41,8 @@ class _OrdersState extends State<Orders> {
     return Scaffold(
       key: widget._scaffoldKey,
       appBar: AppBar(
-        title: Text(Names.ordersAppBar, style: Styles.title(Colors.white)),
-        backgroundColor: Palette.primary,
-        actions: [createDeleteButton(), createRefreshButton()],
+        title: Text(Names.ordersAppBar),
+        actions: [getActions()],
       ),
       drawer: DrawerApp(),
       body: createList(),
@@ -51,7 +51,8 @@ class _OrdersState extends State<Orders> {
 
   void refreshList() {
     _service = MenuOrderDataService(_token);
-    _service.get().then((response) => setState(() => _orders = response.reversed.toList()));
+    _service.get().then(
+        (response) => setState(() => _orders = response.reversed.toList()));
   }
 
   void deleteOrders() {
@@ -86,6 +87,28 @@ class _OrdersState extends State<Orders> {
           }
       },
     );
+  }
+
+  void actionAdmin(int selected) {
+    switch (selected) {
+      case 0:
+        refreshList();
+        break;
+      case 1:
+        showDialog(
+          context: context,
+          builder: (_) => MaterialDialogYesNo(
+            title: 'Eliminar todos los pedidos',
+            body:
+                'Esta acción eliminará el registro de todos los pedidos para siempre.',
+            positiveActionLabel: 'Eliminar',
+            positiveAction: () => {deleteOrders(), Navigator.pop(context)},
+            negativeActionLabel: "Cancelar",
+            negativeAction: () => Navigator.pop(context),
+          ),
+        );
+        break;
+    }
   }
 
   Widget createList() {
@@ -123,13 +146,13 @@ class _OrdersState extends State<Orders> {
       tileColor: Palette.background,
       title: Text(
         order.client.name,
-        style: Styles.subTitle(Colors.black),
+        style: Styles.subTitle(),
         softWrap: false,
         overflow: TextOverflow.ellipsis,
       ),
       subtitle: Text(
         order.orderType,
-        style: Styles.bodyWithoutColor(),
+        style: TextStyle(fontSize: 14, color: Colors.black54),
       ),
       trailing: chip,
       onTap: () => Utils.pushRoute(context, OrderDetail(order))
@@ -137,29 +160,11 @@ class _OrdersState extends State<Orders> {
     );
   }
 
-  Widget createDeleteButton() {
-    return IconButton(
-      icon: Icon(Icons.delete_forever),
-      tooltip: 'Borrar pedidos',
-      onPressed: () => showDialog(
-        context: context,
-        builder: (_) => MaterialDialogYesNo(
-          title: 'Eliminar todos los pedidos',
-          body: 'Esta acción eliminará el registro de todos los pedidos para siempre.',
-          positiveActionLabel: 'Eliminar',
-          positiveAction: () =>{deleteOrders(), Navigator.pop(context)},
-          negativeActionLabel: "Cancelar",
-          negativeAction: () => Navigator.pop(context),
-        ),
-      ),
-    );
-  }
-
-  Widget createRefreshButton() {
-    return IconButton(
-      icon: Icon(Icons.refresh),
-      tooltip: 'Refrescar',
-      onPressed: () => refreshList(),
+  Widget getActions() {
+    return RichPopupMenu(
+      action: (int selected) => actionAdmin(selected),
+      labels: ['Refrescar', 'Borrar todos los pedidos'],
+      icons: [Icons.refresh, Icons.delete],
     );
   }
 
@@ -173,7 +178,7 @@ class _OrdersState extends State<Orders> {
       ),
       label: Text(
         'Entregado',
-        style: Styles.body(Colors.black),
+        style: Styles.body(),
       ),
     );
   }
@@ -188,7 +193,7 @@ class _OrdersState extends State<Orders> {
       ),
       label: Text(
         'Sin entregar',
-        style: Styles.body(Colors.black),
+        style: Styles.body(),
       ),
     );
   }

@@ -36,7 +36,7 @@ class MemoriesDataService {
       },
       body: Memory.profileToJson(memory),
     );
-    print(response.body);
+
     if (response.statusCode == 200) {
       return Order.profileFromJsonResponse(response.body);
     } else {

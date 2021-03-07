@@ -5,15 +5,16 @@ import 'package:saborissimo/data/model/MenuOrder.dart';
 import 'package:saborissimo/data/service/MenuDataService.dart';
 import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
-import 'package:saborissimo/res/styles.dart';
-import 'package:saborissimo/ui/cart/confirm_order.dart';
+import 'package:saborissimo/ui/cart/cart_review.dart';
 import 'package:saborissimo/ui/drawer/drawer_app.dart';
 import 'package:saborissimo/ui/menu/create_entrances.dart';
 import 'package:saborissimo/ui/menu/meal_detail.dart';
-import 'package:saborissimo/utils/PreferencesUtils.dart';
+import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/utils.dart';
 import 'package:saborissimo/widgets/material_dialog_neutral.dart';
 import 'package:saborissimo/widgets/material_dialog_yes_no.dart';
+import 'package:saborissimo/widgets/meal_grid_tile.dart';
+import 'package:saborissimo/widgets/rich_popup_menu.dart';
 
 class DailyMenu extends StatefulWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -53,8 +54,7 @@ class _DailyMenuState extends State<DailyMenu> {
     return Scaffold(
       key: widget._scaffoldKey,
       appBar: AppBar(
-        title: Text(Names.menuAppBar, style: Styles.title(Colors.white)),
-        backgroundColor: Palette.primary,
+        title: Text(Names.menuAppBar),
         actions: createActions(),
       ),
       drawer: DrawerApp(),
@@ -107,27 +107,47 @@ class _DailyMenuState extends State<DailyMenu> {
     );
   }
 
-  void attemptToMark(Meal meal) {
+  void addToCart(Meal meal) {
     if (!_logged) {
       if (meal.type == "entrada") {
-        setState(() => _entrance = meal);
+        if (_entrance != null && _entrance.id == meal.id) {
+          setState(() => _entrance = null);
+        } else {
+          setState(() => _entrance = meal);
+        }
       }
       if (meal.type == "medio") {
-        setState(() => _middle = meal);
+        if (_middle != null && _middle.id == meal.id) {
+          setState(() => _middle = null);
+        } else {
+          setState(() => _middle = meal);
+        }
       }
       if (meal.type == "guisado") {
-        setState(() => _stew = meal);
+        if (_stew != null && _stew.id == meal.id) {
+          setState(() => _stew = null);
+        } else {
+          setState(() => _stew = meal);
+        }
       }
       if (meal.type == "postre") {
-        setState(() => _dessert = meal);
+        if (_dessert != null && _dessert.id == meal.id) {
+          setState(() => _dessert = null);
+        } else {
+          setState(() => _dessert = meal);
+        }
       }
       if (meal.type == "bebida") {
-        setState(() => _drink = meal);
+        if (_drink != null && _drink.id == meal.id) {
+          setState(() => _drink = null);
+        } else {
+          setState(() => _drink = meal);
+        }
       }
     }
   }
 
-  bool isMarked(Meal meal) {
+  bool isInCart(Meal meal) {
     if (!_logged) {
       if (meal.type == "entrada" && _entrance != null) {
         return _entrance.id == meal.id;
@@ -173,7 +193,7 @@ class _DailyMenuState extends State<DailyMenu> {
     if (isValidOrder()) {
       Utils.pushRoute(
         context,
-        ConfirmOrder(MenuOrder(0, _entrance, _middle, _stew, _dessert, _drink)),
+        CartReview(MenuOrder(0, _entrance, _middle, _stew, _dessert, _drink)),
       ).then((value) => refreshMenu());
     } else {
       Utils.showSnack(
@@ -183,20 +203,30 @@ class _DailyMenuState extends State<DailyMenu> {
     }
   }
 
-  List<Widget> createActions() {
-    List<Widget> actions = [];
+  void actionClient(int selected) {
+    switch (selected) {
+      case 0:
+        refreshMenu();
+        break;
+      case 1:
+        showDialog(
+          context: context,
+          builder: (_) => MaterialDialogNeutral(
+            'Ayuda',
+            'Toca la imagen del platillo para ver mas detalles.',
+          ),
+        );
+        break;
+    }
+  }
 
-    actions.add(IconButton(
-      icon: Icon(Icons.refresh),
-      tooltip: 'Refrescar',
-      onPressed: () => refreshMenu(),
-    ));
-
-    if (_logged) {
-      actions.add(IconButton(
-        icon: Icon(Icons.delete_forever),
-        tooltip: 'Borrar menú',
-        onPressed: () => showDialog(
+  void actionAdmin(int selected) {
+    switch (selected) {
+      case 0:
+        refreshMenu();
+        break;
+      case 1:
+        showDialog(
           context: context,
           builder: (_) => MaterialDialogYesNo(
             title: 'Eliminar el menú del día',
@@ -206,52 +236,94 @@ class _DailyMenuState extends State<DailyMenu> {
             negativeActionLabel: "Cancelar",
             negativeAction: () => Navigator.pop(context),
           ),
-        ),
-      ));
+        );
+        break;
+    }
+  }
 
-      actions.add(IconButton(
-        icon: Icon(Icons.receipt_long),
-        tooltip: 'Publicar menu',
-        onPressed: () => Utils.pushRoute(context, CreateEntrances()),
-      ));
+  List<Widget> createActions() {
+    List<Widget> actions = [];
+
+    if (_logged) {
+      actions = [
+        IconButton(
+          icon: Icon(Icons.receipt_long),
+          tooltip: 'Publicar menu',
+          onPressed: () => Utils.pushRoute(context, CreateEntrances()),
+        ),
+        RichPopupMenu(
+          action: (int selected) => actionAdmin(selected),
+          labels: ['Refrescar', 'Borrar menú'],
+          icons: [Icons.refresh, Icons.delete],
+        ),
+      ];
     } else {
-      actions.add(IconButton(
-        icon: Icon(Icons.help),
-        tooltip: 'Ayuda',
-        onPressed: () => showDialog(
-          context: context,
-          builder: (_) => MaterialDialogNeutral(
-            'Ayuda',
-            'Manten presionado cualquier platillo para agregarlo a tu orden',
-          ),
+      actions = [
+        IconButton(
+          icon: Icon(Icons.shopping_cart),
+          onPressed: () => goToCart(),
         ),
-      ));
-
-      actions.add(IconButton(
-        icon: Icon(Icons.shopping_cart),
-        tooltip: 'Realizar pedido',
-        onPressed: () => goToCart(),
-      ));
+        RichPopupMenu(
+          action: (int selected) => actionClient(selected),
+          labels: ['Refrescar', 'Ayuda'],
+          icons: [Icons.refresh, Icons.help],
+        ),
+      ];
     }
 
     return actions;
   }
 
   Widget createMenu() {
-    List<Widget> rows = [];
+    List<Widget> tiles = [];
 
     if (_menu != null) {
       if (_menu.entrances.isNotEmpty) {
-        rows.add(createLabel('Entradas'));
-        rows.add(createRow(_menu.entrances));
-        rows.add(createLabel('Platos medios'));
-        rows.add(createRow(_menu.middles));
-        rows.add(createLabel('Platos fuertes'));
-        rows.add(createRow(_menu.stews));
-        rows.add(createLabel('Postres'));
-        rows.add(createRow(_menu.desserts));
-        rows.add(createLabel('Bebidas'));
-        rows.add(createRow(_menu.drinks));
+        _menu.entrances.forEach((meal) => tiles.add(
+              MealGridTile(
+                meal: meal,
+                isSelected: () => this.isInCart(meal),
+                goDetail: () =>
+                    Utils.pushRoute(context, MealDetail(meal: meal)),
+                addToCart: () => addToCart(meal),
+              ),
+            ));
+        _menu.middles.forEach((meal) => tiles.add(
+              MealGridTile(
+                meal: meal,
+                isSelected: () => this.isInCart(meal),
+                goDetail: () =>
+                    Utils.pushRoute(context, MealDetail(meal: meal)),
+                addToCart: () => addToCart(meal),
+              ),
+            ));
+        _menu.stews.forEach((meal) => tiles.add(
+              MealGridTile(
+                meal: meal,
+                isSelected: () => this.isInCart(meal),
+                goDetail: () =>
+                    Utils.pushRoute(context, MealDetail(meal: meal)),
+                addToCart: () => addToCart(meal),
+              ),
+            ));
+        _menu.desserts.forEach((meal) => tiles.add(
+              MealGridTile(
+                meal: meal,
+                isSelected: () => this.isInCart(meal),
+                goDetail: () =>
+                    Utils.pushRoute(context, MealDetail(meal: meal)),
+                addToCart: () => addToCart(meal),
+              ),
+            ));
+        _menu.drinks.forEach((meal) => tiles.add(
+              MealGridTile(
+                meal: meal,
+                isSelected: () => this.isInCart(meal),
+                goDetail: () =>
+                    Utils.pushRoute(context, MealDetail(meal: meal)),
+                addToCart: () => addToCart(meal),
+              ),
+            ));
       } else {
         return Utils.createNoItemsMessage(
           'El menu de hoy no ha sido publicado aún, disculpe las molestias',
@@ -265,80 +337,16 @@ class _DailyMenuState extends State<DailyMenu> {
       );
     }
 
-    return ListView(children: rows);
-  }
-
-  Widget createLabel(String text) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 20),
-      width: double.infinity,
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: Styles.title(Colors.black),
-      ),
-    );
-  }
-
-  Widget createRow(List<Meal> meals) {
-    List<Widget> cards = [];
-
-    meals.forEach(
-      (meal) => {cards.add(createCard(context, meal))},
-    );
-
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: cards,
-      ),
-    );
-  }
-
-  Widget createCard(context, Meal meal) {
-    return InkWell(
-      onTap: () => Utils.pushRoute(context, MealDetail(meal)),
-      onLongPress: () => attemptToMark(meal),
-      child: Container(
-        color: Colors.transparent,
-        width: 225,
-        child: Card(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          child: Padding(
-            padding: EdgeInsets.all(5),
-            child: Stack(
-              alignment: Alignment.center,
-              children: <Widget>[
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    meal.picture,
-                    height: 125,
-                    width: double.infinity,
-                    fit: BoxFit.fitWidth,
-                  ),
-                ),
-                if (!isMarked(meal))
-                  Text(
-                    meal.name,
-                    textAlign: TextAlign.center,
-                    style: Styles.legend(20),
-                    overflow: TextOverflow.clip,
-                  ),
-                if (isMarked(meal))
-                  Container(
-                    color: Colors.black54,
-                    child: Icon(
-                      Icons.check_circle_outline,
-                      color: Colors.white,
-                      size: 50,
-                    ),
-                  ),
-              ],
-            ),
-          ),
+    return Padding(
+      padding: EdgeInsets.all(3),
+      child: GridView(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 0.90,
+          crossAxisSpacing: 3,
+          mainAxisSpacing: 3,
         ),
+        children: tiles,
       ),
     );
   }
