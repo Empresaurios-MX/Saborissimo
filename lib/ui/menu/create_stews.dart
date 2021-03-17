@@ -5,6 +5,7 @@ import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/menu/create_desserts.dart';
+import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/utils.dart';
 
@@ -69,7 +70,7 @@ class _CreateStewsState extends State<CreateStews> {
 
     if (selectedMeals.isNotEmpty) {
       if (selectedMeals.length <= 3) {
-        Utils.pushRoute(
+        NavigationUtils.push(
           context,
           CreateDesserts(
             widget.entrances,

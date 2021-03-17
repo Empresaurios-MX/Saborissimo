@@ -6,6 +6,7 @@ import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/drawer/drawer_app.dart';
 import 'package:saborissimo/ui/order/order_detail.dart';
+import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/utils.dart';
 import 'package:saborissimo/widgets/material_dialog_yes_no.dart';
@@ -155,7 +156,7 @@ class _OrdersState extends State<Orders> {
         style: TextStyle(fontSize: 14, color: Colors.black54),
       ),
       trailing: chip,
-      onTap: () => Utils.pushRoute(context, OrderDetail(order))
+      onTap: () => NavigationUtils.push(context, OrderDetail(order))
           .then((_) => refreshList()),
     );
   }

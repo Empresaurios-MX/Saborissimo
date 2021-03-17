@@ -9,6 +9,7 @@ import 'package:saborissimo/ui/cart/cart_review.dart';
 import 'package:saborissimo/ui/drawer/drawer_app.dart';
 import 'package:saborissimo/ui/menu/create_entrances.dart';
 import 'package:saborissimo/ui/menu/meal_detail.dart';
+import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/utils.dart';
 import 'package:saborissimo/widgets/material_dialog_neutral.dart';
@@ -191,7 +192,7 @@ class _DailyMenuState extends State<DailyMenu> {
 
   void goToCart() {
     if (isValidOrder()) {
-      Utils.pushRoute(
+      NavigationUtils.push(
         context,
         CartReview(MenuOrder(0, _entrance, _middle, _stew, _dessert, _drink)),
       ).then((value) => refreshMenu());
@@ -249,7 +250,7 @@ class _DailyMenuState extends State<DailyMenu> {
         IconButton(
           icon: Icon(Icons.receipt_long),
           tooltip: 'Publicar menu',
-          onPressed: () => Utils.pushRoute(context, CreateEntrances()),
+          onPressed: () => NavigationUtils.push(context, CreateEntrances()),
         ),
         RichPopupMenu(
           action: (int selected) => actionAdmin(selected),
@@ -284,7 +285,7 @@ class _DailyMenuState extends State<DailyMenu> {
                 meal: meal,
                 isSelected: () => this.isInCart(meal),
                 goDetail: () =>
-                    Utils.pushRoute(context, MealDetail(meal: meal)),
+                    NavigationUtils.push(context, MealDetail(meal: meal)),
                 addToCart: () => addToCart(meal),
               ),
             ));
@@ -293,7 +294,7 @@ class _DailyMenuState extends State<DailyMenu> {
                 meal: meal,
                 isSelected: () => this.isInCart(meal),
                 goDetail: () =>
-                    Utils.pushRoute(context, MealDetail(meal: meal)),
+                    NavigationUtils.push(context, MealDetail(meal: meal)),
                 addToCart: () => addToCart(meal),
               ),
             ));
@@ -302,7 +303,7 @@ class _DailyMenuState extends State<DailyMenu> {
                 meal: meal,
                 isSelected: () => this.isInCart(meal),
                 goDetail: () =>
-                    Utils.pushRoute(context, MealDetail(meal: meal)),
+                    NavigationUtils.push(context, MealDetail(meal: meal)),
                 addToCart: () => addToCart(meal),
               ),
             ));
@@ -311,7 +312,7 @@ class _DailyMenuState extends State<DailyMenu> {
                 meal: meal,
                 isSelected: () => this.isInCart(meal),
                 goDetail: () =>
-                    Utils.pushRoute(context, MealDetail(meal: meal)),
+                    NavigationUtils.push(context, MealDetail(meal: meal)),
                 addToCart: () => addToCart(meal),
               ),
             ));
@@ -320,7 +321,7 @@ class _DailyMenuState extends State<DailyMenu> {
                 meal: meal,
                 isSelected: () => this.isInCart(meal),
                 goDetail: () =>
-                    Utils.pushRoute(context, MealDetail(meal: meal)),
+                    NavigationUtils.push(context, MealDetail(meal: meal)),
                 addToCart: () => addToCart(meal),
               ),
             ));

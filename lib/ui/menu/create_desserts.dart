@@ -4,6 +4,7 @@ import 'package:saborissimo/data/service/MealsDataService.dart';
 import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
+import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/utils.dart';
 
@@ -71,7 +72,7 @@ class _CreateDessertsState extends State<CreateDesserts> {
 
     if (selectedMeals.isNotEmpty) {
       if (selectedMeals.length <= 3) {
-        Utils.pushRoute(
+        NavigationUtils.push(
           context,
           CreateDrinks(
             widget.entrances,
@@ -82,11 +83,15 @@ class _CreateDessertsState extends State<CreateDesserts> {
         );
       } else {
         Utils.showSnack(
-            widget._scaffoldKey, "Solo puede agregar un máximo de 3 platillos");
+          widget._scaffoldKey,
+          "Solo puede agregar un máximo de 3 platillos",
+        );
       }
     } else {
       Utils.showSnack(
-          widget._scaffoldKey, "Debe agregar por lo menos 1 platillo");
+        widget._scaffoldKey,
+        "Debe agregar por lo menos 1 platillo",
+      );
     }
   }
 

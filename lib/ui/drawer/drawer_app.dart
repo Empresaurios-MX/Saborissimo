@@ -7,6 +7,7 @@ import 'package:saborissimo/ui/meals/meals.dart';
 import 'package:saborissimo/ui/memories/memories.dart';
 import 'package:saborissimo/ui/menu/daily_menu.dart';
 import 'package:saborissimo/ui/order/orders.dart';
+import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/utils.dart';
 
@@ -37,20 +38,14 @@ class _DrawerAppState extends State<DrawerApp> {
         children: <Widget>[
           Utils.createDrawerHeader(150, Names.appName),
           SizedBox(height: 20),
-          createDrawerItem(
-              context, DailyMenu(), Icons.menu_book, Names.menuAppBar),
+          drawerTile(DailyMenu(), Icons.menu_book, Names.menuAppBar),
+          if (_logged) drawerTile(Meals(), Icons.food_bank, Names.mealsAppBar),
+          drawerTile(Memories(), Icons.photo_album, Names.memoriesAppBar),
           if (_logged)
-            createDrawerItem(
-                context, Meals(), Icons.food_bank, Names.mealsAppBar),
-          createDrawerItem(
-              context, Memories(), Icons.photo_album, Names.memoriesAppBar),
-          if (_logged)
-            createDrawerItem(
-                context, Orders(), Icons.shopping_bag, Names.ordersAppBar),
-          if (_logged) createLogOutDrawerItem(),
+            drawerTile(Orders(), Icons.shopping_bag, Names.ordersAppBar),
+          if (_logged) logoutTile(),
           if (!_logged)
-            createDrawerItem(
-                context, Login(), Icons.login, 'Sección de empleados'),
+            drawerTile(Login(), Icons.login, 'Sección de empleados'),
         ],
       ),
     );
@@ -73,31 +68,22 @@ class _DrawerAppState extends State<DrawerApp> {
 
     setState(() => _logged = false);
 
-    Utils.replaceRoute(context, DailyMenu());
+    NavigationUtils.replace(context, DailyMenu());
   }
 
-  Widget createLogOutDrawerItem() {
+  Widget logoutTile() {
     return ListTile(
       onTap: () => logOut(),
-      leading: Icon(
-        Icons.logout,
-        size: 25,
-        color: Palette.primary,
-      ),
+      leading: Icon(Icons.logout, size: 25, color: Palette.primary),
       title: Text(Names.logoutAppBar, style: Styles.subTitle()),
     );
   }
 
-  Widget createDrawerItem(
-      BuildContext context, Widget destination, IconData icon, String title) {
+  Widget drawerTile(Widget destination, IconData icon, String label) {
     return ListTile(
-      onTap: () => Utils.replaceRoute(context, destination),
-      leading: Icon(
-        icon,
-        size: 25,
-        color: Palette.primary,
-      ),
-      title: Text(title, style: Styles.subTitle()),
+      onTap: () => NavigationUtils.replace(context, destination),
+      leading: Icon(icon, size: 25, color: Palette.primary),
+      title: Text(label, style: Styles.subTitle()),
     );
   }
 }

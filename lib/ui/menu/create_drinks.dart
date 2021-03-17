@@ -7,6 +7,7 @@ import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/menu/daily_menu.dart';
+import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/utils.dart';
 import 'package:saborissimo/widgets/material_dialog_neutral.dart';
@@ -105,10 +106,7 @@ class _CreateDrinksState extends State<CreateDrinks> {
     showDialog(
       context: context,
       builder: (_) => MaterialDialogNeutral('', 'Menú publicado con exito.'),
-    ).then((_) => {
-          Navigator.of(context).popUntil((route) => route.isFirst),
-          Utils.replaceRoute(context, DailyMenu()),
-        });
+    ).then((_) => NavigationUtils.popAndReplace(context, DailyMenu()));
   }
 
   void showErrorMessage() {

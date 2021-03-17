@@ -1,5 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/Memory.dart';
 import 'package:saborissimo/data/service/MemoriesDataService.dart';
@@ -9,6 +7,7 @@ import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/drawer/drawer_app.dart';
 import 'package:saborissimo/ui/memories/add_memory.dart';
 import 'package:saborissimo/utils/firebase_storage_helper.dart';
+import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/utils.dart';
 import 'package:saborissimo/widgets/material_dialog_yes_no.dart';
@@ -47,8 +46,8 @@ class _MemoriesState extends State<Memories> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add_a_photo),
         backgroundColor: Palette.accent,
-        onPressed: () =>
-            Utils.pushRoute(context, AddMemory()).then((_) => refreshList()),
+        onPressed: () => NavigationUtils.push(context, AddMemory())
+            .then((_) => refreshList()),
       ),
       drawer: DrawerApp(),
       body: createList(),

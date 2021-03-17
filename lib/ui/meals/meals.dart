@@ -6,6 +6,7 @@ import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/ui/drawer/drawer_app.dart';
 import 'package:saborissimo/ui/menu/create_meal.dart';
 import 'package:saborissimo/ui/menu/meal_detail.dart';
+import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/utils.dart';
 import 'package:saborissimo/widgets/meal_list_tile.dart';
@@ -42,7 +43,8 @@ class _MealsState extends State<Meals> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () => Utils.pushRoute(context, CreateMeal()).then((_) => refreshList()),
+        onPressed: () => NavigationUtils.push(context, CreateMeal())
+            .then((_) => refreshList()),
       ),
       drawer: DrawerApp(),
       body: createList(),
@@ -75,7 +77,7 @@ class _MealsState extends State<Meals> {
     return ListView.builder(
       itemBuilder: (context, index) => MealListTile(
         meal: _meals[index],
-        action: () => Utils.pushRoute(
+        action: () => NavigationUtils.push(
           context,
           MealDetail(meal: _meals[index], logged: true),
         ).then((_) => refreshList()),

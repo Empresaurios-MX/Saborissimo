@@ -6,6 +6,7 @@ import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/menu/create_meal.dart';
 import 'package:saborissimo/ui/menu/create_middles.dart';
+import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/utils.dart';
 
@@ -44,7 +45,7 @@ class _CreateEntrancesState extends State<CreateEntrances> {
         actions: [
           IconButton(
             icon: Icon(Icons.add),
-            onPressed: () => Utils.pushRoute(context, CreateMeal())
+            onPressed: () => NavigationUtils.push(context, CreateMeal())
                 .then((_) => refreshList()),
           ),
         ],
@@ -74,7 +75,7 @@ class _CreateEntrancesState extends State<CreateEntrances> {
 
     if (selectedMeals.isNotEmpty) {
       if (selectedMeals.length <= 3) {
-        Utils.pushRoute(context, CreateMiddles(selectedMeals));
+        NavigationUtils.push(context, CreateMiddles(selectedMeals));
       } else {
         Utils.showSnack(
             widget._scaffoldKey, "Solo puede agregar un máximo de 3 platillos");

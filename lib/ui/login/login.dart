@@ -6,6 +6,7 @@ import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/ui/drawer/drawer_app.dart';
 import 'package:saborissimo/ui/menu/daily_menu.dart';
+import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/utils.dart';
 import 'package:saborissimo/widgets/input/password_field_filled.dart';
@@ -119,6 +120,6 @@ class _LoginState extends State<Login> {
           preferences.setBool(PreferencesUtils.LOGGED_KEY, true)
         });
 
-    Utils.replaceRoute(context, DailyMenu());
+    NavigationUtils.replace(context, DailyMenu());
   }
 }
