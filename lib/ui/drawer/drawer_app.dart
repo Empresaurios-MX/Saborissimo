@@ -9,7 +9,7 @@ import 'package:saborissimo/ui/menu/daily_menu.dart';
 import 'package:saborissimo/ui/order/orders.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
-import 'package:saborissimo/utils/utils.dart';
+import 'package:saborissimo/widgets/drawer_title.dart';
 
 class DrawerApp extends StatefulWidget {
   @override
@@ -36,7 +36,7 @@ class _DrawerAppState extends State<DrawerApp> {
     return Drawer(
       child: Column(
         children: <Widget>[
-          Utils.createDrawerHeader(150, Names.appName),
+          DrawerTitle(Names.appName, Palette.primary),
           SizedBox(height: 20),
           drawerTile(DailyMenu(), Icons.menu_book, Names.menuAppBar),
           if (_logged) drawerTile(Meals(), Icons.food_bank, Names.mealsAppBar),

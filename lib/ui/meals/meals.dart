@@ -8,8 +8,9 @@ import 'package:saborissimo/ui/menu/create_meal.dart';
 import 'package:saborissimo/ui/menu/meal_detail.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
-import 'package:saborissimo/utils/utils.dart';
+import 'package:saborissimo/utils/printer.dart';
 import 'package:saborissimo/widgets/meal_list_tile.dart';
+import 'package:saborissimo/widgets/no_items_message.dart';
 
 class Meals extends StatefulWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -66,11 +67,18 @@ class _MealsState extends State<Meals> {
   }
 
   Widget createList() {
-    if (_meals.isEmpty) {
+    if(_meals == null) {
       return Center(
         child: CircularProgressIndicator(
           valueColor: AlwaysStoppedAnimation(Palette.accent),
         ),
+      );
+    }
+    if (_meals.isEmpty) {
+      return NoItemsMessage(
+        title: 'Sin platillos',
+        subtitle: 'No hay platillos registrados, registra uno seleccionando +',
+        icon: Icons.no_meals,
       );
     }
 

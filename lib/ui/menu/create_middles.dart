@@ -7,7 +7,7 @@ import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/menu/create_stews.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
-import 'package:saborissimo/utils/utils.dart';
+import 'package:saborissimo/utils/printer.dart';
 
 class CreateMiddles extends StatefulWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -74,11 +74,11 @@ class _CreateMiddlesState extends State<CreateMiddles> {
           CreateStews(widget.entrances, selectedMeals),
         );
       } else {
-        Utils.showSnack(
+        Printer.snackBar(
             widget._scaffoldKey, "Solo puede agregar un máximo de 3 platillos");
       }
     } else {
-      Utils.showSnack(
+      Printer.snackBar(
           widget._scaffoldKey, "Debe agregar por lo menos 1 platillo");
     }
   }
@@ -107,7 +107,7 @@ class _CreateMiddlesState extends State<CreateMiddles> {
     return CheckboxListTile(
       contentPadding: EdgeInsets.all(10),
       title: Text(meal.name, style: Styles.subTitle()),
-      secondary: Utils.createThumbnail(meal.picture),
+      secondary: Printer.createThumbnail(meal.picture),
       activeColor: Palette.done,
       value: _selected[meal],
       onChanged: (value) =>

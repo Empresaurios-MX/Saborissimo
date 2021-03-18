@@ -11,10 +11,11 @@ import 'package:saborissimo/ui/menu/create_entrances.dart';
 import 'package:saborissimo/ui/menu/meal_detail.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
-import 'package:saborissimo/utils/utils.dart';
+import 'package:saborissimo/utils/printer.dart';
 import 'package:saborissimo/widgets/material_dialog_neutral.dart';
 import 'package:saborissimo/widgets/material_dialog_yes_no.dart';
 import 'package:saborissimo/widgets/meal_grid_tile.dart';
+import 'package:saborissimo/widgets/no_items_message.dart';
 import 'package:saborissimo/widgets/rich_popup_menu.dart';
 
 class DailyMenu extends StatefulWidget {
@@ -91,14 +92,14 @@ class _DailyMenuState extends State<DailyMenu> {
                     if (success)
                       refreshMenu()
                     else
-                      Utils.showSnack(
+                      Printer.snackBar(
                         widget._scaffoldKey,
                         'Error, inicie sesión e intente de nuevo',
                       )
                   },
                 )
                 .catchError(
-                  (_) => Utils.showSnack(
+                  (_) => Printer.snackBar(
                     widget._scaffoldKey,
                     'Error, inicie sesión e intente de nuevo',
                   ),
@@ -197,7 +198,7 @@ class _DailyMenuState extends State<DailyMenu> {
         CartReview(MenuOrder(0, _entrance, _middle, _stew, _dessert, _drink)),
       ).then((value) => refreshMenu());
     } else {
-      Utils.showSnack(
+      Printer.snackBar(
         widget._scaffoldKey,
         'Su pedido esta incompleto!\nUn pedido completo consta de los 3 tiempos más la bebida',
       );
@@ -326,8 +327,10 @@ class _DailyMenuState extends State<DailyMenu> {
               ),
             ));
       } else {
-        return Utils.createNoItemsMessage(
-          'El menu de hoy no ha sido publicado aún, disculpe las molestias',
+        return NoItemsMessage(
+          title: 'Menu no disponible',
+          subtitle: 'El menu de hoy no ha sido publicado aún, disculpe las molestias',
+          icon: Icons.watch_later,
         );
       }
     } else {

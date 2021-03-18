@@ -8,7 +8,8 @@ import 'package:saborissimo/ui/drawer/drawer_app.dart';
 import 'package:saborissimo/ui/menu/daily_menu.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
-import 'package:saborissimo/utils/utils.dart';
+import 'package:saborissimo/utils/printer.dart';
+import 'package:saborissimo/widgets/banner_label.dart';
 import 'package:saborissimo/widgets/input/password_field_filled.dart';
 import 'package:saborissimo/widgets/input/text_field_filled.dart';
 import 'package:saborissimo/widgets/rounded_button.dart';
@@ -48,7 +49,7 @@ class _LoginState extends State<Login> {
         padding: EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 40),
         child: Column(
           children: [
-            Utils.createLoginHeader(100, Names.appName),
+            BannerLabel(Names.appName, Palette.primary),
             SizedBox(height: 40),
             Form(
               key: widget._key,
@@ -95,7 +96,7 @@ class _LoginState extends State<Login> {
       widget.service
           .login(Admin(_user, _password))
           .catchError(
-            (error) => Utils.showSnack(
+            (error) => Printer.snackBar(
               widget._scaffoldKey,
               "Usuario o contraseña incorrectos",
             ),
@@ -104,7 +105,7 @@ class _LoginState extends State<Login> {
                 if (response.key != null)
                   saveUserToPreferences(response)
                 else
-                  Utils.showSnack(
+                  Printer.snackBar(
                     widget._scaffoldKey,
                     "Usuario o contraseña incorrectos",
                   )

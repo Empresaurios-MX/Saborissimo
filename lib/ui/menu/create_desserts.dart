@@ -6,7 +6,7 @@ import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
-import 'package:saborissimo/utils/utils.dart';
+import 'package:saborissimo/utils/printer.dart';
 
 import 'create_drinks.dart';
 
@@ -82,13 +82,13 @@ class _CreateDessertsState extends State<CreateDesserts> {
           ),
         );
       } else {
-        Utils.showSnack(
+        Printer.snackBar(
           widget._scaffoldKey,
           "Solo puede agregar un máximo de 3 platillos",
         );
       }
     } else {
-      Utils.showSnack(
+      Printer.snackBar(
         widget._scaffoldKey,
         "Debe agregar por lo menos 1 platillo",
       );
@@ -119,7 +119,7 @@ class _CreateDessertsState extends State<CreateDesserts> {
     return CheckboxListTile(
       contentPadding: EdgeInsets.all(10),
       title: Text(meal.name, style: Styles.subTitle()),
-      secondary: Utils.createThumbnail(meal.picture),
+      secondary: Printer.createThumbnail(meal.picture),
       activeColor: Palette.done,
       value: _selected[meal],
       onChanged: (value) =>

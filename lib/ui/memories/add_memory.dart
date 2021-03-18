@@ -8,7 +8,7 @@ import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/utils/firebase_storage_helper.dart';
 import 'package:saborissimo/utils/image_utils.dart';
-import 'package:saborissimo/utils/utils.dart';
+import 'package:saborissimo/utils/printer.dart';
 import 'package:saborissimo/utils/validation_utils.dart';
 import 'package:saborissimo/widgets/input/image_avatar.dart';
 import 'package:saborissimo/widgets/input/text_field_empty.dart';
@@ -79,7 +79,7 @@ class _AddMemoryState extends State<AddMemory> {
 
   void _validateForm() {
     if (_selectedPicture == null) {
-      Utils.showSnack(widget._scaffoldKey, Messages.NO_IMAGE);
+      Printer.snackBar(widget._scaffoldKey, Messages.NO_IMAGE);
 
       return;
     }
@@ -121,7 +121,7 @@ class _AddMemoryState extends State<AddMemory> {
   void showErrorMessage() {
     setState(() => _working = false);
 
-    Utils.showSnack(widget._scaffoldKey, Messages.ERROR);
+    Printer.snackBar(widget._scaffoldKey, Messages.ERROR);
   }
 
   Widget uploadButton() {

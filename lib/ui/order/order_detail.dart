@@ -5,7 +5,7 @@ import 'package:saborissimo/data/service/MenuOrderDataService.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
-import 'package:saborissimo/utils/utils.dart';
+import 'package:saborissimo/utils/printer.dart';
 import 'package:saborissimo/widgets/material_dialog_neutral.dart';
 import 'package:saborissimo/widgets/material_dialog_yes_no.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -62,14 +62,14 @@ class OrderDetail extends StatelessWidget {
                     if (success)
                       showDoneDialog(context)
                     else
-                      Utils.showSnack(
+                      Printer.snackBar(
                         _scaffoldKey,
                         "Error, inicie sesión e intente de nuevo",
                       )
                   },
                 )
                 .catchError(
-                  (_) => Utils.showSnack(
+                  (_) => Printer.snackBar(
                     _scaffoldKey,
                     "Error, inicie sesión e intente de nuevo",
                   ),

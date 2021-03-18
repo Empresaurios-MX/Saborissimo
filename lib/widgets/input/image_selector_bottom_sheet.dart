@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class ImageSelector extends StatelessWidget {
+class ImageSelectorBottomSheet extends StatelessWidget {
   final Color theme;
   final String cameraLabel;
   final String galleryLabel;
   final Function cameraAction;
   final Function galleryAction;
 
-  ImageSelector({
+  ImageSelectorBottomSheet({
     this.theme,
     this.cameraLabel,
     this.galleryLabel,

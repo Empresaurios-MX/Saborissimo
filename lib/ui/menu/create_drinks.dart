@@ -9,7 +9,7 @@ import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/menu/daily_menu.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
-import 'package:saborissimo/utils/utils.dart';
+import 'package:saborissimo/utils/printer.dart';
 import 'package:saborissimo/widgets/material_dialog_neutral.dart';
 
 class CreateDrinks extends StatefulWidget {
@@ -89,13 +89,13 @@ class _CreateDrinksState extends State<CreateDrinks> {
                   {if (success) showDoneDialog() else showErrorMessage()},
             );
       } else {
-        Utils.showSnack(
+        Printer.snackBar(
           widget._scaffoldKey,
           "Solo puede agregar un máximo de 3 platillos",
         );
       }
     } else {
-      Utils.showSnack(
+      Printer.snackBar(
         widget._scaffoldKey,
         "Debe agregar por lo menos 1 platillo",
       );
@@ -112,7 +112,7 @@ class _CreateDrinksState extends State<CreateDrinks> {
   void showErrorMessage() {
     setState(() => working = false);
 
-    Utils.showSnack(
+    Printer.snackBar(
       widget._scaffoldKey,
       "Ha ocurrido un error, intente de nuevo",
     );
@@ -142,7 +142,7 @@ class _CreateDrinksState extends State<CreateDrinks> {
     return CheckboxListTile(
       contentPadding: EdgeInsets.all(10),
       title: Text(meal.name, style: Styles.subTitle()),
-      secondary: Utils.createThumbnail(meal.picture),
+      secondary: Printer.createThumbnail(meal.picture),
       activeColor: Palette.done,
       value: _selected[meal],
       onChanged: (value) =>

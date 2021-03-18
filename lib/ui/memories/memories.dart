@@ -9,8 +9,9 @@ import 'package:saborissimo/ui/memories/add_memory.dart';
 import 'package:saborissimo/utils/firebase_storage_helper.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
-import 'package:saborissimo/utils/utils.dart';
+import 'package:saborissimo/utils/printer.dart';
 import 'package:saborissimo/widgets/material_dialog_yes_no.dart';
+import 'package:saborissimo/widgets/no_items_message.dart';
 
 class Memories extends StatefulWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -73,14 +74,14 @@ class _MemoriesState extends State<Memories> {
                 FirebaseStorageHelper.deleteFile(memory.picture),
               }
             else
-              Utils.showSnack(
+              Printer.snackBar(
                 widget._scaffoldKey,
                 'Error, inicie sesión e intente de nuevo',
               )
           },
         )
         .catchError(
-          (_) => Utils.showSnack(
+          (_) => Printer.snackBar(
             widget._scaffoldKey,
             'Error, inicie sesión e intente de nuevo',
           ),
@@ -147,10 +148,10 @@ class _MemoriesState extends State<Memories> {
     }
 
     if (_memories.isEmpty) {
-      return Center(
-        child: Utils.createNoItemsMessage(
-          'No se han publicado nuevos recuerdos',
-        ),
+      return NoItemsMessage(
+        title: 'Sin recuerdos',
+        subtitle: 'No se han publicado recuerdos',
+        icon: Icons.image_not_supported,
       );
     }
 

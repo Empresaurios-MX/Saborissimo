@@ -1,15 +1,6 @@
 import 'package:flutter/material.dart';
 
 class Styles {
-  static TextStyle headerTitle(Color color) {
-    return TextStyle(
-      color: color,
-      fontWeight: FontWeight.bold,
-      fontFamily: 'ReliqStd-Active',
-      fontSize: 50,
-    );
-  }
-
   static TextStyle title() {
     return TextStyle(
       color: Colors.black,

@@ -8,8 +8,9 @@ import 'package:saborissimo/ui/drawer/drawer_app.dart';
 import 'package:saborissimo/ui/order/order_detail.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
-import 'package:saborissimo/utils/utils.dart';
+import 'package:saborissimo/utils/printer.dart';
 import 'package:saborissimo/widgets/material_dialog_yes_no.dart';
+import 'package:saborissimo/widgets/no_items_message.dart';
 import 'package:saborissimo/widgets/rich_popup_menu.dart';
 
 class Orders extends StatefulWidget {
@@ -73,14 +74,14 @@ class _OrdersState extends State<Orders> {
                     if (success)
                       refreshList()
                     else
-                      Utils.showSnack(
+                      Printer.snackBar(
                         widget._scaffoldKey,
                         'Error, inicie sesión e intente de nuevo',
                       )
                   },
                 )
                 .catchError(
-                  (_) => Utils.showSnack(
+                  (_) => Printer.snackBar(
                     widget._scaffoldKey,
                     'Error, inicie sesión e intente de nuevo',
                   ),
@@ -121,10 +122,10 @@ class _OrdersState extends State<Orders> {
       );
     }
     if (_orders.isEmpty) {
-      return Center(
-        child: Utils.createNoItemsMessage(
-          'No se han realizado pedidos',
-        ),
+      return NoItemsMessage(
+        title: 'Sin pedidos',
+        subtitle: 'No se han realizado pedidos',
+        icon: Icons.search_off,
       );
     }
 

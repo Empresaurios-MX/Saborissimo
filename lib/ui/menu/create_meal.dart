@@ -13,7 +13,7 @@ import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/firebase_storage_helper.dart';
 import 'package:saborissimo/utils/image_utils.dart';
-import 'package:saborissimo/utils/utils.dart';
+import 'package:saborissimo/utils/printer.dart';
 import 'package:saborissimo/utils/validation_utils.dart';
 import 'package:saborissimo/widgets/body_label.dart';
 import 'package:saborissimo/widgets/input/image_avatar.dart';
@@ -111,7 +111,7 @@ class _CreateMealState extends State<CreateMeal> {
 
   void _validateForm() {
     if (_selectedPicture == null) {
-      Utils.showSnack(widget._scaffoldKey, Messages.NO_IMAGE);
+      Printer.snackBar(widget._scaffoldKey, Messages.NO_IMAGE);
 
       return;
     }
@@ -159,7 +159,7 @@ class _CreateMealState extends State<CreateMeal> {
   void showErrorMessage() {
     setState(() => _working = false);
 
-    Utils.showSnack(widget._scaffoldKey, Messages.ERROR);
+    Printer.snackBar(widget._scaffoldKey, Messages.ERROR);
   }
 
   Widget uploadButton() {

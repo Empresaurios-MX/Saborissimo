@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:saborissimo/res/palette.dart';
-import 'package:saborissimo/widgets/input/image_selector.dart';
+import 'package:saborissimo/widgets/input/image_selector_bottom_sheet.dart';
 
 class ImageSelectorUtils {
   final double height;
@@ -25,7 +25,7 @@ class ImageSelectorUtils {
   void showSelector(context) {
     showModalBottomSheet(
       context: context,
-      builder: (ctx) => ImageSelector(
+      builder: (ctx) => ImageSelectorBottomSheet(
         theme: Palette.primary,
         cameraLabel: 'Tomar una foto ahora',
         galleryLabel: 'Seleccionar de la galeria',
