@@ -8,6 +8,7 @@ import 'package:saborissimo/ui/order/order_detail.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/printer.dart';
+import 'package:saborissimo/widgets/avatar_chip.dart';
 import 'package:saborissimo/widgets/dialog/material_dialog_yes_no.dart';
 import 'package:saborissimo/widgets/no_items_message.dart';
 import 'package:saborissimo/widgets/rich_popup_menu.dart';
@@ -134,10 +135,22 @@ class _OrdersState extends State<Orders> {
   }
 
   Widget createListTile(BuildContext context, Order order) {
-    Widget chip = createCrossChip();
+    Widget chip;
 
     if (order.state) {
-      chip = createCheckChip();
+      chip = AvatarChip(
+        label: 'Entregado',
+        avatar: Text('✔'),
+        theme: Palette.doneLight,
+        avatarTheme: Palette.done,
+      );
+    } else {
+      chip = AvatarChip(
+        label: 'Sin entregar',
+        avatar: Text('✘'),
+        theme: Palette.todoLight,
+        avatarTheme: Palette.todo,
+      );
     }
 
     return ListTile(
@@ -163,36 +176,6 @@ class _OrdersState extends State<Orders> {
       action: (int selected) => actionAdmin(selected),
       labels: ['Refrescar', 'Borrar todos los pedidos'],
       icons: [Icons.refresh, Icons.delete],
-    );
-  }
-
-  Widget createCheckChip() {
-    return Chip(
-      backgroundColor: Palette.doneLight,
-      avatar: CircleAvatar(
-        backgroundColor: Palette.done,
-        foregroundColor: Colors.white,
-        child: Text('✔'),
-      ),
-      label: Text(
-        'Entregado',
-        style: Styles.body(),
-      ),
-    );
-  }
-
-  Widget createCrossChip() {
-    return Chip(
-      backgroundColor: Palette.todoLight,
-      avatar: CircleAvatar(
-        backgroundColor: Palette.todo,
-        foregroundColor: Colors.white,
-        child: Text('✘'),
-      ),
-      label: Text(
-        'Sin entregar',
-        style: Styles.body(),
-      ),
     );
   }
 }

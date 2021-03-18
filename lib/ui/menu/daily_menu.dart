@@ -3,7 +3,6 @@ import 'package:saborissimo/data/model/Meal.dart';
 import 'package:saborissimo/data/model/Menu.dart';
 import 'package:saborissimo/data/model/MenuOrder.dart';
 import 'package:saborissimo/data/service/MenuDataService.dart';
-import 'package:saborissimo/res/strings.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/ui/cart/cart_review.dart';
 import 'package:saborissimo/ui/drawer/drawer_app.dart';
@@ -12,6 +11,7 @@ import 'package:saborissimo/ui/menu/meal_detail.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/printer.dart';
+import 'package:saborissimo/widgets/actionable_chip.dart';
 import 'package:saborissimo/widgets/dialog/material_dialog_neutral.dart';
 import 'package:saborissimo/widgets/dialog/material_dialog_yes_no.dart';
 import 'package:saborissimo/widgets/meal_grid_tile.dart';
@@ -27,6 +27,7 @@ class DailyMenu extends StatefulWidget {
 
 class _DailyMenuState extends State<DailyMenu> {
   bool _logged = false;
+  int generate = 0;
   Menu _menu;
 
   Meal _entrance;
@@ -264,51 +265,61 @@ class _DailyMenuState extends State<DailyMenu> {
 
     if (_menu != null) {
       if (_menu.entrances.isNotEmpty) {
-        _menu.entrances.forEach((meal) => tiles.add(
-              MealGridTile(
-                meal: meal,
-                isSelected: () => this.isInCart(meal),
-                goDetail: () =>
-                    NavigationUtils.push(context, MealDetail(meal: meal)),
-                addToCart: () => addToCart(meal),
-              ),
-            ));
-        _menu.middles.forEach((meal) => tiles.add(
-              MealGridTile(
-                meal: meal,
-                isSelected: () => this.isInCart(meal),
-                goDetail: () =>
-                    NavigationUtils.push(context, MealDetail(meal: meal)),
-                addToCart: () => addToCart(meal),
-              ),
-            ));
-        _menu.stews.forEach((meal) => tiles.add(
-              MealGridTile(
-                meal: meal,
-                isSelected: () => this.isInCart(meal),
-                goDetail: () =>
-                    NavigationUtils.push(context, MealDetail(meal: meal)),
-                addToCart: () => addToCart(meal),
-              ),
-            ));
-        _menu.desserts.forEach((meal) => tiles.add(
-              MealGridTile(
-                meal: meal,
-                isSelected: () => this.isInCart(meal),
-                goDetail: () =>
-                    NavigationUtils.push(context, MealDetail(meal: meal)),
-                addToCart: () => addToCart(meal),
-              ),
-            ));
-        _menu.drinks.forEach((meal) => tiles.add(
-              MealGridTile(
-                meal: meal,
-                isSelected: () => this.isInCart(meal),
-                goDetail: () =>
-                    NavigationUtils.push(context, MealDetail(meal: meal)),
-                addToCart: () => addToCart(meal),
-              ),
-            ));
+        if (generate == 1 || generate == 0) {
+          _menu.entrances.forEach((meal) => tiles.add(
+                MealGridTile(
+                  meal: meal,
+                  isSelected: () => isInCart(meal),
+                  goDetail: () =>
+                      NavigationUtils.push(context, MealDetail(meal: meal)),
+                  addToCart: () => addToCart(meal),
+                ),
+              ));
+        }
+        if (generate == 2 || generate == 0) {
+          _menu.middles.forEach((meal) => tiles.add(
+                MealGridTile(
+                  meal: meal,
+                  isSelected: () => isInCart(meal),
+                  goDetail: () =>
+                      NavigationUtils.push(context, MealDetail(meal: meal)),
+                  addToCart: () => addToCart(meal),
+                ),
+              ));
+        }
+        if (generate == 3 || generate == 0) {
+          _menu.stews.forEach((meal) => tiles.add(
+                MealGridTile(
+                  meal: meal,
+                  isSelected: () => isInCart(meal),
+                  goDetail: () =>
+                      NavigationUtils.push(context, MealDetail(meal: meal)),
+                  addToCart: () => addToCart(meal),
+                ),
+              ));
+        }
+        if (generate == 4 || generate == 0) {
+          _menu.desserts.forEach((meal) => tiles.add(
+                MealGridTile(
+                  meal: meal,
+                  isSelected: () => isInCart(meal),
+                  goDetail: () =>
+                      NavigationUtils.push(context, MealDetail(meal: meal)),
+                  addToCart: () => addToCart(meal),
+                ),
+              ));
+        }
+        if (generate == 5 || generate == 0) {
+          _menu.drinks.forEach((meal) => tiles.add(
+                MealGridTile(
+                  meal: meal,
+                  isSelected: () => isInCart(meal),
+                  goDetail: () =>
+                      NavigationUtils.push(context, MealDetail(meal: meal)),
+                  addToCart: () => addToCart(meal),
+                ),
+              ));
+        }
       } else {
         return NoItemsMessage(
           title: 'Menu no disponible',
@@ -327,14 +338,59 @@ class _DailyMenuState extends State<DailyMenu> {
 
     return Padding(
       padding: EdgeInsets.all(3),
-      child: GridView(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.90,
-          crossAxisSpacing: 3,
-          mainAxisSpacing: 3,
-        ),
-        children: tiles,
+      child: Column(
+        children: [
+          Container(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  ActionableChip(
+                    label: 'Todos',
+                    theme: Palette.primaryLight,
+                    action: () => setState(() => generate = 0),
+                  ),
+                  ActionableChip(
+                    label: 'Entradas',
+                    theme: Palette.primaryLight,
+                    action: () => setState(() => generate = 1),
+                  ),
+                  ActionableChip(
+                    label: 'Platos medios',
+                    theme: Palette.primaryLight,
+                    action: () => setState(() => generate = 2),
+                  ),
+                  ActionableChip(
+                    label: 'Guisados',
+                    theme: Palette.primaryLight,
+                    action: () => setState(() => generate = 3),
+                  ),
+                  ActionableChip(
+                    label: 'Postres',
+                    theme: Palette.primaryLight,
+                    action: () => setState(() => generate = 4),
+                  ),
+                  ActionableChip(
+                    label: 'Bebidas',
+                    theme: Palette.primaryLight,
+                    action: () => setState(() => generate = 5),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            child: GridView(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.90,
+                crossAxisSpacing: 3,
+                mainAxisSpacing: 3,
+              ),
+              children: tiles,
+            ),
+          ),
+        ],
       ),
     );
   }
