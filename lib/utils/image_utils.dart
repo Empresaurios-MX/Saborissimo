@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:saborissimo/res/palette.dart';
-import 'package:saborissimo/widgets/input/image_selector_bottom_sheet.dart';
+import 'file:///C:/Users/daniel/Documents/AndroidStudio/saborissimo/lib/widgets/sheet/image_selector_bottom_sheet.dart';
 
 class ImageSelectorUtils {
   final double height;

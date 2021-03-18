@@ -12,7 +12,7 @@ import 'package:saborissimo/utils/printer.dart';
 import 'package:saborissimo/utils/validation_utils.dart';
 import 'package:saborissimo/widgets/input/image_avatar.dart';
 import 'package:saborissimo/widgets/input/text_field_empty.dart';
-import 'package:saborissimo/widgets/material_dialog_neutral.dart';
+import 'file:///C:/Users/daniel/Documents/AndroidStudio/saborissimo/lib/widgets/dialog/material_dialog_neutral.dart';
 
 class AddMemory extends StatefulWidget {
   final _key = GlobalKey<FormState>();

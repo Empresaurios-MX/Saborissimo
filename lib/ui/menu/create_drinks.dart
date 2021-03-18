@@ -11,7 +11,7 @@ import 'package:saborissimo/ui/menu/daily_menu.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/printer.dart';
-import 'package:saborissimo/widgets/material_dialog_neutral.dart';
+import 'file:///C:/Users/daniel/Documents/AndroidStudio/saborissimo/lib/widgets/dialog/material_dialog_neutral.dart';
 import 'package:saborissimo/widgets/no_items_message.dart';
 
 class CreateDrinks extends StatefulWidget {

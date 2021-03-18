@@ -4,8 +4,8 @@ import 'package:saborissimo/data/service/MealsDataService.dart';
 import 'package:saborissimo/res/messages.dart';
 import 'package:saborissimo/utils/firebase_storage_helper.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
-import 'package:saborissimo/widgets/material_dialog_yes_no.dart';
-import 'package:saborissimo/widgets/meal_draggable_sheet.dart';
+import 'package:saborissimo/widgets/dialog/material_dialog_yes_no.dart';
+import 'file:///C:/Users/daniel/Documents/AndroidStudio/saborissimo/lib/widgets/sheet/meal_draggable_sheet.dart';
 
 class MealDetail extends StatelessWidget {
   final Meal meal;

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/Order.dart';
 import 'package:saborissimo/data/service/MenuOrderDataService.dart';
-import 'package:saborissimo/res/strings.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/drawer/drawer_app.dart';
@@ -9,7 +8,7 @@ import 'package:saborissimo/ui/order/order_detail.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/printer.dart';
-import 'package:saborissimo/widgets/material_dialog_yes_no.dart';
+import 'package:saborissimo/widgets/dialog/material_dialog_yes_no.dart';
 import 'package:saborissimo/widgets/no_items_message.dart';
 import 'package:saborissimo/widgets/rich_popup_menu.dart';
 

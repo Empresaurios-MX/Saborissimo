@@ -6,8 +6,8 @@ import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/printer.dart';
-import 'package:saborissimo/widgets/material_dialog_neutral.dart';
-import 'package:saborissimo/widgets/material_dialog_yes_no.dart';
+import 'package:saborissimo/widgets/dialog/material_dialog_neutral.dart';
+import 'package:saborissimo/widgets/dialog/material_dialog_yes_no.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class OrderDetail extends StatelessWidget {

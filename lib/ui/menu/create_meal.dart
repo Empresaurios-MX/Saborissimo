@@ -1,26 +1,22 @@
 import 'dart:io';
 
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:saborissimo/data/model/Meal.dart';
 import 'package:saborissimo/data/service/MealsDataService.dart';
 import 'package:saborissimo/res/messages.dart';
-import 'package:saborissimo/res/strings.dart';
 import 'package:saborissimo/res/palette.dart';
-import 'package:saborissimo/res/styles.dart';
-import 'package:saborissimo/utils/preferences_utils.dart';
+import 'package:saborissimo/res/strings.dart';
 import 'package:saborissimo/utils/firebase_storage_helper.dart';
 import 'package:saborissimo/utils/image_utils.dart';
+import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/printer.dart';
 import 'package:saborissimo/utils/validation_utils.dart';
-import 'package:saborissimo/widgets/body_label.dart';
+import 'package:saborissimo/widgets/label/body_label.dart';
 import 'package:saborissimo/widgets/input/image_avatar.dart';
 import 'package:saborissimo/widgets/input/long_text_field_empty.dart';
 import 'package:saborissimo/widgets/input/selector_field_empty.dart';
 import 'package:saborissimo/widgets/input/text_field_empty.dart';
-import 'package:saborissimo/widgets/material_dialog_neutral.dart';
+import 'file:///C:/Users/daniel/Documents/AndroidStudio/saborissimo/lib/widgets/dialog/material_dialog_neutral.dart';
 
 class CreateMeal extends StatefulWidget {
   final _key = GlobalKey<FormState>();

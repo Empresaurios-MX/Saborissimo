@@ -3,9 +3,9 @@ import 'package:saborissimo/data/model/Order.dart';
 import 'package:saborissimo/data/service/MenuOrderDataService.dart';
 import 'package:saborissimo/ui/menu/daily_menu.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
-import 'package:saborissimo/widgets/body_label.dart';
-import 'package:saborissimo/widgets/column_label.dart';
-import 'package:saborissimo/widgets/material_dialog_neutral.dart';
+import 'package:saborissimo/widgets/label/body_label.dart';
+import 'package:saborissimo/widgets/label/column_label.dart';
+import 'file:///C:/Users/daniel/Documents/AndroidStudio/saborissimo/lib/widgets/dialog/material_dialog_neutral.dart';
 
 class PayConfirm extends StatelessWidget {
   final Order order;

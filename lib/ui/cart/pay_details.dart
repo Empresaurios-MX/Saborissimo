@@ -6,11 +6,11 @@ import 'package:saborissimo/data/model/Order.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/ui/cart/pay_confirm.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
-import 'package:saborissimo/widgets/body_label.dart';
+import 'package:saborissimo/widgets/label/body_label.dart';
 import 'package:saborissimo/widgets/input/long_text_field_empty.dart';
 import 'package:saborissimo/widgets/input/phone_field_empty.dart';
 import 'package:saborissimo/widgets/input/text_field_empty.dart';
-import 'package:saborissimo/widgets/sub_title_label.dart';
+import 'package:saborissimo/widgets/label/sub_title_label.dart';
 
 class PayDetails extends StatefulWidget {
   final _key = GlobalKey<FormState>();

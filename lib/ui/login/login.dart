@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/Login.dart';
 import 'package:saborissimo/data/model/LoginResponse.dart';
 import 'package:saborissimo/data/service/UserDataService.dart';
-import 'package:saborissimo/res/strings.dart';
 import 'package:saborissimo/res/palette.dart';
+import 'package:saborissimo/res/strings.dart';
 import 'package:saborissimo/ui/drawer/drawer_app.dart';
 import 'package:saborissimo/ui/menu/daily_menu.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/printer.dart';
-import 'package:saborissimo/widgets/banner_label.dart';
-import 'package:saborissimo/widgets/input/password_field_filled.dart';
-import 'package:saborissimo/widgets/input/text_field_filled.dart';
+import 'package:saborissimo/widgets/input/password_field_empty.dart';
+import 'package:saborissimo/widgets/input/text_field_empty.dart';
+import 'package:saborissimo/widgets/label/banner_label.dart';
 import 'package:saborissimo/widgets/rounded_button.dart';
 
 class Login extends StatefulWidget {
@@ -55,14 +55,14 @@ class _LoginState extends State<Login> {
               key: widget._key,
               child: Column(
                 children: [
-                  TextFieldFilled(
+                  TextFieldEmpty(
                     hint: 'Usuario',
                     theme: Palette.primary,
                     textListener: (text) => setState(() => _user = text),
                     validator: (text) => _getErrorMessage(text.isEmpty),
                   ),
                   SizedBox(height: 10),
-                  PasswordFieldFilled(
+                  PasswordFieldEmpty(
                     hint: 'Contraseña',
                     hideText: _obscureText,
                     theme: Palette.primary,

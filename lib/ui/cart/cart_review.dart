@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/MenuOrder.dart';
 import 'package:saborissimo/ui/cart/pay_details.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
-import 'package:saborissimo/widgets/body_label.dart';
 import 'package:saborissimo/widgets/meal_list_tile.dart';
 import 'package:saborissimo/widgets/no_items_message.dart';
 

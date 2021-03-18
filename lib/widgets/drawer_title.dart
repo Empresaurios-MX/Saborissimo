@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:saborissimo/widgets/banner_label.dart';
+import 'package:saborissimo/widgets/label/banner_label.dart';
 
 class DrawerTitle extends StatelessWidget {
   final String title;
