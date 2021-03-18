@@ -168,13 +168,6 @@ class _DailyMenuState extends State<DailyMenu> {
     return false;
   }
 
-  bool isValidOrder() {
-    return _entrance != null &&
-        _middle != null &&
-        _stew != null &&
-        _drink != null;
-  }
-
   void resetSelection() {
     setState(
       () => {
@@ -189,17 +182,10 @@ class _DailyMenuState extends State<DailyMenu> {
   }
 
   void goToCart() {
-    if (isValidOrder()) {
-      NavigationUtils.push(
-        context,
-        CartReview(MenuOrder(0, _entrance, _middle, _stew, _dessert, _drink)),
-      ).then((value) => refreshMenu());
-    } else {
-      Printer.snackBar(
-        widget._scaffoldKey,
-        'Su pedido esta incompleto!\nUn pedido completo consta de los 3 tiempos más la bebida',
-      );
-    }
+    NavigationUtils.push(
+      context,
+      CartReview(MenuOrder(0, _entrance, _middle, _stew, _dessert, _drink)),
+    ).then((value) => refreshMenu());
   }
 
   void actionClient(int selected) {
