@@ -124,7 +124,6 @@ class _PayDetailsState extends State<PayDetails> {
                     theme: Palette.primary,
                     textListener: (value) =>
                         setState(() => _references = value),
-                    validator: () => {},
                   ),
                 Container(
                   width: double.infinity,
