@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/Meal.dart';
 import 'package:saborissimo/data/service/MealsDataService.dart';
-import 'package:saborissimo/res/names.dart';
+import 'package:saborissimo/res/strings.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/ui/drawer/drawer_app.dart';
 import 'package:saborissimo/ui/menu/create_meal.dart';
@@ -37,11 +37,7 @@ class _MealsState extends State<Meals> {
     return Scaffold(
       key: widget._scaffoldKey,
       appBar: AppBar(
-        title: Text(Names.mealsAppBar),
-        actions: [
-          createRefreshButton(),
-        ],
-      ),
+          title: Text(DrawerApp.MEALS), actions: [createRefreshButton()]),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () => NavigationUtils.push(context, CreateMeal())
@@ -67,7 +63,7 @@ class _MealsState extends State<Meals> {
   }
 
   Widget createList() {
-    if(_meals == null) {
+    if (_meals == null) {
       return Center(
         child: CircularProgressIndicator(
           valueColor: AlwaysStoppedAnimation(Palette.accent),

@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:saborissimo/data/model/Meal.dart';
 import 'package:saborissimo/data/service/MealsDataService.dart';
 import 'package:saborissimo/res/messages.dart';
-import 'package:saborissimo/res/names.dart';
+import 'package:saborissimo/res/strings.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
@@ -59,7 +59,7 @@ class _CreateMealState extends State<CreateMeal> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: widget._scaffoldKey,
-      appBar: AppBar(title: Text(Names.createMealAppBar)),
+      appBar: AppBar(title: Text('Nuevo platillo')),
       floatingActionButton: uploadButton(),
       body: Padding(
         padding: EdgeInsets.all(10),
@@ -91,7 +91,7 @@ class _CreateMealState extends State<CreateMeal> {
                 ),
                 SizedBox(height: 10),
                 SelectorFieldEmpty(
-                  options: Names.mealTypeSelector,
+                  options: Strings.mealTypeSelector,
                   hint: 'Tipo de platillo *',
                   theme: Palette.primary,
                   textListener: (value) => setState(() => _type = value),

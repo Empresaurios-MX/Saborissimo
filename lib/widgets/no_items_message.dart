@@ -10,6 +10,7 @@ class NoItemsMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
       width: double.infinity,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

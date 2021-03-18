@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:saborissimo/res/names.dart';
+import 'package:saborissimo/res/strings.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/login/login.dart';
@@ -12,6 +12,13 @@ import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/widgets/drawer_title.dart';
 
 class DrawerApp extends StatefulWidget {
+  static const String MENU = 'Menú del dia';
+  static const String MEALS = 'Platillos';
+  static const String MEMORIES = 'Recuerdos';
+  static const String ORDERS = 'Pedidos';
+  static const String LOGOUT = 'Cerrar sesión';
+  static const String EMPLOYEES = 'Sección de empleados';
+
   @override
   _DrawerAppState createState() => _DrawerAppState();
 }
@@ -36,16 +43,15 @@ class _DrawerAppState extends State<DrawerApp> {
     return Drawer(
       child: Column(
         children: <Widget>[
-          DrawerTitle(Names.appName, Palette.primary),
+          DrawerTitle(Strings.APP_NAME, Palette.primary),
           SizedBox(height: 20),
-          drawerTile(DailyMenu(), Icons.menu_book, Names.menuAppBar),
-          if (_logged) drawerTile(Meals(), Icons.food_bank, Names.mealsAppBar),
-          drawerTile(Memories(), Icons.photo_album, Names.memoriesAppBar),
+          drawerTile(DailyMenu(), Icons.menu_book, DrawerApp.MENU),
+          if (_logged) drawerTile(Meals(), Icons.food_bank, DrawerApp.MEALS),
+          drawerTile(Memories(), Icons.photo_album, DrawerApp.MEMORIES),
           if (_logged)
-            drawerTile(Orders(), Icons.shopping_bag, Names.ordersAppBar),
+            drawerTile(Orders(), Icons.shopping_bag, DrawerApp.ORDERS),
           if (_logged) logoutTile(),
-          if (!_logged)
-            drawerTile(Login(), Icons.login, 'Sección de empleados'),
+          if (!_logged) drawerTile(Login(), Icons.login, DrawerApp.EMPLOYEES),
         ],
       ),
     );
@@ -75,7 +81,7 @@ class _DrawerAppState extends State<DrawerApp> {
     return ListTile(
       onTap: () => logOut(),
       leading: Icon(Icons.logout, size: 25, color: Palette.primary),
-      title: Text(Names.logoutAppBar, style: Styles.subTitle()),
+      title: Text(DrawerApp.LOGOUT, style: Styles.subTitle()),
     );
   }
 

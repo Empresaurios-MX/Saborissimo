@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/Meal.dart';
 import 'package:saborissimo/data/service/MealsDataService.dart';
-import 'package:saborissimo/res/names.dart';
+import 'package:saborissimo/res/strings.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
+import 'package:saborissimo/ui/menu/create_meal.dart';
 import 'package:saborissimo/ui/menu/create_stews.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/printer.dart';
+import 'package:saborissimo/widgets/no_items_message.dart';
 
 class CreateMiddles extends StatefulWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -43,7 +45,16 @@ class _CreateMiddlesState extends State<CreateMiddles> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: widget._scaffoldKey,
-      appBar: AppBar(title: Text(Names.createMiddlesAppBar)),
+      appBar: AppBar(
+        title: Text('Seleccione los platos medios'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () => NavigationUtils.push(context, CreateMeal())
+                .then((_) => refreshList()),
+          ),
+        ],
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.arrow_forward),
@@ -84,11 +95,18 @@ class _CreateMiddlesState extends State<CreateMiddles> {
   }
 
   Widget createList() {
-    if (_meals.isEmpty) {
+    if (_meals == null) {
       return Center(
         child: CircularProgressIndicator(
           valueColor: AlwaysStoppedAnimation(Palette.accent),
         ),
+      );
+    }
+    if (_meals.isEmpty) {
+      return NoItemsMessage(
+        title: 'Sin platos medios',
+        subtitle: 'No hay platos medios registrados, registra uno seleccionando +',
+        icon: Icons.no_meals,
       );
     }
 

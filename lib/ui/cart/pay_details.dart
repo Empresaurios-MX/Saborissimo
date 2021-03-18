@@ -3,18 +3,13 @@ import 'package:saborissimo/data/model/Address.dart';
 import 'package:saborissimo/data/model/Client.dart';
 import 'package:saborissimo/data/model/MenuOrder.dart';
 import 'package:saborissimo/data/model/Order.dart';
-import 'package:saborissimo/data/service/MenuOrderDataService.dart';
-import 'package:saborissimo/res/names.dart';
 import 'package:saborissimo/res/palette.dart';
-import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/cart/pay_confirm.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
-import 'package:saborissimo/utils/printer.dart';
 import 'package:saborissimo/widgets/body_label.dart';
 import 'package:saborissimo/widgets/input/long_text_field_empty.dart';
 import 'package:saborissimo/widgets/input/phone_field_empty.dart';
 import 'package:saborissimo/widgets/input/text_field_empty.dart';
-import 'package:saborissimo/widgets/material_dialog_neutral.dart';
 import 'package:saborissimo/widgets/sub_title_label.dart';
 
 class PayDetails extends StatefulWidget {

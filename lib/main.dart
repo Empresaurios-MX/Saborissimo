@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:native_updater/native_updater.dart';
-import 'package:saborissimo/res/names.dart';
+import 'package:saborissimo/res/strings.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/ui/menu/daily_menu.dart';
 
@@ -15,7 +15,7 @@ class Saborissimo extends StatelessWidget {
     );
 
     return MaterialApp(
-      title: Names.appName,
+      title: Strings.APP_NAME,
       home: DailyMenu(),
       theme: ThemeData(
         primaryColor: Palette.primary,

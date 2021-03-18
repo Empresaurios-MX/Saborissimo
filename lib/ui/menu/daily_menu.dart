@@ -3,7 +3,7 @@ import 'package:saborissimo/data/model/Meal.dart';
 import 'package:saborissimo/data/model/Menu.dart';
 import 'package:saborissimo/data/model/MenuOrder.dart';
 import 'package:saborissimo/data/service/MenuDataService.dart';
-import 'package:saborissimo/res/names.dart';
+import 'package:saborissimo/res/strings.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/ui/cart/cart_review.dart';
 import 'package:saborissimo/ui/drawer/drawer_app.dart';
@@ -55,10 +55,7 @@ class _DailyMenuState extends State<DailyMenu> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: widget._scaffoldKey,
-      appBar: AppBar(
-        title: Text(Names.menuAppBar),
-        actions: createActions(),
-      ),
+      appBar: AppBar(title: Text(DrawerApp.MENU), actions: createActions()),
       drawer: DrawerApp(),
       body: createMenu(),
     );
@@ -329,7 +326,8 @@ class _DailyMenuState extends State<DailyMenu> {
       } else {
         return NoItemsMessage(
           title: 'Menu no disponible',
-          subtitle: 'El menu de hoy no ha sido publicado aún, disculpe las molestias',
+          subtitle:
+              'El menu de hoy no ha sido publicado aún, disculpe las molestias',
           icon: Icons.watch_later,
         );
       }

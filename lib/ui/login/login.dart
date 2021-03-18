@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/Login.dart';
 import 'package:saborissimo/data/model/LoginResponse.dart';
 import 'package:saborissimo/data/service/UserDataService.dart';
-import 'package:saborissimo/res/names.dart';
+import 'package:saborissimo/res/strings.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/ui/drawer/drawer_app.dart';
 import 'package:saborissimo/ui/menu/daily_menu.dart';
@@ -43,13 +43,13 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: widget._scaffoldKey,
-      appBar: AppBar(title: Text('Sección de empleados')),
+      appBar: AppBar(title: Text(DrawerApp.EMPLOYEES)),
       drawer: DrawerApp(),
       body: SingleChildScrollView(
         padding: EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 40),
         child: Column(
           children: [
-            BannerLabel(Names.appName, Palette.primary),
+            BannerLabel(Strings.APP_NAME, Palette.primary),
             SizedBox(height: 40),
             Form(
               key: widget._key,
@@ -74,7 +74,7 @@ class _LoginState extends State<Login> {
             ),
             SizedBox(height: 40),
             RoundedButton(
-              label: Names.loginAppBar,
+              label: 'Iniciar sesión',
               color: Palette.primary,
               action: () => validateForm(),
             ),

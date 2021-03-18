@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/Order.dart';
 import 'package:saborissimo/data/service/MenuOrderDataService.dart';
-import 'package:saborissimo/res/names.dart';
+import 'package:saborissimo/res/strings.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/drawer/drawer_app.dart';
@@ -42,10 +42,7 @@ class _OrdersState extends State<Orders> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: widget._scaffoldKey,
-      appBar: AppBar(
-        title: Text(Names.ordersAppBar),
-        actions: [getActions()],
-      ),
+      appBar: AppBar(title: Text(DrawerApp.ORDERS), actions: [getActions()]),
       drawer: DrawerApp(),
       body: createList(),
     );

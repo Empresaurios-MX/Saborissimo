@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/Meal.dart';
 import 'package:saborissimo/data/service/MealsDataService.dart';
-import 'package:saborissimo/res/names.dart';
+import 'package:saborissimo/res/strings.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/menu/create_meal.dart';
@@ -9,6 +9,7 @@ import 'package:saborissimo/ui/menu/create_middles.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/printer.dart';
+import 'package:saborissimo/widgets/no_items_message.dart';
 
 class CreateEntrances extends StatefulWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -41,7 +42,7 @@ class _CreateEntrancesState extends State<CreateEntrances> {
     return Scaffold(
       key: widget._scaffoldKey,
       appBar: AppBar(
-        title: Text(Names.createEntrancesAppBar),
+        title: Text('Seleccione las entradas'),
         actions: [
           IconButton(
             icon: Icon(Icons.add),
@@ -87,11 +88,18 @@ class _CreateEntrancesState extends State<CreateEntrances> {
   }
 
   Widget createList() {
-    if (_meals.isEmpty) {
+    if (_meals == null) {
       return Center(
         child: CircularProgressIndicator(
           valueColor: AlwaysStoppedAnimation(Palette.accent),
         ),
+      );
+    }
+    if (_meals.isEmpty) {
+      return NoItemsMessage(
+        title: 'Sin entradas',
+        subtitle: 'No hay entradas registrados, registra uno seleccionando +',
+        icon: Icons.no_meals,
       );
     }
 

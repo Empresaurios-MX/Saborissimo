@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/Memory.dart';
 import 'package:saborissimo/data/service/MemoriesDataService.dart';
-import 'package:saborissimo/res/names.dart';
+import 'package:saborissimo/res/strings.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/drawer/drawer_app.dart';
@@ -41,9 +41,7 @@ class _MemoriesState extends State<Memories> {
     return Scaffold(
       key: widget._scaffoldKey,
       appBar: AppBar(
-        title: Text(Names.memoriesAppBar),
-        actions: [createRefreshButton()],
-      ),
+          title: Text(DrawerApp.MEMORIES), actions: [createRefreshButton()]),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add_a_photo),
         backgroundColor: Palette.accent,

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/Memory.dart';
 import 'package:saborissimo/data/service/MemoriesDataService.dart';
 import 'package:saborissimo/res/messages.dart';
-import 'package:saborissimo/res/names.dart';
+import 'package:saborissimo/res/strings.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/utils/firebase_storage_helper.dart';
 import 'package:saborissimo/utils/image_utils.dart';
@@ -46,7 +46,7 @@ class _AddMemoryState extends State<AddMemory> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: widget._scaffoldKey,
-      appBar: AppBar(title: Text(Names.createMemoryAppBar)),
+      appBar: AppBar(title: Text('Nuevo recuerdo')),
       floatingActionButton: uploadButton(),
       body: Padding(
         padding: EdgeInsets.all(20),
