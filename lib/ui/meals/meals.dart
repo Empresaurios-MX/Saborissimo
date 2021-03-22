@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/Meal.dart';
 import 'package:saborissimo/data/service/MealsDataService.dart';
-import 'package:saborissimo/res/strings.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/ui/drawer/drawer_app.dart';
 import 'package:saborissimo/ui/menu/create_meal.dart';
 import 'package:saborissimo/ui/menu/meal_detail.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
-import 'package:saborissimo/utils/printer.dart';
-import 'package:saborissimo/widgets/meal_list_tile.dart';
 import 'package:saborissimo/widgets/no_items_message.dart';
+import 'package:saborissimo/widgets/tile/meal_list_tile.dart';
 
 class Meals extends StatefulWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();

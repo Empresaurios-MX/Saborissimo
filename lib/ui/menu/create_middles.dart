@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/Meal.dart';
 import 'package:saborissimo/data/service/MealsDataService.dart';
-import 'package:saborissimo/res/strings.dart';
 import 'package:saborissimo/res/palette.dart';
-import 'package:saborissimo/res/styles.dart';
 import 'package:saborissimo/ui/menu/create_meal.dart';
 import 'package:saborissimo/ui/menu/create_stews.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
 import 'package:saborissimo/utils/printer.dart';
 import 'package:saborissimo/widgets/no_items_message.dart';
+import 'package:saborissimo/widgets/tile/image_checkbox_tile.dart';
 
 class CreateMiddles extends StatefulWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -122,13 +121,12 @@ class _CreateMiddlesState extends State<CreateMiddles> {
   Widget createListTile(Meal meal) {
     _selected.putIfAbsent(meal, () => false);
 
-    return CheckboxListTile(
-      contentPadding: EdgeInsets.all(10),
-      title: Text(meal.name, style: Styles.subTitle()),
-      secondary: Printer.createThumbnail(meal.picture),
-      activeColor: Palette.done,
-      value: _selected[meal],
-      onChanged: (value) =>
+    return ImageCheckboxTile(
+      title: meal.name,
+      imageUrl: meal.picture,
+      checkedColor: Palette.done,
+      isChecked: _selected[meal],
+      checkListener: (value) =>
           setState(() => _selected.update(meal, (old) => !old)),
     );
   }

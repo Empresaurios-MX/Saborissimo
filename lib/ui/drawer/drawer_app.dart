@@ -9,7 +9,7 @@ import 'package:saborissimo/ui/menu/daily_menu.dart';
 import 'package:saborissimo/ui/order/orders.dart';
 import 'package:saborissimo/utils/navigation_utils.dart';
 import 'package:saborissimo/utils/preferences_utils.dart';
-import 'package:saborissimo/widgets/drawer_title.dart';
+import 'file:///C:/Users/daniel/Documents/AndroidStudio/saborissimo/lib/widgets/tile/drawer_title.dart';
 
 class DrawerApp extends StatefulWidget {
   static const String MENU = 'Menú del dia';

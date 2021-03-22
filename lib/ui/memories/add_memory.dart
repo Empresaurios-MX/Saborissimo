@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:saborissimo/data/model/Memory.dart';
 import 'package:saborissimo/data/service/MemoriesDataService.dart';
 import 'package:saborissimo/res/messages.dart';
-import 'package:saborissimo/res/strings.dart';
 import 'package:saborissimo/res/palette.dart';
 import 'package:saborissimo/utils/firebase_storage_helper.dart';
 import 'package:saborissimo/utils/image_utils.dart';
@@ -12,6 +11,7 @@ import 'package:saborissimo/utils/printer.dart';
 import 'package:saborissimo/utils/validation_utils.dart';
 import 'package:saborissimo/widgets/input/image_avatar.dart';
 import 'package:saborissimo/widgets/input/text_field_empty.dart';
+
 import 'file:///C:/Users/daniel/Documents/AndroidStudio/saborissimo/lib/widgets/dialog/material_dialog_neutral.dart';
 
 class AddMemory extends StatefulWidget {

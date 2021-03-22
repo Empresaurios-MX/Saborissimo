@@ -14,7 +14,7 @@ import 'package:saborissimo/utils/printer.dart';
 import 'package:saborissimo/widgets/actionable_chip.dart';
 import 'package:saborissimo/widgets/dialog/material_dialog_neutral.dart';
 import 'package:saborissimo/widgets/dialog/material_dialog_yes_no.dart';
-import 'package:saborissimo/widgets/meal_grid_tile.dart';
+import 'file:///C:/Users/daniel/Documents/AndroidStudio/saborissimo/lib/widgets/tile/meal_grid_tile.dart';
 import 'package:saborissimo/widgets/no_items_message.dart';
 import 'package:saborissimo/widgets/rich_popup_menu.dart';
 
