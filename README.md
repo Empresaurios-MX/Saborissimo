@@ -1,4 +1,4 @@
 # Saboríssimo
 
-Saboríssimo es una plataforma de pedidos a domicilio para el restaurante Saboríssimo
+Aplicación para realizar pedidos de comida, y publicar nuevos platillos
 
